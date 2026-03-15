@@ -1,0 +1,3 @@
+MOCK IMAGE PLACEHOLDER
+scene=标题与案由
+prompt=简洁法治风标题卡，关键词：民间借贷

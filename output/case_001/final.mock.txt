@@ -1,0 +1,2 @@
+MOCK VIDEO OUTPUT
+Use FFmpeg provider in later versions to produce final.mp4
