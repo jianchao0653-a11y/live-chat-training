@@ -1,0 +1,17 @@
+2026-03-15 02:34:50,812 | INFO | Pipeline started for case=cases/case_001.md
+2026-03-15 02:34:50,812 | INFO | Case parsed: dispute_focus=双方款项性质应认定为借款还是投资；转账记录与聊天记录能否形成完整证据链。
+2026-03-15 02:34:50,813 | ERROR | Pipeline failed: 'ShotItem' object has no attribute '__dict__'
+Traceback (most recent call last):
+  File "/workspace/live-chat-training/app/pipeline.py", line 48, in run
+    materials, base_files = generate_materials(
+  File "/workspace/live-chat-training/app/steps/generate_materials.py", line 28, in generate_materials
+    shots_payload = [shot.__dict__ for shot in materials.shots]
+  File "/workspace/live-chat-training/app/steps/generate_materials.py", line 28, in <listcomp>
+    shots_payload = [shot.__dict__ for shot in materials.shots]
+AttributeError: 'ShotItem' object has no attribute '__dict__'
+2026-03-15 02:34:50,813 | INFO | Pipeline finished with status=failed
+2026-03-15 02:35:01,110 | INFO | Pipeline started for case=cases/case_001.md
+2026-03-15 02:35:01,110 | INFO | Case parsed: dispute_focus=双方款项性质应认定为借款还是投资；转账记录与聊天记录能否形成完整证据链。
+2026-03-15 02:35:01,111 | INFO | Materials generated: ['script_60s.md', 'voiceover.txt', 'subtitles.srt', 'shots.json']
+2026-03-15 02:35:01,112 | INFO | Render completed: images=4 audio=voice.txt video=final.mock.txt
+2026-03-15 02:35:01,112 | INFO | Pipeline finished with status=success
