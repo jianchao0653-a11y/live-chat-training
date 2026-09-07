@@ -12,8 +12,20 @@ final class KeyboardViewController: UIInputViewController {
         view.backgroundColor = LensTheme.background
         stack.axis = .vertical; stack.spacing = 12; stack.translatesAutoresizingMaskIntoConstraints = false; view.addSubview(stack)
         NSLayoutConstraint.activate([stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)])
-        let heading = UILabel(); heading.text = "观微 · 已批准草稿"; heading.font = .preferredFont(forTextStyle: .headline); heading.adjustsFontForContentSizeCategory = true; heading.textColor = LensTheme.ink; stack.addArrangedSubview(heading)
-        status.numberOfLines = 0; status.font = .preferredFont(forTextStyle: .body); status.adjustsFontForContentSizeCategory = true; status.textColor = LensTheme.ink; stack.addArrangedSubview(status)
+        let heading = UILabel(); heading.text = "观微 · 聊天建议"; heading.font = .preferredFont(forTextStyle: .headline); heading.adjustsFontForContentSizeCategory = true; heading.textColor = LensTheme.ink; stack.addArrangedSubview(heading)
+        // Long drafts scroll inside the preview instead of pushing the switch key off screen.
+        let preview = UIScrollView(); preview.backgroundColor = .white; preview.layer.cornerRadius = 12
+        preview.alwaysBounceVertical = false; stack.addArrangedSubview(preview)
+        status.numberOfLines = 0; status.font = .preferredFont(forTextStyle: .body); status.adjustsFontForContentSizeCategory = true; status.textColor = LensTheme.ink
+        status.translatesAutoresizingMaskIntoConstraints = false; preview.addSubview(status)
+        NSLayoutConstraint.activate([
+            preview.heightAnchor.constraint(equalToConstant: 120),
+            status.leadingAnchor.constraint(equalTo: preview.contentLayoutGuide.leadingAnchor, constant: 12),
+            status.trailingAnchor.constraint(equalTo: preview.contentLayoutGuide.trailingAnchor, constant: -12),
+            status.topAnchor.constraint(equalTo: preview.contentLayoutGuide.topAnchor, constant: 12),
+            status.bottomAnchor.constraint(equalTo: preview.contentLayoutGuide.bottomAnchor, constant: -12),
+            status.widthAnchor.constraint(equalTo: preview.frameLayoutGuide.widthAnchor, constant: -24)
+        ])
         style(insert, primary: true); insert.setTitle("确认人物后插入", for: .normal)
         insert.addTarget(self, action: #selector(redeem), for: .touchUpInside); stack.addArrangedSubview(insert)
         let refresh = UIButton(type: .system); style(refresh, primary: false); refresh.setTitle("刷新批准草稿", for: .normal); refresh.addTarget(self, action: #selector(refreshDraft), for: .touchUpInside); stack.addArrangedSubview(refresh)

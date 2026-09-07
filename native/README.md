@@ -1,4 +1,6 @@
-# 观微 v0.14 双端工程预览
+# 观微 v0.15 统一 UI 工程预览
+
+新增 [视觉规范](../02_product/MOBILE_UI_SYSTEM.md)、[MADR-036](../03_decisions/MADR-036.md) 和 [v0.15 UI 验收](../07_reviews/V0_15_UI_ACCEPTANCE.md)。[当前 Android 包](../output/native/conversation-lens-0.15.0-debug.apk)；下方 v0.14 包保留为功能基线。
 
 [Android 安装包](../output/native/conversation-lens-0.14.0-debug.apk) · [v0.14 验收与剩余工作](../07_reviews/V0_14_ACCEPTANCE.md) · [iPhone 工程](ios/README.md) · [v0.13 历史验收](../07_reviews/V0_13_ACCEPTANCE.md)
 
@@ -70,4 +72,4 @@ Windows 中文路径下构建会通过经核对的临时 ASCII 联接运行工�
 
 ## 尚未完成
 
-ARM64 仅完成构建和 16 KB 对齐，未在物理手机运行。抖音、快手、微信真机兼容性、九键、横屏和大字号覆盖、语音及平台贴纸、真实 GPT/OCR 验收仍待完成。iPhone 需要 macOS/Xcode 实施与签名，目前没有 iOS 工程或 IPA。
+ARM64 仅完成构建和 16 KB 对齐，未在物理手机运行。抖音、快手、微信真机兼容性、九键、横屏和大字号覆盖、语音及平台贴纸、真实 GPT/OCR 验收仍待完成。iPhone 工程已在 macOS/Xcode Simulator 完成构建与核心/UI 测试；尚无签名 IPA 和物理设备验收。

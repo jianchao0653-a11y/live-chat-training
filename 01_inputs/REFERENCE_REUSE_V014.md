@@ -29,3 +29,6 @@ CPED、MPDD、SocialDial、FANToM、ToMBench、CEI、RECCON、SOTOPIA、ToMAP �
 研究来源与更早处理记录保留在 `REFERENCE_PROJECTS.md`、`NEEDS_TXT_IMPLEMENTATION.md`。真正新增第三方代码时须重新核对当前许可证，并保留通知。
 
 云端调试还查阅了 [AOSP Android 14 InputMethodManagerService](https://github.com/aosp-mirror/platform_frameworks_base/blob/android-14.0.0_r1/services/core/java/com/android/server/inputmethod/InputMethodManagerService.java)：其 help/handler 明确 `ime list` 默认仅显示已启用输入法，`-a` 才列全部。用于修正测试脚本语义，没有复制系统服务实现。
+# v0.15 UI 补充
+
+视觉原则参考 Material 3 的颜色角色/字体层级、Apple HIG 的原生控件与动态字体、WCAG 的文字对比度方法；实现为自有 LensStyle/LensTheme token，无新增第三方 UI 运行依赖，没有复制其他输入法前端。具体链接、颜色与约束见 [视觉规范 1.0](../02_product/MOBILE_UI_SYSTEM.md)。以下保留 v0.14 工程复用账本。
