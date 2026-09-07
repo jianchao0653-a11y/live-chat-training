@@ -15,6 +15,14 @@ def fill(hint,value):
 def labels():
     return [n.get('text') for n in snapshot().iter('node') if n.get('package')=='com.conversationlens.ime' and n.get('text')]
 
+def wait_labels(predicate, timeout=15):
+    deadline=time.monotonic()+timeout
+    while time.monotonic()<deadline:
+        current=labels()
+        if predicate(current):return current
+        time.sleep(.2)
+    raise AssertionError('UI did not reach expected state: '+str(current))
+
 def scroll_find(text):
     for _ in range(8):
         tree=snapshot()
@@ -31,8 +39,8 @@ def pair():
     adb('reverse','tcp:4317','tcp:'+port)
     code=api('devices/pairing','POST',{'streamer_id':'0001'})['code']
     fill('电脑设置页的六位配对码',code)
-    tap_text('配对连接');time.sleep(1)
-    assert any('已连接 · 主播 0001' in x for x in labels()), labels()
+    tap_text('配对连接')
+    wait_labels(lambda values:any('已连接 · 主播 0001' in x for x in values))
     print('PASS paired_scoped_roster',flush=True)
 
 def analyze():

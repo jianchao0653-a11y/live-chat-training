@@ -1,8 +1,8 @@
 # 观微 · Conversation Lens 本地测试版
 
-版本：0.13.0。适合项目发起人和玉麒麟先跑业务流程；Android 已有原生连接预览，双端产品尚未完成。
+版本：0.14.0。适合项目发起人与授权测试者先跑业务流程；Android 与 iOS 均有原生工程预览，双端产品尚未完成相关真机和真实模型验收。
 
-原生续作：已交付 [Android 安装说明](../native/README.md) 与 [v0.13 验收](../07_reviews/V0_13_ACCEPTANCE.md)。电脑“设置与数据”可生成限定当前主播的配对码、查看和撤销手机连接。Android 复用本服务的关系、分析与反馈；没有 iPhone IPA。
+原生续作：[双端说明](../native/README.md)、[v0.14 验收](../07_reviews/V0_14_ACCEPTANCE.md) 与 [iOS 工程](../native/ios/README.md)。电脑“设置与数据”可生成限定当前主播的配对码、查看和撤销手机连接。iPhone 建议键盘使用 30 秒单次可撤销授权，主 App 的长期设备令牌不共享给键盘；当前没有签名 IPA。
 
 ## 启动
 
@@ -67,8 +67,8 @@ npm.cmd start
 | 多轮自动积累信念 | 尚未实现；重复输入不会重复加权 |
 | 人物/关系隔离 | Streamer/Person/Pair 已拆表；六个配置位的记忆/反馈按关系检索；仍为单人管理，不是多租户登录鉴权 |
 | iPhone/Android 浏览器 | 响应式界面；真机结果需要分别登记 |
-| Android 输入法、单帧授权、跨 App 确认插入 | v0.13 已实现并在合成模拟器验证；真实 GPT/OCR 和三平台真机待验 |
-| iOS 输入法与分享入口 | 未实现；需 macOS / Xcode |
+| Android 输入法、单帧授权、跨 App 确认插入 | v0.14 工程预览，含稳定性和选图回归；真实 GPT/OCR 和三平台真机待验 |
+| iOS 主 App、照片入口与建议键盘 | 云端构建/核心与界面测试已通过；真机签名与平台待验；分享扩展未实现 |
 | 导出与删除 | JSON 导出、人物级级联删除及回执 |
 | 自动保留期、备份清理、磁盘加密 | 尚未实现；数据存至用户删除，依赖本机磁盘权限 |
 
@@ -97,4 +97,4 @@ app/tests/           核心逻辑及真实 HTTP 接口测试
 runtime/lens.sqlite  本机运行数据（不提交）
 ```
 
-执行 `npm.cmd test`。截图与浏览器验证结果见 `output/playwright/`，最新验收说明见 [v0.11 验收报告](../07_reviews/V0_11_ACCEPTANCE.md)。
+执行 `npm.cmd test`。最新范围和限制见 [v0.14 验收报告](../07_reviews/V0_14_ACCEPTANCE.md)，合成文本及真实 GPT/OCR 测量入口见 [evals/README.md](evals/README.md)。

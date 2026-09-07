@@ -110,5 +110,6 @@ jobs:
           path: |
             output/ios/receipt.json
             output/ios/launch.png
+            output/ios/app-simulator.tar.gz
             output/ios/Tests.xcresult
           retention-days: 7

@@ -18,23 +18,27 @@ import PhotosUI
     private var connection = DeviceVault.load()
     private var result: [String: Any]?
     private var context = UUID().uuidString
-    private var revision = 0
+    fileprivate var revision = 0
     init() { if let connection { endpoint = connection.endpoint } }
     func invalidate() {
         let old = context; context = UUID().uuidString; revision += 1; result = nil; candidates = []; draft = ""; approved = false; try? LeaseStore.clear()
         if let c = connection { Task { _ = try? await NativeHTTP.call(endpoint: c.endpoint, path: "cancel", token: c.token, body: ["context": old]) } }
     }
     func pair() async {
+        guard !busy else { return }
+        invalidate(); let generation = revision; let target = endpoint; let pin = code
         await task {
-            let response = try await NativeHTTP.call(endpoint: self.endpoint, path: "pair", body: ["code": self.code, "name": "iPhone"])
+            let response = try await NativeHTTP.call(endpoint: target, path: "pair", body: ["code": pin, "name": "iPhone"])
+            guard generation == self.revision else { return }
             guard let token = response["token"] as? String else { throw LensError.message("配对响应无效") }
-            let c = DeviceConnection(endpoint: self.endpoint, token: token); try DeviceVault.save(c); self.connection = c; self.code = ""
+            let c = DeviceConnection(endpoint: target, token: token); try DeviceVault.save(c); self.connection = c; self.code = ""
             try await self.roster()
         }
     }
     func roster() async throws {
         guard let c = connection else { return }
         let response = try await NativeHTTP.call(endpoint: c.endpoint, path: "roster", token: c.token)
+        guard connection?.token == c.token else { return }
         people = response["people"] as? [[String: String]] ?? []
         if !people.contains(where: { $0["id"] == personID }) { personID = people.first?["id"] ?? "" }
         status = "已连接，选择人物并批准片段"
@@ -51,10 +55,10 @@ import PhotosUI
     }
     func stage() async {
         guard let c = connection, let result, let ticket = result["ticket_id"] as? String, let person = result["person"] as? [String: String], !draft.isEmpty else { status = "请先分析并选择草稿"; return }
-        let generation = revision
+        let generation = revision; let approvedDraft = draft
         await task {
-            let response = try await NativeHTTP.call(endpoint: c.endpoint, path: "tickets/\(ticket)/lease", token: c.token, body: ["context": self.context, "host": "ios.user-confirmed", "person_id": person["id"] ?? "", "pair_id": person["pair_id"] ?? "", "draft": self.draft, "approved": true])
-            guard generation == self.revision else { return }
+            let response = try await NativeHTTP.call(endpoint: c.endpoint, path: "tickets/\(ticket)/lease", token: c.token, body: ["context": self.context, "host": "ios.user-confirmed", "person_id": person["id"] ?? "", "pair_id": person["pair_id"] ?? "", "draft": approvedDraft, "approved": true])
+            guard generation == self.revision, self.draft == approvedDraft else { return }
             var lease = try JSONDecoder().decode(InsertionLease.self, from: JSONSerialization.data(withJSONObject: response)); lease.endpoint = c.endpoint
             try LeaseStore.save(lease); self.status = "30 秒内返回聊天，切换观微键盘，核对人物后插入。"
         }
@@ -75,7 +79,8 @@ import PhotosUI
     func disconnect() { invalidate(); connection = nil; DeviceVault.clear(); image = nil; text = ""; people = []; status = "已清除本机连接；电脑可撤销设备授权" }
     func task(_ action: () async throws -> Void) async {
         guard !busy else { return }; busy = true; defer { busy = false }
-        do { try await action() } catch { status = error.localizedDescription }
+        let generation = revision
+        do { try await action() } catch { if generation == revision { status = error.localizedDescription } }
     }
 }
 
@@ -90,7 +95,7 @@ import PhotosUI
                         TextField("HTTPS 服务根地址", text: $model.endpoint).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("endpoint")
                         SecureField("六位配对码", text: $model.code).keyboardType(.numberPad)
                         Button("配对连接") { Task { await model.pair() } }.disabled(model.busy)
-                        Button("断开连接") { model.disconnect() }.accessibilityIdentifier("disconnect")
+                        Button("断开连接") { photo = nil; model.disconnect() }.accessibilityIdentifier("disconnect")
                         Text(model.status).accessibilityIdentifier("status")
                     }
                     Section("你批准的聊天片段") {
@@ -128,7 +133,8 @@ import PhotosUI
                     .onChange(of: model.mode) { _, _ in model.invalidate() }
                     .onChange(of: photo) { _, value in
                         model.invalidate(); model.image = nil
-                        Task { if let data = try? await value?.loadTransferable(type: Data.self), photo == value, data.count <= 15_000_000 { model.image = UIImage(data: data) } }
+                        let generation = model.revision
+                        Task { if let data = try? await value?.loadTransferable(type: Data.self), photo == value, model.revision == generation, data.count <= 15_000_000 { model.image = UIImage(data: data) } }
                     }
             }
         }

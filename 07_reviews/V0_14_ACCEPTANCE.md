@@ -25,6 +25,7 @@
 - 私有 [PR #3](https://github.com/jianchao0653-a11y/live-chat-training/pull/3)，分支 `codex/mobile-acceptance-v014`。仅白名单源码、合成测试与工程文档；未上传私人聊天、SQLite、备份或密钥。
 - 首轮 [34106837637](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34106837637)：service/iOS 成功，Android 失败在 sdkmanager 路径；已修复。
 - 第二轮 [34107857991](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34107857991)：修复后实际重跑，最终结果继续登记在本文件的追加记录。
+- 第四轮 [34110111177](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34110111177)：iOS App/键盘编译、两项核心测试与一项真实 UI 回归通过；UI 验证输入后明确批准、修改片段取消批准、断开连接清空片段。Android 最终矩阵和最新源代码结果以最终追加记录为准。
 
 ## 工程距离：用未闭合验收包量化
 

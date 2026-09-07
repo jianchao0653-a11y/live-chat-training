@@ -70,14 +70,14 @@ def install():
     print(adb('install','--no-incremental','-r',APK),flush=True)
     adb('shell','cmd','statusbar','collapse')
     adb('shell','input','keyevent','82')
+    adb('shell','am','force-stop','com.conversationlens.ime')
+    adb('shell','am','start','-W','-n','com.conversationlens.ime/.SetupActivity')
     for _ in range(60):
-        if 'com.conversationlens.ime/.LensImeService' in adb('shell','ime','list','-s'):break
+        if 'com.conversationlens.ime/.LensImeService' in adb('shell','ime','list','-a','-s'):break
         time.sleep(.5)
     else:raise AssertionError('Installed IME was not registered: '+adb('shell','dumpsys','package','com.conversationlens.ime'))
     adb('shell','ime','enable','com.conversationlens.ime/.LensImeService')
     adb('shell','settings','put','secure','show_ime_with_hard_keyboard','1')
-    adb('shell','am','force-stop','com.conversationlens.ime')
-    adb('shell','am','start','-n','com.conversationlens.ime/.SetupActivity')
     time.sleep(2)
     # Force-stop can asynchronously select the stock IME on API 34. Select ours
     # after the Activity launch has completed, then verify the actual setting.

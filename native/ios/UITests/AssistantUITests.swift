@@ -24,7 +24,9 @@ final class AssistantUITests: XCTestCase {
         let disconnect = app.buttons["disconnect"]
         for _ in 0..<8 where !disconnect.isHittable { app.swipeDown() }
         disconnect.tap()
-        XCTAssertEqual(transcript.value as? String ?? "", "")
+        for _ in 0..<5 where !transcript.isHittable { app.swipeUp() }
+        XCTAssertTrue(transcript.exists)
+        XCTAssertEqual(transcript.value as? String, "")
         let capture = XCTAttachment(screenshot: app.screenshot()); capture.lifetime = .keepAlways; add(capture)
     }
 }
