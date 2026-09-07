@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="LensKeyboardTheme" parent="android:style/Theme.InputMethod">
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">#E8EDE9</item>
+        <item name="android:colorAccent">#27634D</item>
+    </style>
+</resources>

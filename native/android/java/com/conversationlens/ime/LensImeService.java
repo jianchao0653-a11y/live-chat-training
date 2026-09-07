@@ -33,6 +33,8 @@ public final class LensImeService extends InputMethodService {
     private int pending;
     private final ArrayList<Button> modeButtons = new ArrayList<>();
 
+    @Override public void onCreate() { setTheme(R.style.LensKeyboardTheme); super.onCreate(); }
+
     @Override public View onCreateInputView() {
         getWindow().getWindow().setNavigationBarColor(LensStyle.KEYBOARD);
         getWindow().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
@@ -111,6 +113,10 @@ public final class LensImeService extends InputMethodService {
     }
     @Override public void onStartInputView(EditorInfo info, boolean restarting) {
         super.onStartInputView(info, restarting);
+        if(Build.VERSION.SDK_INT>=30){
+            android.view.WindowInsetsController bars=getWindow().getWindow().getInsetsController();
+            if(bars!=null)bars.setSystemBarsAppearance(android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+        }
         if (!ready) { generation++; startSession(generation); }
         render();
     }
