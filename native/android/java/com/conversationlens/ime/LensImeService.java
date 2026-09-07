@@ -36,13 +36,19 @@ public final class LensImeService extends InputMethodService {
     @Override public void onCreate() { setTheme(R.style.LensKeyboardTheme); super.onCreate(); }
 
     @Override public View onCreateInputView() {
-        getWindow().getWindow().setNavigationBarColor(LensStyle.KEYBOARD);
+        getWindow().getWindow().setNavigationBarColor(LensStyle.NAVIGATION);
         getWindow().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(4), dp(4), dp(4), dp(4)); root.setBackgroundColor(LensStyle.KEYBOARD);
         root.setOnApplyWindowInsetsListener((view, insets) -> {
             int bottom = Build.VERSION.SDK_INT >= 30 ? insets.getInsets(WindowInsets.Type.navigationBars()).bottom : insets.getSystemWindowInsetBottom();
             view.setPadding(dp(4), dp(4), dp(4), dp(4) + bottom);
+            // Android may inherit black OR white navigation icons from the host.
+            // Draw a contrast-safe band in the actual inset, including edge-to-edge IMEs.
+            android.graphics.drawable.LayerDrawable background=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{
+                new android.graphics.drawable.ColorDrawable(LensStyle.KEYBOARD),new android.graphics.drawable.ColorDrawable(LensStyle.NAVIGATION)});
+            background.setLayerGravity(1,Gravity.BOTTOM);background.setLayerHeight(1,bottom);
+            view.setBackground(background);
             return insets;
         });
         toolbar=new LinearLayout(this);toolbar.setGravity(Gravity.CENTER_VERTICAL);root.addView(toolbar);

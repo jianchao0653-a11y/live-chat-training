@@ -4,7 +4,7 @@
 
 范围：Android 键盘、安装页、连接/片段/图片/候选；iPhone SwiftUI 主 App 和 UIKit 建议扩展。采用共享 token、明确主次按钮、分区、字体和间距。v0.14 原包保留，新包为 `output/native/conversation-lens-0.15.0-debug.apk`。
 
-最终本地 APK SHA256：`2e867f216362486d40a0eef7d9000432a38ccd1fb5719dda95f67e31ddec1a91`，ARM64+x86_64，调试签名与 16KB 对齐已核验。v0.14 原包 SHA256 仍为 `c105b72156f7f2971ca0798bd2afc3db9b53b7bbfc6c1e1bce0ca60858c43c14`，没有覆盖。
+最终本地 APK SHA256：`3a535f4199a1bd424fc33b85d7b9960c29e18191ab0b3ec77ec54c521336d9d9`，ARM64+x86_64，调试签名与 16KB 对齐已核验。v0.14 原包 SHA256 仍为 `c105b72156f7f2971ca0798bd2afc3db9b53b7bbfc6c1e1bce0ca60858c43c14`，没有覆盖。
 
 | 验证 | 结果与边界 |
 |---|---|
@@ -20,3 +20,10 @@
 最终源码提交 `6fbc5a1e49be50824334bba95442ef8e3dac1991`；私有云端 run [34115756817](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34115756817)。此前 `b043085` / run `34114964064` 被包含 iPhone 长草稿滚动修正的新提交替代，工作流按 concurrency 配置取消，不能记为最终通过或产品回归失败。Android 产品源码与本地最终验收包一致。
 
 工程缺口保持不变：六个真机 OS×聊天平台组合、真实模型/OCR 校准、三人七天首轮试点、签名发布、身份/保留与部署恢复。不以 UI 完成表示整个项目完成。
+
+
+## 最终收口进度
+
+测试修正提交 `ab5ef2379cf13a4aac5f97443dcfbfc0ebae54cd` / run [34116725290](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34116725290) 已四作业全绿。修正针对 API34 建议页异步打开：先等待配对页、确保按钮可见，再填写；仅重试明确的字段未就绪，失败时保存控件树，所有产品断言保留。
+
+实际截图另发现两个对比度问题：Android 导航按钮被系统渲染为白色，iOS 主按钮白字被页面样式覆盖。已分别以 IME 主题/系统栏外观和独立 SwiftUI 主按钮样式修正，未改变整体设计。最终产品提交 `3aa3b7b8c54908669167386f16586aca1302e65b`，run [34117307838](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34117307838)。最终 Android 本地全部回归已重新通过，回执均匹配本文顶部 APK 哈希。云端最终结果在此追加。
