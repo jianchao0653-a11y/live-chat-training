@@ -10,6 +10,7 @@ for folder in ['app','native','.github']:
     for path in (root/folder).rglob('*'):
         if path.is_file() and path.suffix in allowed and '__pycache__' not in path.parts and not any(x in path.parts for x in ['.xcodeproj','DerivedData']):paths.append(path)
 paths += [root/'package.json',root/'.gitignore']
+paths += [root/'03_decisions/MADR-032-035.md']
 entries=[]
 for p in sorted(set(paths)):
     if p.resolve().is_relative_to(root.resolve()) is False or p.is_symlink():raise RuntimeError('Source escaped workspace')

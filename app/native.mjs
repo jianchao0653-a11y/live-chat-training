@@ -68,7 +68,7 @@ export function createNativeBridge({store, analyze, extract, revision, config, c
     async handle(req,path,b) {
       if(path==='/api/native/redeem' && req.method==='POST'){
         sweep();const l=leases.get(b.lease_id);
-        if(!l || !equal(l.secret,b.secret))fail(410,'短期插入授权已失效，请回主 App 重新生成。');
+        if(!l || !equal(l.secret,text(b.secret,100)))fail(410,'短期插入授权已失效，请回主 App 重新生成。');
         if(b.confirmed!==true)fail(400,'请先确认当前聊天人物。');
         leases.delete(l.id);const d=devices.get(l.device_id);
         if(!d)fail(401,'设备授权已撤销。');

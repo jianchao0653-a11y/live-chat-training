@@ -114,3 +114,34 @@ test('image extraction requires approval and cancels in-flight output',async()=>
     await native.handle(req,'/api/native/cancel',{context:'image'});release();await assert.rejects(()=>pending,e=>e.status===409);
   }finally{store.close();}
 });
+
+test('iOS short lease exposes no device token, redeems one immutable draft and remains revocable',async t=>{
+  const {request,p,pair}=await fixture(t);const d=await pair();
+  const stage=async()=>{
+    const a=(await request('native/analyze','POST',payload(p),d.token)).body;
+    return (await request(`native/tickets/${a.ticket_id}/lease`,'POST',{...payload(p),approved:true,draft:'人工批准的唯一草稿'},d.token)).body;
+  };
+  const l=await stage();assert.equal(l.draft,'人工批准的唯一草稿');assert(!JSON.stringify(l).includes(d.token));
+  assert.equal((await request('native/roster','GET',null,l.secret)).status,401);
+  assert.equal((await request('native/redeem','POST',{lease_id:l.lease_id,secret:'wrong',confirmed:true})).status,410);
+  assert.equal((await request('native/redeem','POST',{lease_id:l.lease_id,secret:l.secret})).status,400);
+  const r=await request('native/redeem','POST',{lease_id:l.lease_id,secret:l.secret,confirmed:true,draft:'伪造新文本'});
+  assert.equal(r.status,200);assert.equal(r.body.draft,'人工批准的唯一草稿');
+  assert.equal((await request('native/redeem','POST',{lease_id:l.lease_id,secret:l.secret,confirmed:true})).status,410);
+  const next=await stage();assert.equal((await request(`devices/${d.id}`,'DELETE')).status,200);
+  assert.equal((await request('native/redeem','POST',{lease_id:next.lease_id,secret:next.secret,confirmed:true})).status,410);
+});
+
+test('iOS lease expires in 30 seconds using server time',async()=>{
+  let now=100;const store=openStore(':memory:');
+  try{
+    const id=store.createPerson({name:'合成人物',platform:'视频号',stage:'熟悉中',notes:'',boundary:''});
+    const native=createNativeBridge({store:{...store,analysis:()=>({result:{route:'FAST',candidates:[{text:'x'}]}})},clock:()=>now,config:()=>({}),revision:()=>'',extract:()=>{},analyze:async()=>({id:'synthetic',mode:'local',result:{summary:'',route:'FAST',judge:{},candidates:[{text:'x'}]}})});
+    const code=(await native.manage('/api/devices/pairing','POST',{streamer_id:'0001'})).code;
+    const d=await native.handle({method:'POST',headers:{}},'/api/native/pair',{code,name:'x'}),req={method:'POST',headers:{authorization:`Bearer ${d.token}`}};
+    const b=payload(store.person(id)),a=await native.handle(req,'/api/native/analyze',b);
+    const l=await native.handle(req,`/api/native/tickets/${a.ticket_id}/lease`,{...b,draft:'x'});
+    assert.equal(l.expires_at-now,30000);now+=30000;
+    await assert.rejects(()=>native.handle({method:'POST',headers:{}},'/api/native/redeem',{...l,confirmed:true}),e=>e.status===410);
+  }finally{store.close();}
+});

@@ -30,7 +30,7 @@ if os.name == 'nt' and not str(SOURCE_ROOT).isascii():
     ROOT = link
 APP = ROOT / 'native/android'
 TOOLS = ROOT / 'runtime/android-tools'
-SDK = Path(os.environ.get('ANDROID_SDK_ROOT', str(TOOLS / 'sdk')))
+SDK = Path(os.environ.get('ANDROID_SDK_ROOT', os.environ.get('ANDROID_HOME', str(TOOLS / 'sdk'))))
 NDK_HOST = 'windows-x86_64' if os.name == 'nt' else ('darwin-x86_64' if sys.platform == 'darwin' else 'linux-x86_64')
 BUILD = ROOT / 'runtime/native-build-ascii'
 VENDOR = ROOT / 'runtime/native-sources'

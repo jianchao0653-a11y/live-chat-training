@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 import os
 
 ROOT = Path(__file__).resolve().parents[2]
-SDK = Path(os.environ.get('ANDROID_SDK_ROOT',str(ROOT / 'runtime/android-tools/sdk')))
+SDK = Path(os.environ.get('ANDROID_SDK_ROOT',os.environ.get('ANDROID_HOME',str(ROOT / 'runtime/android-tools/sdk'))))
 BUILD = ROOT / 'runtime/native-build-ascii'
 OUT = ROOT / 'output/native'
 ADB = SDK / ('platform-tools/adb.exe' if os.name=='nt' else 'platform-tools/adb')
