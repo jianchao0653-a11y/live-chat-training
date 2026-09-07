@@ -168,8 +168,13 @@ def workflow():
     # Android 16's picker groups IMEs by non-clickable headers; select the subtype row.
     if any(n.get('text')=='English (US)' for n in tree.iter('node')):tap_text('English (US)',tree)
     else:tap_node(next(n for n in tree.iter('node') if 'Android Keyboard' in n.get('text','')))
-    time.sleep(.5)
-    check(adb('shell','settings','get','secure','default_input_method')=='com.android.inputmethod.latin/.LatinIME','switch_back_to_system_keyboard')
+    selected=''
+    for _ in range(60):
+        selected=adb('shell','settings','get','secure','default_input_method')
+        if selected=='com.android.inputmethod.latin/.LatinIME':break
+        time.sleep(.2)
+    if selected!='com.android.inputmethod.latin/.LatinIME':snapshot('system-picker-switch-failed');screenshot('system-picker-switch-failed')
+    check(selected=='com.android.inputmethod.latin/.LatinIME','switch_back_to_system_keyboard; actual='+selected)
     adb('shell','ime','set','com.conversationlens.ime/.LensImeService');time.sleep(.2)
     tree=snapshot('android-workflow-final');screenshot('android-workflow-final')
     listing=adb('shell','run-as','com.conversationlens.ime','find','files','no_backup','-type','f')
