@@ -53,6 +53,7 @@ public final class DumpRunner extends Instrumentation {
         if (node == null || depth > 30) return;
         xml.startTag(null, "node");
         xml.attribute(null, "text", node.getText() == null ? "" : node.getText().toString());
+        xml.attribute(null, "description", node.getContentDescription() == null ? "" : node.getContentDescription().toString());
         xml.attribute(null, "class", String.valueOf(node.getClassName()));
         xml.attribute(null, "package", String.valueOf(node.getPackageName()));
         xml.attribute(null, "enabled", String.valueOf(node.isEnabled()));

@@ -67,9 +67,13 @@ def smoke():
     assert 'RIME_SMOKE_PASS' in result
 
 def install():
-    print(adb('install','-r',APK),flush=True)
+    print(adb('install','--no-incremental','-r',APK),flush=True)
     adb('shell','cmd','statusbar','collapse')
     adb('shell','input','keyevent','82')
+    for _ in range(60):
+        if 'com.conversationlens.ime/.LensImeService' in adb('shell','ime','list','-s'):break
+        time.sleep(.5)
+    else:raise AssertionError('Installed IME was not registered: '+adb('shell','dumpsys','package','com.conversationlens.ime'))
     adb('shell','ime','enable','com.conversationlens.ime/.LensImeService')
     adb('shell','settings','put','secure','show_ime_with_hard_keyboard','1')
     adb('shell','am','force-stop','com.conversationlens.ime')
@@ -92,6 +96,15 @@ def install():
         log=adb('logcat','-d','-b','crash');(OUT/'install-crash.txt').write_text(log,encoding='utf-8')
         raise AssertionError('Chinese engine not ready; selected='+adb('shell','settings','get','secure','default_input_method')+'; '+log[-5000:])
     screenshot('android-keyboard')
+    # A newly shown IME can receive navigation-bar insets after reporting ready.
+    # Wait for stable key geometry before coordinate-based UI interactions.
+    geometry=None;stable=0
+    for _ in range(20):
+        current=tuple((n.get('text'),n.get('bounds')) for n in snapshot().iter('node') if n.get('text') in ['q','n','切换'] and n.get('class')=='android.widget.Button')
+        stable=stable+1 if current==geometry and len(current)==3 else 0
+        if stable>=2:break
+        geometry=current;time.sleep(.2)
+    else:raise AssertionError('IME geometry did not stabilize')
     print('IME_READY',flush=True)
 
 def workflow():
@@ -104,8 +117,7 @@ def workflow():
     def text_value(tree):
         return next(n.get('text') for n in editors(tree) if n.get('password')=='false')
     def type_word(word):
-        tree=snapshot()
-        for key in word:tap_text(key,tree)
+        for key in word:tap_text(key)
         time.sleep(.15)
         return snapshot()
     tree=type_word('nihao')
@@ -184,8 +196,7 @@ def cross_app():
         time.sleep(.2)
     assert search is not None,'Settings search not found'
     tap_node(search);time.sleep(.7)
-    tree=snapshot()
-    for key in 'nihao':tap_text(key,tree)
+    for key in 'nihao':tap_text(key)
     tree=snapshot('android-cross-app-candidates');tap_text('你好',tree)
     tree=snapshot('android-cross-app-committed');screenshot('android-cross-app-committed')
     assert any(n.get('text')=='你好' and n.get('package')=='com.android.settings.intelligence'

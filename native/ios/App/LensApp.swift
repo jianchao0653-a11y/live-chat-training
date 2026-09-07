@@ -97,7 +97,7 @@ import PhotosUI
                         Picker("人物", selection: $model.personID) { ForEach(model.people, id: \.self) { p in Text(p["name"] ?? "").tag(p["id"] ?? "") } }
                         Picker("目标", selection: $model.goal) { ForEach(["自然接话", "关心近况", "修复误会", "表达边界"], id: \.self) { Text($0) } }
                         Picker("分析", selection: $model.mode) { Text("规则试算").tag("local"); Text("GPT").tag("model") }
-                        TextEditor(text: $model.text).frame(minHeight: 130).accessibilityIdentifier("transcript")
+                        TextEditor(text: $model.text).autocorrectionDisabled().textInputAutocapitalization(.never).frame(minHeight: 130).accessibilityIdentifier("transcript")
                         PhotosPicker("选择一张截图", selection: $photo, matching: .images)
                         if let image = model.image {
                             Image(uiImage: image).resizable().scaledToFit().frame(maxHeight: 280)
@@ -114,6 +114,13 @@ import PhotosUI
                         Text("在系统设置启用观微建议键盘。允许完全访问后，键盘仅在你点击确认插入时联网兑换这一次短期授权；不上传按键或读取聊天全文。中文输入可随时切回熟悉的系统键盘。")
                     }
                 }.navigationTitle("观微")
+                    .scrollDismissesKeyboard(.interactively)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("完成输入") { UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil) }.accessibilityIdentifier("finishInput")
+                        }
+                    }
                     .task { try? await model.roster() }
                     .onChange(of: model.text) { _, _ in model.invalidate() }
                     .onChange(of: model.personID) { _, _ in model.invalidate() }

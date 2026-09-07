@@ -49,12 +49,22 @@ jobs:
       - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
       - name: Install pinned build tools
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0" "ndk;28.2.13676358" "cmake;3.22.1"'
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: native-cache
         with:
-          path: runtime/native-sources
-          key: rime-${{ runner.os }}-${{ hashFiles('native/dependencies.lock.json') }}
+          path: |
+            runtime/native-sources
+            runtime/native-build-ascii/x86_64
+          key: rime-build-${{ runner.os }}-${{ hashFiles('native/dependencies.lock.json', 'native/android/CMakeLists.txt', 'native/scripts/build_android.py') }}
       - run: python3 native/scripts/prepare_sources.py
       - run: python3 native/scripts/build_android.py --abis x86_64
+      - uses: actions/cache/save@v4
+        if: steps.native-cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            runtime/native-sources
+            runtime/native-build-ascii/x86_64
+          key: ${{ steps.native-cache.outputs.cache-primary-key }}
       - run: python3 native/scripts/build_qa.py
       - run: python3 native/scripts/test_policy.py
       - name: Run official Android emulator

@@ -5,7 +5,7 @@ from assistant_qa import *
 
 def main():
     adb('shell','wm','size','720x1280');adb('shell','wm','density','320')
-    adb('install','-r','-t',OUT/'lens-synthetic-qa.apk')
+    adb('install','--no-incremental','-r','-t',OUT/'lens-synthetic-qa.apk')
     install();workflow();cross_app()
     previous=(OUT/'fixture.json').stat().st_mtime if (OUT/'fixture.json').exists() else 0
     log=(OUT/'fixture.log').open('w')

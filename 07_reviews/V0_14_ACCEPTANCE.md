@@ -15,6 +15,8 @@
 
 ## 构建与回执
 
+新增本地系统文件选择器实测：`output/native/picker-receipt.json`。通过真实 DocumentsUI 浏览并选择原创合成 PNG，预览零上传，明确批准后恰好一次固定 OCR 夹具调用，转写回填后复选框未批准。此项补足模拟器真实选文件流程；不代表物理相册/云 OCR/单 App 捕获裁剪已验收。
+
 - APK：`output/native/conversation-lens-0.14.0-debug.apk`，ARM64 + x86_64，minSdk 26/targetSdk 36。
 - 本地 APK SHA256：`c105b72156f7f2971ca0798bd2afc3db9b53b7bbfc6c1e1bce0ca60858c43c14`。
 - `output/native/build-receipt.json` 仅记录构建；其中 `runtimeVerified:false` 不被构建脚本改成运行通过。运行证据另见 `ci-native-receipt.json`、`stability-receipt.json`。
