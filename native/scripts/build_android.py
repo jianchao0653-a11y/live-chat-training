@@ -139,7 +139,7 @@ def build(abis, native_only=False):
         run([java / 'keytool.exe', '-genkeypair', '-keystore', keystore, '-storepass', 'android', '-keypass', 'android',
              '-alias', 'androiddebugkey', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '3650',
              '-dname', 'CN=Conversation Lens Local Debug,O=Local Test,C=CN'])
-    apk = OUT / 'conversation-lens-0.14.0-debug.apk'
+    apk = OUT / 'conversation-lens-0.15.0-debug.apk'
     signer = [java / 'java.exe', '-jar', bt / 'lib/apksigner.jar']
     run(signer + ['sign', '--ks', keystore, '--ks-pass', 'pass:android', '--key-pass', 'pass:android', '--out', apk, aligned])
     run(signer + ['verify', '--verbose', apk])

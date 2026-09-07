@@ -35,13 +35,14 @@ public final class AssistantActivity extends Activity {
         String text, personId; int goal, mode;
     }
     @Override public void onCreate(Bundle state){
-        super.onCreate(state);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        super.onCreate(state);LensStyle.window(this);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
         session=AssistSession.current;
         restored=(TransientForm)getLastNonConfigurationInstance();
-        ScrollView scroll=new ScrollView(this);body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(24,24,24,24);scroll.addView(body);
+        ScrollView scroll=new ScrollView(this);body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(LensStyle.dp(this,20),LensStyle.dp(this,20),LensStyle.dp(this,20),LensStyle.dp(this,24));body.setBackgroundColor(LensStyle.BG);scroll.setFillViewport(true);scroll.addView(body);
         scroll.setOnApplyWindowInsetsListener((v,i)->{int top=i.getSystemWindowInsetTop(),bottom=i.getSystemWindowInsetBottom();if(android.os.Build.VERSION.SDK_INT>=30){top=i.getInsets(android.view.WindowInsets.Type.systemBars()).top;bottom=i.getInsets(android.view.WindowInsets.Type.systemBars()|android.view.WindowInsets.Type.ime()).bottom;}v.setPadding(0,top,0,bottom);return i;});
         label("观微 · 聊天建议",24);label("仅分析你核对并批准的片段。返回聊天后再次确认人物，候选只插入输入框，发送由你完成。",15);
-        status=label("",15);
+        status=label("请连接服务，再准备聊天片段",14);status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        LensStyle.section(body,"设备连接");
         endpoint=edit("服务地址",2101,false);endpoint.setText("http://127.0.0.1:4317");endpoint.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_URI);
         code=edit("电脑设置页的六位配对码",2102,false);code.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_VARIATION_PASSWORD);
         button("配对连接",()->pair());button("断开并清除本机连接",()->disconnect());
@@ -49,13 +50,16 @@ public final class AssistantActivity extends Activity {
         feedbackControls();
         if(session==null || !session.alive()){label("连接后，请回到聊天输入框，点击键盘上的“建议”。",16);setContentView(scroll);return;}
         label("原输入应用："+session.host,13);
-        people=spinner(new String[]{"正在加载人物"});goal=spinner(new String[]{"自然接话","关心近况","修复误会","表达边界"});mode=spinner(new String[]{"本机服务规则试算","GPT 分析（需电脑配置）"});
+        LensStyle.section(body,"01  核对人物与目标");
+        label("人物",13);people=spinner(new String[]{"正在加载人物"});label("本次目标",13);goal=spinner(new String[]{"自然接话","关心近况","修复误会","表达边界"});label("分析方式",13);mode=spinner(new String[]{"本机服务规则试算","GPT 分析（需电脑配置）"});
+        LensStyle.section(body,"02  准备聊天片段");
         transcript=edit("粘贴或输入你批准的聊天片段，标明说话人",2103,true);
         button("截取一次屏幕（系统授权）",()->requestCapture());
         button("选择一张聊天截图",()->{changed();startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),42);});
         imagePanel=new LinearLayout(this);imagePanel.setOrientation(LinearLayout.VERTICAL);body.addView(imagePanel);
-        approved=new CheckBox(this);approved.setText("已核对人物和片段，同意提交给连接的服务");body.addView(approved);
+        approved=new CheckBox(this);approved.setText("已核对人物和片段，同意提交给连接的服务");approved.setTextColor(LensStyle.INK);approved.setTextSize(15);approved.setMinHeight(LensStyle.dp(this,48));approved.setButtonTintList(android.content.res.ColorStateList.valueOf(LensStyle.GREEN));body.addView(approved,LensStyle.space(this));
         button("分析已批准片段",()->analyze());
+        LensStyle.section(body,"03  审阅与编辑候选");
         results=new LinearLayout(this);results.setOrientation(LinearLayout.VERTICAL);body.addView(results);
         button("取消建议并返回",()->{AssistSession.clear();returnToChat();});
         TextWatcher watcher=new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int c,int f){}public void onTextChanged(CharSequence s,int a,int b,int c){changed();}public void afterTextChanged(Editable e){}};
@@ -94,12 +98,12 @@ public final class AssistantActivity extends Activity {
     }
     private void showResult(JSONObject response){
         status.setText(response.optString("mode").equals("model")?"GPT 分析完成 · 请审阅候选":"规则试算完成 · 未调用 GPT");results.removeAllViews();feedbackResult=response;
-        TextView summary=new TextView(this);summary.setText(response.optString("summary"));results.addView(summary);
+        TextView summary=new TextView(this);summary.setText(response.optString("summary"));LensStyle.text(summary,15,false);results.addView(summary,LensStyle.space(this));
         JSONArray candidates=response.optJSONArray("candidates");
         if(candidates==null||candidates.length()==0){summary.append("\n本次没有可插入候选。");return;}
-        draft=new EditText(this);draft.setId(2104);draft.setSaveEnabled(false);draft.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);draft.setHint("选择候选后可修改");
-        for(int i=0;i<candidates.length();i++){final String text=candidates.optJSONObject(i).optString("text");Button b=new Button(this);b.setAllCaps(false);b.setText(text);b.setOnClickListener(v->draft.setText(text));results.addView(b);}
-        results.addView(draft);Button back=new Button(this);back.setText("保留草稿并返回原聊天");back.setOnClickListener(v->{if(session==null||!session.alive()||session.result!=response||SystemClock.elapsedRealtime()>=session.deadline){status.setText("候选已失效，请重新分析");return;}if(draft.getText().toString().trim().isEmpty()){status.setText("请先选择或填写草稿");return;}session.draft=draft.getText().toString();hideKeyboard();returnToChat();});results.addView(back);
+        draft=new EditText(this);draft.setId(2104);draft.setSaveEnabled(false);draft.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);draft.setHint("选择候选后可修改");LensStyle.field(draft);draft.setMinLines(3);
+        for(int i=0;i<candidates.length();i++){final String text=candidates.optJSONObject(i).optString("text");Button b=new Button(this);LensStyle.button(b,false);b.setGravity(android.view.Gravity.START|android.view.Gravity.CENTER_VERTICAL);b.setText(text);b.setOnClickListener(v->draft.setText(text));results.addView(b,LensStyle.space(this));}
+        results.addView(draft,LensStyle.space(this));Button back=new Button(this);LensStyle.button(back,true);back.setText("保留草稿并返回原聊天");back.setOnClickListener(v->{if(session==null||!session.alive()||session.result!=response||SystemClock.elapsedRealtime()>=session.deadline){status.setText("候选已失效，请重新分析");return;}if(draft.getText().toString().trim().isEmpty()){status.setText("请先选择或填写草稿");return;}session.draft=draft.getText().toString();hideKeyboard();returnToChat();});results.addView(back,LensStyle.space(this));
     }
     private void returnToChat(){if(isTaskRoot())finishAndRemoveTask();else finish();}
     private void requestCapture(){
@@ -135,8 +139,8 @@ public final class AssistantActivity extends Activity {
         if(!session.captureMessage.isEmpty())status.setText(session.captureMessage);
         if(session.image==null)return;
         ImageView preview=new ImageView(this);preview.setImageBitmap(session.image);preview.setAdjustViewBounds(true);preview.setMaxHeight(600);preview.setContentDescription("待批准的截图预览");imagePanel.addView(preview);
-        Button upload=new Button(this);upload.setText("批准此图并提交转写");upload.setOnClickListener(v->extractImage());imagePanel.addView(upload);
-        Button discard=new Button(this);discard.setText("丢弃截图");discard.setOnClickListener(v->{changed();session.clearImage();showImage();status.setText("截图已丢弃");});imagePanel.addView(discard);
+        Button upload=new Button(this);LensStyle.button(upload,true);upload.setText("批准此图并提交转写");upload.setOnClickListener(v->extractImage());imagePanel.addView(upload,LensStyle.space(this));
+        Button discard=new Button(this);LensStyle.button(discard,false);discard.setText("丢弃截图");discard.setOnClickListener(v->{changed();session.clearImage();showImage();status.setText("截图已丢弃");});imagePanel.addView(discard,LensStyle.space(this));
     }
     private void extractImage(){
         if(session==null||!session.alive()||session.image==null||client==null){status.setText("请先连接服务并选择截图");return;}
@@ -160,9 +164,9 @@ public final class AssistantActivity extends Activity {
     private void hideKeyboard(){View focus=getCurrentFocus();if(focus!=null)((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focus.getWindowToken(),0);}
     private void report(int token,Exception e){runOnUiThread(()->{if(!isDestroyed()&&token==work)error(e);});}
     private void error(Exception e){status.setText(e.getMessage()==null?"连接失败，请检查服务与 USB 转发":e.getMessage());}
-    private TextView label(String value,int size){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);body.addView(t);return t;}
-    private EditText edit(String hint,int id,boolean multi){EditText e=new EditText(this);e.setHint(hint);e.setId(id);e.setSaveEnabled(false);e.setInputType(InputType.TYPE_CLASS_TEXT|(multi?InputType.TYPE_TEXT_FLAG_MULTI_LINE:0));if(multi)e.setMinLines(3);body.addView(e);return e;}
-    private Spinner spinner(String[] names){Spinner s=new Spinner(this);s.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));body.addView(s);return s;}
-    private void button(String title,Runnable action){Button b=new Button(this);b.setText(title);b.setAllCaps(false);b.setOnClickListener(v->action.run());body.addView(b);}
+    private TextView label(String value,int size){TextView t=new TextView(this);t.setText(value);LensStyle.text(t,size,size>=18);body.addView(t,LensStyle.space(this));return t;}
+    private EditText edit(String hint,int id,boolean multi){EditText e=new EditText(this);e.setHint(hint);e.setId(id);e.setSaveEnabled(false);e.setInputType(InputType.TYPE_CLASS_TEXT|(multi?InputType.TYPE_TEXT_FLAG_MULTI_LINE:0));if(multi)e.setMinLines(3);LensStyle.field(e);body.addView(e,LensStyle.space(this));return e;}
+    private Spinner spinner(String[] names){Spinner s=new Spinner(this);s.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));s.setMinimumHeight(LensStyle.dp(this,52));s.setPadding(LensStyle.dp(this,12),0,LensStyle.dp(this,12),0);s.setBackgroundTintList(android.content.res.ColorStateList.valueOf(LensStyle.GREEN));body.addView(s,LensStyle.space(this));return s;}
+    private void button(String title,Runnable action){Button b=new Button(this);b.setText(title);LensStyle.button(b,title.equals("分析已批准片段")||title.equals("配对连接"));b.setOnClickListener(v->action.run());body.addView(b,LensStyle.space(this));}
     @Override protected void onDestroy(){work++;if(session!=null&&session.draft.isEmpty()&&AssistSession.current==session)session.invalidate();super.onDestroy();}
 }

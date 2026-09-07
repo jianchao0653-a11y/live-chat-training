@@ -25,7 +25,7 @@ public final class LensImeService extends InputMethodService {
     private long session; // Engine worker only.
     private boolean ready, chinese, numeric, upper, symbols, sensitive;
     private boolean composing;
-    private LinearLayout root, candidates, keyboard;
+    private LinearLayout root, candidates, keyboard, toolbar;
     private TextView status;
     private Button previousPage, nextPage;
     private Button assist;
@@ -34,27 +34,32 @@ public final class LensImeService extends InputMethodService {
     private final ArrayList<Button> modeButtons = new ArrayList<>();
 
     @Override public View onCreateInputView() {
+        getWindow().getWindow().setNavigationBarColor(LensStyle.KEYBOARD);
+        getWindow().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(4), dp(6), dp(4), dp(6)); root.setBackgroundColor(0xffe9f0ed);
+        root.setPadding(dp(4), dp(4), dp(4), dp(4)); root.setBackgroundColor(LensStyle.KEYBOARD);
         root.setOnApplyWindowInsetsListener((view, insets) -> {
             int bottom = Build.VERSION.SDK_INT >= 30 ? insets.getInsets(WindowInsets.Type.navigationBars()).bottom : insets.getSystemWindowInsetBottom();
-            view.setPadding(dp(4), dp(6), dp(4), dp(6) + bottom);
+            view.setPadding(dp(4), dp(4), dp(4), dp(4) + bottom);
             return insets;
         });
-        status = new TextView(this); status.setTextSize(13); status.setPadding(dp(8), 0, dp(8), dp(4));
-        root.addView(status);
-        assist = new Button(this); assist.setAllCaps(false); root.addView(assist);
+        toolbar=new LinearLayout(this);toolbar.setGravity(Gravity.CENTER_VERTICAL);root.addView(toolbar);
+        status = new TextView(this); LensStyle.text(status,12,false); status.setPadding(dp(8), dp(4), dp(8), dp(4));
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        toolbar.addView(status,new LinearLayout.LayoutParams(0,-2,1));
+        assist = new Button(this); LensStyle.button(assist,false);toolbar.addView(assist,new LinearLayout.LayoutParams(-2,-2));
         assist.setOnClickListener(v -> assistAction());
-        HorizontalScrollView scroller = new HorizontalScrollView(this);
+        HorizontalScrollView scroller = new HorizontalScrollView(this);scroller.setHorizontalScrollBarEnabled(false);
         candidates = new LinearLayout(this); scroller.addView(candidates);
         LinearLayout candidateRow = new LinearLayout(this);
         candidateRow.addView(scroller, new LinearLayout.LayoutParams(0, -1, 1));
         previousPage = new Button(this); previousPage.setText("‹");
         nextPage = new Button(this); nextPage.setText("›");
         for (Button button : new Button[]{previousPage, nextPage}) {
-            button.setPadding(0,0,0,0); button.setMinWidth(0); button.setMinimumWidth(0);
-            candidateRow.addView(button, new LinearLayout.LayoutParams(dp(36), -1));
+            LensStyle.key(button,true);button.setTextSize(22);
+            candidateRow.addView(button, new LinearLayout.LayoutParams(dp(48), -1));
         }
+        previousPage.setContentDescription("上一页候选");nextPage.setContentDescription("下一页候选");
         previousPage.setOnClickListener(view -> engine(3, -1, null));
         nextPage.setOnClickListener(view -> engine(3, 1, null));
         root.addView(candidateRow, new LinearLayout.LayoutParams(-1, dp(48)));
@@ -204,6 +209,7 @@ public final class LensImeService extends InputMethodService {
             : new String[]{"qwertyuiop", "asdfghjkl", "zxcvbnm"};
         for (String row : rows) {
             LinearLayout line = row();
+            if(!numeric && !symbols && row.equals(rows[1]))line.setPadding(dp(14),0,dp(14),0);
             for (int i = 0; i < row.length(); i++) {
                 String key = row.substring(i, i + 1);
                 addKey(line, upper && !chinese ? key.toUpperCase(java.util.Locale.ROOT) : key, () -> key(key), 1);
@@ -240,7 +246,7 @@ public final class LensImeService extends InputMethodService {
         final int token = generation;
         for (int i = 5; i < latest.length; i++) {
             final int index = i - 5;
-            Button button = new Button(this); button.setText(latest[i]); button.setTextSize(18); button.setAllCaps(false);
+            Button button = new Button(this); button.setText(latest[i]); LensStyle.key(button,false);button.setTextSize(18);button.setPadding(dp(12),0,dp(12),0);
             button.setOnClickListener(view -> { if (token == generation) engine(1, index, null); });
             candidates.addView(button, new LinearLayout.LayoutParams(-2, -1));
         }
@@ -257,6 +263,10 @@ public final class LensImeService extends InputMethodService {
         assist.setVisibility(allowed?View.VISIBLE:View.GONE);
         AssistSession s=AssistSession.current;
         boolean insert=s!=null && s.insertable(info);
+        toolbar.setOrientation(insert?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+        status.setLayoutParams(new LinearLayout.LayoutParams(insert?-1:0,-2,insert?0:1));
+        assist.setLayoutParams(new LinearLayout.LayoutParams(insert?-1:-2,-2));
+        LensStyle.button(assist,insert);
         assist.setText(insert?"确认正在与「"+s.result.optJSONObject("person").optString("name")+"」聊天并插入":"建议");
         assist.setEnabled(ready && pending==0 && !composing && (s==null || !s.consuming));
     }
@@ -287,11 +297,13 @@ public final class LensImeService extends InputMethodService {
     }
     private LinearLayout row() {
         LinearLayout row = new LinearLayout(this); row.setGravity(Gravity.CENTER);
-        keyboard.addView(row, new LinearLayout.LayoutParams(-1, dp(48))); return row;
+        int height=getResources().getConfiguration().orientation==2?48:52;
+        keyboard.addView(row, new LinearLayout.LayoutParams(-1, dp(height))); return row;
     }
     private Button addKey(LinearLayout row, String label, Runnable action, float weight) {
-        Button button = new Button(this); button.setText(label); button.setTextSize(label.length() > 1 ? 13 : 18);
+        Button button = new Button(this); button.setText(label);LensStyle.key(button,label.length()>1 || "⌫⇧中英".contains(label));button.setTextSize(label.length() > 1 ? 13 : 18);
         button.setPadding(0, 0, 0, 0); button.setMinWidth(0); button.setMinimumWidth(0); button.setAllCaps(false);
+        button.setContentDescription(label.equals("⌫")?"退格":label.equals("⇧")?"切换大写":label);
         button.setEnabled(ready); button.setOnClickListener(view -> action.run());
         row.addView(button, new LinearLayout.LayoutParams(0, -1, weight)); return button;
     }

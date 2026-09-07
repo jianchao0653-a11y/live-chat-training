@@ -8,13 +8,28 @@ final class KeyboardViewController: UIInputViewController {
     private var pending = false
     private var displayedLeaseID: String?
     override func viewDidLoad() {
-        super.viewDidLoad(); stack.axis = .vertical; stack.spacing = 8; stack.translatesAutoresizingMaskIntoConstraints = false; view.addSubview(stack)
+        super.viewDidLoad(); overrideUserInterfaceStyle = .light
+        view.backgroundColor = LensTheme.background
+        stack.axis = .vertical; stack.spacing = 12; stack.translatesAutoresizingMaskIntoConstraints = false; view.addSubview(stack)
         NSLayoutConstraint.activate([stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)])
-        status.numberOfLines = 0; status.font = .preferredFont(forTextStyle: .body); stack.addArrangedSubview(status)
-        insert.addTarget(self, action: #selector(redeem), for: .touchUpInside); insert.titleLabel?.numberOfLines = 0; insert.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true; stack.addArrangedSubview(insert)
-        let refresh = UIButton(type: .system); refresh.setTitle("刷新批准草稿", for: .normal); refresh.addTarget(self, action: #selector(refreshDraft), for: .touchUpInside); stack.addArrangedSubview(refresh)
-        let next = UIButton(type: .system); next.setTitle("切回熟悉的输入法 🌐", for: .normal); next.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents); stack.addArrangedSubview(next)
+        let heading = UILabel(); heading.text = "观微 · 已批准草稿"; heading.font = .preferredFont(forTextStyle: .headline); heading.adjustsFontForContentSizeCategory = true; heading.textColor = LensTheme.ink; stack.addArrangedSubview(heading)
+        status.numberOfLines = 0; status.font = .preferredFont(forTextStyle: .body); status.adjustsFontForContentSizeCategory = true; status.textColor = LensTheme.ink; stack.addArrangedSubview(status)
+        style(insert, primary: true); insert.setTitle("确认人物后插入", for: .normal)
+        insert.addTarget(self, action: #selector(redeem), for: .touchUpInside); stack.addArrangedSubview(insert)
+        let refresh = UIButton(type: .system); style(refresh, primary: false); refresh.setTitle("刷新批准草稿", for: .normal); refresh.addTarget(self, action: #selector(refreshDraft), for: .touchUpInside); stack.addArrangedSubview(refresh)
+        let next = UIButton(type: .system); style(next, primary: false); next.setTitle("切回熟悉的输入法 🌐", for: .normal); next.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents); stack.addArrangedSubview(next)
         refreshDraft()
+    }
+    private func style(_ button: UIButton, primary: Bool) {
+        var configuration = primary ? UIButton.Configuration.filled() : UIButton.Configuration.tinted()
+        configuration.baseBackgroundColor = primary ? LensTheme.green : LensTheme.tint
+        configuration.baseForegroundColor = primary ? .white : LensTheme.green
+        configuration.background.cornerRadius = 12
+        configuration.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 16, bottom: 12, trailing: 16)
+        button.configuration = configuration; button.titleLabel?.numberOfLines = 0
+        button.titleLabel?.font = .preferredFont(forTextStyle: .body)
+        button.titleLabel?.adjustsFontForContentSizeCategory = true
+        button.heightAnchor.constraint(greaterThanOrEqualToConstant: 48).isActive = true
     }
     override func viewWillAppear(_ animated: Bool) { super.viewWillAppear(animated); generation += 1; refreshDraft() }
     override func viewWillDisappear(_ animated: Bool) { generation += 1; super.viewWillDisappear(animated) }

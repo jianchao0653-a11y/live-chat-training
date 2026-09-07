@@ -4,6 +4,10 @@
 
 ## 已实现与验证
 
+**最终功能基线已通过**：[第七轮 34112887861](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34112887861)，提交 `933c72b7a84954ae88e2713cfb414409d9f9bfb6`，service、Android API34、API36、iOS 四作业均 success。Android 每 API 通过 18 项键盘、跨 App 中文、配对/分析/编辑/确认插入及 5 项稳定性。iOS 在 iPhone SE 3 / iOS 26.2 / Xcode 26.3 完成 App+扩展构建、2 核心+1 UI 测试和启动。
+
+四份产物已归档 `output/ci/run-34112887861/`。iOS 模拟器包 SHA256 `d2c96d95a63fd5af59e493b14d85110493d0d6244f103f371846a1106badf8e0`；不是签名 IPA。Android 云端 APK SHA256：API34 `35c166089787f3096c67688d1654490b23003566a6ce3b0a6f9628d8942626cf`；API36 `2a60e31ef6929d3212e6fbed5f011fd355dcd10a5fa1f83ecbed43e16235cec1`。独立调试签名导致不同哈希。下方早期轮次仅保留排错历史，最终结论以本段为准。后续 UI 变更属于 v0.15，不能借用此基线宣称已验。
+
 | 工作流 | 本轮交付 | 已有证据 | 尚未关闭 |
 |---|---|---|---|
 | Android 稳定性 | 横竖屏/大字号保留片段、重新批准；帧 stride/末行边界检查；截图服务启动失败处理 | 本地 API 36，18 项键盘回归、跨 App 中文与配对/分析/编辑/确认插入；5 项稳定性；JVM 22 断言与帧测试 | 真机厂商差异、单 App 捕获裁剪、真实相册、长时间后台 |

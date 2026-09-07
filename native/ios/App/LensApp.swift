@@ -1,6 +1,13 @@
 import SwiftUI
 import PhotosUI
 
+private struct LensPrimaryButton: ViewModifier {
+    func body(content: Content) -> some View {
+        content.font(.body.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 44)
+            .buttonStyle(.borderedProminent).tint(Color(uiColor: LensTheme.green))
+    }
+}
+
 @MainActor final class AssistantModel: ObservableObject {
     @Published var endpoint = "https://"
     @Published var code = ""
@@ -91,34 +98,60 @@ import PhotosUI
         WindowGroup {
             NavigationStack {
                 Form {
+                    Section {
+                        Text("从容输入，认真回应").font(.title3.weight(.semibold))
+                        Text("离线输入 · 片段由你批准 · 消息由你发送")
+                            .font(.subheadline).foregroundStyle(Color(uiColor: LensTheme.muted))
+                    }
                     Section("设备连接") {
                         TextField("HTTPS 服务根地址", text: $model.endpoint).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("endpoint")
                         SecureField("六位配对码", text: $model.code).keyboardType(.numberPad)
-                        Button("配对连接") { Task { await model.pair() } }.disabled(model.busy)
-                        Button("断开连接") { photo = nil; model.disconnect() }.accessibilityIdentifier("disconnect")
-                        Text(model.status).accessibilityIdentifier("status")
+                        Button("配对连接") { Task { await model.pair() } }.modifier(LensPrimaryButton()).disabled(model.busy)
+                        Button("断开连接") { photo = nil; model.disconnect() }.frame(minHeight: 44).accessibilityIdentifier("disconnect")
+                        HStack(alignment: .top, spacing: 10) {
+                            if model.busy { ProgressView().accessibilityLabel("正在处理") }
+                            Text(model.status).font(.subheadline).foregroundStyle(Color(uiColor: LensTheme.muted)).accessibilityIdentifier("status")
+                        }
                     }
-                    Section("你批准的聊天片段") {
+                    Section("01  核对人物与目标") {
                         Picker("人物", selection: $model.personID) { ForEach(model.people, id: \.self) { p in Text(p["name"] ?? "").tag(p["id"] ?? "") } }
                         Picker("目标", selection: $model.goal) { ForEach(["自然接话", "关心近况", "修复误会", "表达边界"], id: \.self) { Text($0) } }
                         Picker("分析", selection: $model.mode) { Text("规则试算").tag("local"); Text("GPT").tag("model") }
-                        TextEditor(text: $model.text).autocorrectionDisabled().textInputAutocapitalization(.never).frame(minHeight: 130).accessibilityIdentifier("transcript")
-                        PhotosPicker("选择一张截图", selection: $photo, matching: .images)
+                    }
+                    Section("02  准备聊天片段") {
+                        Text("粘贴或输入原话，并标明说话人").font(.subheadline).foregroundStyle(Color(uiColor: LensTheme.muted))
+                        TextEditor(text: $model.text).autocorrectionDisabled().textInputAutocapitalization(.never).frame(minHeight: 130).accessibilityLabel("聊天片段").accessibilityIdentifier("transcript")
+                        PhotosPicker("选择一张截图", selection: $photo, matching: .images).frame(minHeight: 44)
                         if let image = model.image {
                             Image(uiImage: image).resizable().scaledToFit().frame(maxHeight: 280)
                             Button("批准此图并转写") { Task { await model.extract() } }.disabled(model.busy)
                             Button("丢弃图片") { model.image = nil; model.invalidate() }
                         }
                         Toggle("已核对人物和片段，同意提交服务", isOn: $model.approved).accessibilityIdentifier("approval")
-                        Button("分析已批准片段") { Task { await model.analyze() } }.disabled(model.busy).accessibilityIdentifier("analyze")
+                        Button("分析已批准片段") { Task { await model.analyze() } }.modifier(LensPrimaryButton()).disabled(model.busy).accessibilityIdentifier("analyze")
                     }
-                    Section("候选与插入") {
-                        ForEach(model.candidates, id: \.self) { text in Button(text) { model.draft = text } }
-                        TextEditor(text: $model.draft).frame(minHeight: 90).accessibilityIdentifier("draft")
-                        Button("批准草稿并交给键盘（30 秒）") { Task { await model.stage() } }.disabled(model.busy)
+                    Section("03  审阅与编辑候选") {
+                        if model.candidates.isEmpty {
+                            Label("分析完成后，在这里选择并编辑候选。", systemImage: "text.bubble")
+                                .font(.subheadline).foregroundStyle(Color(uiColor: LensTheme.muted))
+                        }
+                        ForEach(model.candidates, id: \.self) { text in
+                            Button { model.draft = text } label: {
+                                HStack(alignment: .top) {
+                                    Text(text).frame(maxWidth: .infinity, alignment: .leading)
+                                    Image(systemName: model.draft == text ? "checkmark.circle.fill" : "circle")
+                                }.padding(.vertical, 8)
+                            }.frame(minHeight: 44)
+                        }
+                        TextEditor(text: $model.draft).frame(minHeight: 90).accessibilityLabel("可编辑草稿").accessibilityIdentifier("draft")
+                        Button("批准草稿并交给键盘（30 秒）") { Task { await model.stage() } }.modifier(LensPrimaryButton()).disabled(model.busy)
                         Text("在系统设置启用观微建议键盘。允许完全访问后，键盘仅在你点击确认插入时联网兑换这一次短期授权；不上传按键或读取聊天全文。中文输入可随时切回熟悉的系统键盘。")
                     }
                 }.navigationTitle("观微")
+                    .scrollContentBackground(.hidden)
+                    .background(Color(uiColor: LensTheme.background))
+                    .foregroundStyle(Color(uiColor: LensTheme.ink))
+                    .tint(Color(uiColor: LensTheme.green))
                     .scrollDismissesKeyboard(.interactively)
                     .toolbar {
                         ToolbarItemGroup(placement: .keyboard) {
@@ -136,7 +169,7 @@ import PhotosUI
                         let generation = model.revision
                         Task { if let data = try? await value?.loadTransferable(type: Data.self), photo == value, model.revision == generation, data.count <= 15_000_000 { model.image = UIImage(data: data) } }
                     }
-            }
+            }.preferredColorScheme(.light)
         }
     }
 }
