@@ -32,3 +32,5 @@ CPED、MPDD、SocialDial、FANToM、ToMBench、CEI、RECCON、SOTOPIA、ToMAP �
 ## v0.15 UI 补充
 
 视觉原则参考 Material 3 的颜色角色/字体层级、Apple HIG 的原生控件与动态字体、WCAG 的文字对比度方法；实现为自有 LensStyle/LensTheme token，无新增第三方 UI 运行依赖，没有复制其他输入法前端。具体链接、颜色与约束见 [视觉规范 1.0](../02_product/MOBILE_UI_SYSTEM.md)。上文保留 v0.14 工程复用账本。
+
+导航图标差异排查还读取 [AOSP NavigationBarController](https://github.com/aosp-mirror/platform_frameworks_base/blob/android-14.0.0_r1/core/java/android/inputmethodservice/NavigationBarController.java)，核对输入法导航区域与系统栏外观的处理。产品使用公开 WindowInsets/主题接口和自有背景绘制，没有复制该系统类。

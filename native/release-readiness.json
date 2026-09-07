@@ -5,12 +5,12 @@
     {
       "id": "android-stability",
       "status": "PARTIAL",
-      "evidence": "Local API 36 synthetic keyboard, insertion and five stability checks"
+      "evidence": "v0.15 run 34119039965: API34/36 keyboard, insertion and five stability checks passed; physical/OEM and extended lifecycle pending."
     },
     {
       "id": "ios-build-ui",
       "status": "PARTIAL",
-      "evidence": "v0.14 run 34112887861 passed app/keyboard build, two core tests, one UI test and launch; physical App Group/Full Access/signing not verified. v0.15 UI regression tracked separately."
+      "evidence": "v0.15 run 34119039965: app/keyboard build, two core tests, one UI test, ready-state screenshots and launch passed; physical App Group/Full Access/signing pending."
     },
     {
       "id": "android-douyin",
