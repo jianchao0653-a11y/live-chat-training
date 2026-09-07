@@ -1,11 +1,20 @@
 import SwiftUI
 import PhotosUI
 
-private struct LensPrimaryButton: ViewModifier {
-    func body(content: Content) -> some View {
-        content.font(.body.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 44)
-            .buttonStyle(.borderedProminent).tint(Color(uiColor: LensTheme.green))
+private struct LensPrimaryStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label.font(.body.weight(.semibold))
+            .foregroundStyle(Color(uiColor: enabled ? .white : LensTheme.muted))
+            .padding(.horizontal, 12).padding(.vertical, 10)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(Color(uiColor: enabled ? LensTheme.green : LensTheme.tint))
+            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .opacity(configuration.isPressed ? 0.85 : 1)
     }
+}
+private struct LensPrimaryButton: ViewModifier {
+    func body(content: Content) -> some View { content.buttonStyle(LensPrimaryStyle()) }
 }
 
 @MainActor final class AssistantModel: ObservableObject {
@@ -150,7 +159,6 @@ private struct LensPrimaryButton: ViewModifier {
                 }.navigationTitle("观微")
                     .scrollContentBackground(.hidden)
                     .background(Color(uiColor: LensTheme.background))
-                    .foregroundStyle(Color(uiColor: LensTheme.ink))
                     .tint(Color(uiColor: LensTheme.green))
                     .scrollDismissesKeyboard(.interactively)
                     .toolbar {
