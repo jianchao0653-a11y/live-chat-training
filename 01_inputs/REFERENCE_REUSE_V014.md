@@ -27,3 +27,5 @@ FlorisBoard、HeliBoard、Trime 前端未复制或 fork；尤其不能将 Trime 
 CPED、MPDD、SocialDial、FANToM、ToMBench、CEI、RECCON、SOTOPIA、ToMAP 等是评估研究池，没有把数据集导入产品。Ex-AI、Orbit、RelateAI、whatsapp-llm、ALSO、MapDia 等名称尚未完成仓库身份/许可核验，不能宣称采用。
 
 研究来源与更早处理记录保留在 `REFERENCE_PROJECTS.md`、`NEEDS_TXT_IMPLEMENTATION.md`。真正新增第三方代码时须重新核对当前许可证，并保留通知。
+
+云端调试还查阅了 [AOSP Android 14 InputMethodManagerService](https://github.com/aosp-mirror/platform_frameworks_base/blob/android-14.0.0_r1/services/core/java/com/android/server/inputmethod/InputMethodManagerService.java)：其 help/handler 明确 `ime list` 默认仅显示已启用输入法，`-a` 才列全部。用于修正测试脚本语义，没有复制系统服务实现。

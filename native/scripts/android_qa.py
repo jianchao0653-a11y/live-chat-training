@@ -195,7 +195,19 @@ def cross_app():
         if search is not None:break
         time.sleep(.2)
     assert search is not None,'Settings search not found'
-    tap_node(search);time.sleep(.7)
+    tap_node(search)
+    for _ in range(20):
+        tree=snapshot()
+        field=next((n for n in tree.iter('node') if n.get('package')=='com.android.settings.intelligence' and n.get('class')=='android.widget.AutoCompleteTextView'),None)
+        if field is not None:break
+        time.sleep(.2)
+    assert field is not None,'Settings search editor not found'
+    tap_node(field)
+    for _ in range(30):
+        tree=snapshot()
+        if any(n.get('text')=='q' and n.get('class')=='android.widget.Button' and n.get('enabled')=='true' for n in tree.iter('node')):break
+        time.sleep(.2)
+    else:raise AssertionError('Settings editor did not show keyboard')
     for key in 'nihao':tap_text(key)
     tree=snapshot('android-cross-app-candidates');tap_text('你好',tree)
     tree=snapshot('android-cross-app-committed');screenshot('android-cross-app-committed')
