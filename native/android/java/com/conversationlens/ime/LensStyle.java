@@ -13,7 +13,7 @@ import android.widget.*;
 final class LensStyle {
     static final int BG=0xfff5f7f6, SURFACE=0xffffffff, INK=0xff202b27,
         MUTED=0xff58665f, GREEN=0xff27634d, TINT=0xffe6efe9,
-        BORDER=0xffc3cec7, KEYBOARD=0xffe8ede9, NAVIGATION=0xff7c847f, DISABLED=0xffdde4df;
+        BORDER=0xffc3cec7, KEYBOARD=0xffe8ede9, NAVIGATION=0xff58665f, DISABLED=0xffdde4df;
     static int dp(Context c,int n){return Math.round(n*c.getResources().getDisplayMetrics().density);}
     static GradientDrawable shape(Context c,int color,int radius,boolean stroke){
         GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(dp(c,radius));

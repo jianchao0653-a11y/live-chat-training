@@ -37,14 +37,14 @@ public final class LensImeService extends InputMethodService {
 
     @Override public View onCreateInputView() {
         getWindow().getWindow().setNavigationBarColor(LensStyle.NAVIGATION);
-        getWindow().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        getWindow().getWindow().getDecorView().setSystemUiVisibility(0);
         root = new LinearLayout(this); root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(4), dp(4), dp(4), dp(4)); root.setBackgroundColor(LensStyle.KEYBOARD);
         root.setOnApplyWindowInsetsListener((view, insets) -> {
             int bottom = Build.VERSION.SDK_INT >= 30 ? insets.getInsets(WindowInsets.Type.navigationBars()).bottom : insets.getSystemWindowInsetBottom();
             view.setPadding(dp(4), dp(4), dp(4), dp(4) + bottom);
-            // Android may inherit black OR white navigation icons from the host.
-            // Draw a contrast-safe band in the actual inset, including edge-to-edge IMEs.
+            // Request light icons on an explicit dark band, for both framework
+            // IME navigation and system navigation in edge-to-edge windows.
             android.graphics.drawable.LayerDrawable background=new android.graphics.drawable.LayerDrawable(new android.graphics.drawable.Drawable[]{
                 new android.graphics.drawable.ColorDrawable(LensStyle.KEYBOARD),new android.graphics.drawable.ColorDrawable(LensStyle.NAVIGATION)});
             background.setLayerGravity(1,Gravity.BOTTOM);background.setLayerHeight(1,bottom);
@@ -121,7 +121,7 @@ public final class LensImeService extends InputMethodService {
         super.onStartInputView(info, restarting);
         if(Build.VERSION.SDK_INT>=30){
             android.view.WindowInsetsController bars=getWindow().getWindow().getInsetsController();
-            if(bars!=null)bars.setSystemBarsAppearance(android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
+            if(bars!=null)bars.setSystemBarsAppearance(0,android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS);
         }
         if (!ready) { generation++; startSession(generation); }
         render();
