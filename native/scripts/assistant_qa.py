@@ -9,8 +9,15 @@ def api(path, method='GET', data=None):
     return json.load(urllib.request.urlopen(req))
 
 def fill(hint,value):
-    result=adb('shell','am','instrument','-w','-e','hint',"'"+hint+"'",'-e','value',base64.b64encode(value.encode()).decode(),'com.conversationlens.ime.qa/.DumpRunner')
-    if 'INSTRUMENTATION_RESULT: error=' in result:raise AssertionError(result)
+    # Opening an Activity is asynchronous on hosted emulators. Retry only the
+    # explicit not-ready result, never retry analysis, OCR or insertion requests.
+    deadline=time.monotonic()+12
+    while True:
+        result=adb('shell','am','instrument','-w','-e','hint',"'"+hint+"'",'-e','value',base64.b64encode(value.encode()).decode(),'com.conversationlens.ime.qa/.DumpRunner')
+        if 'INSTRUMENTATION_RESULT: error=' not in result:return
+        if 'Synthetic field not found' not in result or time.monotonic()>=deadline:
+            snapshot('field-not-ready');raise AssertionError(result)
+        time.sleep(.2)
 
 def labels():
     return [n.get('text') for n in snapshot().iter('node') if n.get('package')=='com.conversationlens.ime' and n.get('text')]
@@ -34,6 +41,8 @@ def scroll_find(text):
     raise AssertionError('Control not visible: '+text)
 
 def pair():
+    wait_labels(lambda values:'配对连接' in values)
+    scroll_find('配对连接')
     config=json.loads((OUT/'fixture.json').read_text(encoding='utf-8'))
     port=config['base'].rsplit(':',1)[1]
     adb('reverse','tcp:4317','tcp:'+port)

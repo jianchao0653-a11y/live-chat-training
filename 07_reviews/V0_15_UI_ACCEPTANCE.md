@@ -17,6 +17,6 @@
 
 回执与截图：`output/ui-v015/`，包含 `contrast.json`、键盘与密码截图、插入截图及各项哈希回执。[键盘实际截图](../output/ui-v015/android-nihao-candidates.png)。
 
-源码提交 `b043085eec715572171f567157a4493f805a04fd`；私有云端 run [34114964064](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34114964064) 已启动，最终结果另行追加，不能沿用 v0.14 的全绿结论。
+最终源码提交 `6fbc5a1e49be50824334bba95442ef8e3dac1991`；私有云端 run [34115756817](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34115756817)。此前 `b043085` / run `34114964064` 被包含 iPhone 长草稿滚动修正的新提交替代，工作流按 concurrency 配置取消，不能记为最终通过或产品回归失败。Android 产品源码与本地最终验收包一致。
 
 工程缺口保持不变：六个真机 OS×聊天平台组合、真实模型/OCR 校准、三人七天首轮试点、签名发布、身份/保留与部署恢复。不以 UI 完成表示整个项目完成。
