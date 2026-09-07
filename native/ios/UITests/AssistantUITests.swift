@@ -7,6 +7,8 @@ final class AssistantUITests: XCTestCase {
         app.launchArguments = ["-AppleLanguages", "(zh-Hans)"]
         app.launch()
         XCTAssertTrue(app.textFields["endpoint"].waitForExistence(timeout: 10))
+        let initial = XCTAttachment(screenshot: app.screenshot())
+        initial.name = "connection-page-ready"; initial.lifetime = .keepAlways; add(initial)
         let transcript = app.textViews["transcript"]
         for _ in 0..<5 where !transcript.isHittable { app.swipeUp() }
         transcript.tap(); transcript.typeText("synthetic first message")

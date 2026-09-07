@@ -112,4 +112,5 @@ jobs:
             output/ios/launch.png
             output/ios/app-simulator.tar.gz
             output/ios/Tests.xcresult
+            output/ios/screenshots/
           retention-days: 7
