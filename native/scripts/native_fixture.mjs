@@ -11,6 +11,8 @@ const app=createApplication({database:':memory:',apiKey:'synthetic-key',fetcher:
   return new Response(JSON.stringify({status:'completed',output:[{content:[{type:'output_text',text:JSON.stringify({text:'对方：今天加班很累，想安静休息。',warning:'合成 OCR 固定夹具，不代表真实识别质量。'})}]}]}));
 }});
 app.server.on('request',req=>{const path=req.url.split('?')[0];telemetry.routes[path]=(telemetry.routes[path]||0)+1;record();});
+// A removed adb tunnel must not leave a reusable, already-open HTTP socket.
+app.server.prependListener('request',(_req,res)=>res.setHeader('Connection','close'));
 app.server.listen(0,'127.0.0.1');await once(app.server,'listening');
 const base=`http://127.0.0.1:${app.server.address().port}`;
 const boot=await(await fetch(base+'/api/bootstrap')).json();

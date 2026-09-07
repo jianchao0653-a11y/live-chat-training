@@ -1,0 +1,22 @@
+{
+  "version": "0.14.0",
+  "status": "NOT_READY",
+  "gates": [
+    {"id":"android-stability", "status":"PARTIAL", "evidence":"Local API 36 synthetic keyboard, insertion and five stability checks"},
+    {"id":"ios-build-ui", "status":"PARTIAL", "evidence":"Cloud app and keyboard build, two core tests and launch passed; expanded UI test pending"},
+    {"id":"android-douyin", "status":"NOT_RUN", "evidence":""},
+    {"id":"android-kuaishou", "status":"NOT_RUN", "evidence":""},
+    {"id":"android-wechat", "status":"NOT_RUN", "evidence":""},
+    {"id":"ios-douyin", "status":"NOT_RUN", "evidence":""},
+    {"id":"ios-kuaishou", "status":"NOT_RUN", "evidence":""},
+    {"id":"ios-wechat", "status":"NOT_RUN", "evidence":""},
+    {"id":"gpt-human-calibrated", "status":"BLOCKED_KEY_AND_GOLD_SAMPLES", "evidence":"20 synthetic mechanical cases do not close quality acceptance"},
+    {"id":"ocr-human-calibrated", "status":"BLOCKED_KEY_AND_GOLD_SAMPLES", "evidence":"3 synthetic image fixtures, no real OCR invocation"},
+    {"id":"authenticated-tenants", "status":"NOT_IMPLEMENTED", "evidence":"Six profiles and device scopes are not six authenticated tenants"},
+    {"id":"retention-and-backup-deletion", "status":"NOT_IMPLEMENTED", "evidence":"Cascade deletion exists; scheduled retention and backup erasure policy not implemented"},
+    {"id":"recovery-drill", "status":"PARTIAL", "evidence":"Synthetic restore to new file verified; deployment recovery drill pending"},
+    {"id":"signed-distribution", "status":"NOT_RUN", "evidence":"Debug Android only; no signed iOS IPA"},
+    {"id":"pilot-3-users-7-days", "status":"NOT_RUN", "evidence":""},
+    {"id":"pilot-fix-and-next-3", "status":"NOT_RUN", "evidence":""}
+  ]
+}

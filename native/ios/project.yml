@@ -56,11 +56,22 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.conversationlens.tests
+  LensUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources: [UITests]
+    dependencies:
+      - target: ConversationLens
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.conversationlens.uitests
 schemes:
   ConversationLens:
     build:
       targets:
         ConversationLens: all
         LensCoreTests: [test]
+        LensUITests: [test]
     test:
-      targets: [LensCoreTests]
+      targets: [LensCoreTests, LensUITests]

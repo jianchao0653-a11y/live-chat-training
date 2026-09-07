@@ -17,7 +17,8 @@ try:
     apps=list((out/'DerivedData/Build/Products/Debug-iphonesimulator').glob('ConversationLens.app'))
     if not apps:raise RuntimeError('App product missing')
     run(['xcrun','simctl','install',udid,str(apps[0])]);run(['xcrun','simctl','launch',udid,'com.conversationlens.app'])
-    run(['xcrun','simctl','io',udid,'screenshot',str(out/'launch.png')]);receipt['status']='PASS_BUILD_CORE_TESTS_LAUNCH'
+    run(['xcrun','simctl','io',udid,'screenshot',str(out/'launch.png')]);receipt['status']='PASS_BUILD_CORE_UI_TESTS_LAUNCH'
 finally:
+    if receipt['status']=='RUNNING':receipt['status']='FAIL'
     (out/'receipt.json').write_text(json.dumps(receipt,indent=2))
     subprocess.run(['xcrun','simctl','shutdown',udid],check=False)

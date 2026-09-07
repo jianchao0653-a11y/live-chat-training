@@ -87,10 +87,10 @@ import PhotosUI
             NavigationStack {
                 Form {
                     Section("设备连接") {
-                        TextField("HTTPS 服务根地址", text: $model.endpoint).textInputAutocapitalization(.never).autocorrectionDisabled()
+                        TextField("HTTPS 服务根地址", text: $model.endpoint).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("endpoint")
                         SecureField("六位配对码", text: $model.code).keyboardType(.numberPad)
                         Button("配对连接") { Task { await model.pair() } }.disabled(model.busy)
-                        Button("断开连接") { model.disconnect() }
+                        Button("断开连接") { model.disconnect() }.accessibilityIdentifier("disconnect")
                         Text(model.status).accessibilityIdentifier("status")
                     }
                     Section("你批准的聊天片段") {
@@ -104,12 +104,12 @@ import PhotosUI
                             Button("批准此图并转写") { Task { await model.extract() } }.disabled(model.busy)
                             Button("丢弃图片") { model.image = nil; model.invalidate() }
                         }
-                        Toggle("已核对人物和片段，同意提交服务", isOn: $model.approved)
-                        Button("分析已批准片段") { Task { await model.analyze() } }.disabled(model.busy)
+                        Toggle("已核对人物和片段，同意提交服务", isOn: $model.approved).accessibilityIdentifier("approval")
+                        Button("分析已批准片段") { Task { await model.analyze() } }.disabled(model.busy).accessibilityIdentifier("analyze")
                     }
                     Section("候选与插入") {
                         ForEach(model.candidates, id: \.self) { text in Button(text) { model.draft = text } }
-                        TextEditor(text: $model.draft).frame(minHeight: 90)
+                        TextEditor(text: $model.draft).frame(minHeight: 90).accessibilityIdentifier("draft")
                         Button("批准草稿并交给键盘（30 秒）") { Task { await model.stage() } }.disabled(model.busy)
                         Text("在系统设置启用观微建议键盘。允许完全访问后，键盘仅在你点击确认插入时联网兑换这一次短期授权；不上传按键或读取聊天全文。中文输入可随时切回熟悉的系统键盘。")
                     }
@@ -119,7 +119,10 @@ import PhotosUI
                     .onChange(of: model.personID) { _, _ in model.invalidate() }
                     .onChange(of: model.goal) { _, _ in model.invalidate() }
                     .onChange(of: model.mode) { _, _ in model.invalidate() }
-                    .onChange(of: photo) { _, value in Task { if let data = try? await value?.loadTransferable(type: Data.self), data.count <= 15_000_000 { model.invalidate(); model.image = UIImage(data: data) } } }
+                    .onChange(of: photo) { _, value in
+                        model.invalidate(); model.image = nil
+                        Task { if let data = try? await value?.loadTransferable(type: Data.self), photo == value, data.count <= 15_000_000 { model.image = UIImage(data: data) } }
+                    }
             }
         }
     }

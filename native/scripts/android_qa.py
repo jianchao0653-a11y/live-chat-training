@@ -73,9 +73,12 @@ def install():
     adb('shell','ime','enable','com.conversationlens.ime/.LensImeService')
     adb('shell','settings','put','secure','show_ime_with_hard_keyboard','1')
     adb('shell','am','force-stop','com.conversationlens.ime')
-    adb('shell','ime','set','com.conversationlens.ime/.LensImeService')
     adb('shell','am','start','-n','com.conversationlens.ime/.SetupActivity')
     time.sleep(2)
+    # Force-stop can asynchronously select the stock IME on API 34. Select ours
+    # after the Activity launch has completed, then verify the actual setting.
+    adb('shell','ime','set','com.conversationlens.ime/.LensImeService')
+    assert adb('shell','settings','get','secure','default_input_method')=='com.conversationlens.ime/.LensImeService'
     screenshot('android-setup')
     tree = snapshot('android-setup')
     editors = [n for n in tree.iter('node') if n.get('class')=='android.widget.EditText']
@@ -85,7 +88,9 @@ def install():
         time.sleep(2)
         tree = snapshot('android-keyboard')
         if any('简体拼音 · 离线' in n.get('text','') for n in tree.iter('node')): break
-    else: raise AssertionError('Chinese engine did not become ready')
+    else:
+        log=adb('logcat','-d','-b','crash');(OUT/'install-crash.txt').write_text(log,encoding='utf-8')
+        raise AssertionError('Chinese engine not ready; selected='+adb('shell','settings','get','secure','default_input_method')+'; '+log[-5000:])
     screenshot('android-keyboard')
     print('IME_READY',flush=True)
 
@@ -141,11 +146,17 @@ def workflow():
     check(any('简体拼音 · 离线' in n.get('text','') for n in tree.iter('node')),'chinese_restored_after_password')
     check(not any(n.get('text')=='你' and n.get('class')=='android.widget.Button' for n in tree.iter('node')),'fresh_editor_session')
     # System picker must remain accessible; don't select another keyboard automatically.
-    tap_text('切换');tree=snapshot('android-picker')
+    tap_text('切换')
+    for _ in range(20):
+        tree=snapshot('android-picker')
+        if any('Android Keyboard' in n.get('text','') for n in tree.iter('node')):break
+        time.sleep(.2)
     check(any('Android Keyboard' in n.get('text','') for n in tree.iter('node')),'system_keyboard_picker')
     screenshot('android-picker')
     # Android 16's picker groups IMEs by non-clickable headers; select the subtype row.
-    tap_text('English (US)',tree);time.sleep(.2)
+    if any(n.get('text')=='English (US)' for n in tree.iter('node')):tap_text('English (US)',tree)
+    else:tap_node(next(n for n in tree.iter('node') if 'Android Keyboard' in n.get('text','')))
+    time.sleep(.5)
     check(adb('shell','settings','get','secure','default_input_method')=='com.android.inputmethod.latin/.LatinIME','switch_back_to_system_keyboard')
     adb('shell','ime','set','com.conversationlens.ime/.LensImeService');time.sleep(.2)
     tree=snapshot('android-workflow-final');screenshot('android-workflow-final')
@@ -166,7 +177,13 @@ def cross_app():
     adb('shell','am','force-stop','com.android.settings.intelligence')
     adb('shell','am','force-stop','com.android.settings')
     adb('shell','am','start','-a','android.settings.SETTINGS');time.sleep(.5)
-    tap_text('Search Settings');time.sleep(.3)
+    for _ in range(20):
+        tree=snapshot()
+        search=next((n for n in tree.iter('node') if n.get('text','').casefold()=='search settings'),None)
+        if search is not None:break
+        time.sleep(.2)
+    assert search is not None,'Settings search not found'
+    tap_node(search);time.sleep(.7)
     tree=snapshot()
     for key in 'nihao':tap_text(key,tree)
     tree=snapshot('android-cross-app-candidates');tap_text('你好',tree)

@@ -18,6 +18,8 @@ def main():
         tap_text('建议');time.sleep(.5);pair();analyze();insert()
         (OUT/'ci-native-receipt.json').write_text(json.dumps({'synthetic':True,'abi':adb('shell','getprop','ro.product.cpu.abi'),'api':adb('shell','getprop','ro.build.version.sdk'),'checks':['keyboard_18','cross_app_chinese','pair','analyze_edit_return','confirmed_insert'],'realPhone':False,'cloudModel':False},indent=2))
     finally:
-        adb('reverse','--remove','tcp:4317');service.terminate();service.wait(timeout=10);log.close()
+        try:adb('reverse','--remove','tcp:4317')
+        except RuntimeError:pass
+        finally:service.terminate();service.wait(timeout=10);log.close()
 
 if __name__=='__main__': main()

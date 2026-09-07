@@ -9,3 +9,7 @@
 当前 20 个合成场景不是经授权的真实黄金集，不能证明真实关系质量、心理状态或因果效果。正式验收仍需 20–50 组合法脱敏样本与实际 Outcome。
 
 依据：https://developers.openai.com/api/docs/guides/evaluation-best-practices
+
+OCR：`python native/scripts/make_ocr_samples.py` 生成三张原创合成截图；Windows 默认使用微软雅黑，其他系统通过 `LENS_QA_FONT` 指定中文字体。然后 `node app/evals/ocr.mjs --manifest output/evals/ocr-samples/manifest.json` 调用与产品相同的 `/api/extract`，独立内存数据库，逐例记录字符错误率、按行说话人准确率、P50/P95 和真实 usage。没有密钥输出 `ocr-blocked.json`。图片内提示注入也作为普通待转写内容。
+
+自带样本要求 manifest 显式声明 `approvedForCloud: true` 和 `dataClass: synthetic|deidentified`，图片路径限制在清单目录内。清单与运行结果保留本地，不随源码上传；声明不能代替实际取得授权。CER 不等于业务正确率，说话人自动指标按行顺序比较，换行/合并应交双人复核。脚本不自动判定质量通过，也不编造账单。

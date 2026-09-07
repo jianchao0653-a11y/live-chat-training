@@ -1,6 +1,8 @@
-# 观微 Android v0.13 连接预览
+# 观微 v0.14 双端工程预览
 
-[安装包](../output/native/conversation-lens-0.13.0-debug.apk) · [验收记录](../07_reviews/V0_13_ACCEPTANCE.md) · [v0.12 历史说明](README_V012.md)
+[Android 安装包](../output/native/conversation-lens-0.14.0-debug.apk) · [v0.14 验收与剩余工作](../07_reviews/V0_14_ACCEPTANCE.md) · [iPhone 工程](ios/README.md) · [v0.13 历史验收](../07_reviews/V0_13_ACCEPTANCE.md)
+
+v0.14 增加 Android 旋转/大字号恢复、截图帧边界检查、断网恢复验收，以及 iPhone 主 App 和建议键盘扩展。iOS 已在私有仓库 GitHub macOS/Xcode 模拟器完成首次构建、核心测试和启动；真实签名安装、共享容器、完全访问与三平台插入仍待验。云端矩阵见 [PR #3](https://github.com/jianchao0653-a11y/live-chat-training/pull/3)，不把模拟器通过视为真机完成。
 
 保留真实 librime 1.17.0 简体拼音、候选与翻页、英文/符号、退格和系统键盘切换。新增限定主播的设备配对、聊天片段分析、编辑候选、返回原输入框后确认插入，以及实际后续反馈。不会替用户点击发送。
 

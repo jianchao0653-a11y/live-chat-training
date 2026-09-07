@@ -6,6 +6,7 @@ final class KeyboardViewController: UIInputViewController {
     private let insert = UIButton(type: .system)
     private var generation = 0
     private var pending = false
+    private var displayedLeaseID: String?
     override func viewDidLoad() {
         super.viewDidLoad(); stack.axis = .vertical; stack.spacing = 8; stack.translatesAutoresizingMaskIntoConstraints = false; view.addSubview(stack)
         NSLayoutConstraint.activate([stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)])
@@ -20,14 +21,17 @@ final class KeyboardViewController: UIInputViewController {
     override func textWillChange(_ textInput: UITextInput?) { generation += 1 }
     @objc private func refreshDraft() {
         guard !pending else { return }
+        displayedLeaseID = nil
         guard hasFullAccess else { status.text = "未开启完全访问。建议仍可在主 App 查看；此键盘不会联网。"; insert.isEnabled = false; return }
-        do { let lease = try LeaseStore.load(); status.text = lease.draft; insert.setTitle("确认正在与「\(lease.person_name)」聊天并插入", for: .normal); insert.isEnabled = true }
+        do { let lease = try LeaseStore.load(); displayedLeaseID = lease.lease_id; status.text = lease.draft; insert.setTitle("确认正在与「\(lease.person_name)」聊天并插入", for: .normal); insert.isEnabled = true }
         catch { status.text = "请先在主 App 批准草稿，30 秒内返回此处。"; insert.isEnabled = false }
     }
     @objc private func redeem() {
         guard hasFullAccess, !pending else { return }
         do {
-            let lease = try LeaseStore.load(); try LeaseStore.clear()
+            let lease = try LeaseStore.load()
+            guard lease.lease_id == displayedLeaseID else { refreshDraft(); return }
+            try LeaseStore.clear(); displayedLeaseID = nil
             guard let endpoint = lease.endpoint else { throw LensError.message("缺少服务地址") }
             let document = textDocumentProxy.documentIdentifier, revision = generation
             pending = true; insert.isEnabled = false

@@ -24,7 +24,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
   const csrf = randomUUID();
   let configuration = { key: apiKey, model };
   const active = new Map();
-  const configPublic = () => ({ configured: Boolean(configuration.key), model: configuration.model, provider: 'OpenAI', keyStorage: 'server-memory', version: '0.13.0' });
+  const configPublic = () => ({ configured: Boolean(configuration.key), model: configuration.model, provider: 'OpenAI', keyStorage: 'server-memory', version: '0.14.0' });
   const streamerId = value => { const id = field(value || '0001', 4, true); if (!store.get('SELECT id FROM streamers WHERE id=?', id)) fault(404, '主播配置不存在。'); return id; };
   const contextKey = p => hash(JSON.stringify({ version:CONTEXT_VERSION, id:p.id, name:p.name, platform:p.platform, pair:p.relationship, streamer:p.streamer }));
   const send = (res, status, body, type = 'application/json; charset=utf-8') => {
@@ -164,7 +164,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
       }
       if (path === '/api/extract' && req.method === 'POST') return send(res,200,await extract(await bodyOf(req)));
       if (path === '/api/export' && req.method === 'GET') return send(res, 200, {
-        version: '0.13.0', exported_at: now(), people: store.all('SELECT id,name,platform,created_at FROM people ORDER BY id'),
+        version: '0.14.0', exported_at: now(), people: store.all('SELECT id,name,platform,created_at FROM people ORDER BY id'),
         streamers:store.streamers(), relationships:store.all('SELECT * FROM pairs'), claims:store.all('SELECT * FROM claims'),
         context_events:store.all('SELECT * FROM context_events ORDER BY seq'),
         analyses: store.all('SELECT id FROM analyses ORDER BY created_at').map(a => store.analysis(a.id)),
@@ -184,6 +184,6 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   if (!['127.0.0.1','localhost','::1'].includes(host) && !process.env.LENS_ACCESS_TOKEN) throw new Error('局域网模式请先设置 LENS_ACCESS_TOKEN。');
   const { server } = createApplication();
   const port = Number(process.env.PORT || 4317);
-  server.listen(port, host, () => console.log(`Conversation Lens v0.13.0 ready: http://${host}:${port}`));
+  server.listen(port, host, () => console.log(`Conversation Lens v0.14.0 ready: http://${host}:${port}`));
   server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `端口 ${port} 已使用，请直接打开 http://localhost:${port} 或更换 PORT。` : e.message); process.exitCode = 1; });
 }
