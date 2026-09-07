@@ -1,0 +1,45 @@
+import UIKit
+
+final class KeyboardViewController: UIInputViewController {
+    private let stack = UIStackView()
+    private let status = UILabel()
+    private let insert = UIButton(type: .system)
+    private var generation = 0
+    private var pending = false
+    override func viewDidLoad() {
+        super.viewDidLoad(); stack.axis = .vertical; stack.spacing = 8; stack.translatesAutoresizingMaskIntoConstraints = false; view.addSubview(stack)
+        NSLayoutConstraint.activate([stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 12),stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),stack.topAnchor.constraint(equalTo: view.topAnchor, constant: 8),stack.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)])
+        status.numberOfLines = 0; status.font = .preferredFont(forTextStyle: .body); stack.addArrangedSubview(status)
+        insert.addTarget(self, action: #selector(redeem), for: .touchUpInside); insert.titleLabel?.numberOfLines = 0; insert.heightAnchor.constraint(greaterThanOrEqualToConstant: 44).isActive = true; stack.addArrangedSubview(insert)
+        let refresh = UIButton(type: .system); refresh.setTitle("刷新批准草稿", for: .normal); refresh.addTarget(self, action: #selector(refreshDraft), for: .touchUpInside); stack.addArrangedSubview(refresh)
+        let next = UIButton(type: .system); next.setTitle("切回熟悉的输入法 🌐", for: .normal); next.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents); stack.addArrangedSubview(next)
+        refreshDraft()
+    }
+    override func viewWillAppear(_ animated: Bool) { super.viewWillAppear(animated); generation += 1; refreshDraft() }
+    override func viewWillDisappear(_ animated: Bool) { generation += 1; super.viewWillDisappear(animated) }
+    override func textWillChange(_ textInput: UITextInput?) { generation += 1 }
+    @objc private func refreshDraft() {
+        guard !pending else { return }
+        guard hasFullAccess else { status.text = "未开启完全访问。建议仍可在主 App 查看；此键盘不会联网。"; insert.isEnabled = false; return }
+        do { let lease = try LeaseStore.load(); status.text = lease.draft; insert.setTitle("确认正在与「\(lease.person_name)」聊天并插入", for: .normal); insert.isEnabled = true }
+        catch { status.text = "请先在主 App 批准草稿，30 秒内返回此处。"; insert.isEnabled = false }
+    }
+    @objc private func redeem() {
+        guard hasFullAccess, !pending else { return }
+        do {
+            let lease = try LeaseStore.load(); try LeaseStore.clear()
+            guard let endpoint = lease.endpoint else { throw LensError.message("缺少服务地址") }
+            let document = textDocumentProxy.documentIdentifier, revision = generation
+            pending = true; insert.isEnabled = false
+            Task { @MainActor in
+                defer { pending = false }
+                do {
+                    let result = try await NativeHTTP.call(endpoint: endpoint, path: "redeem", body: ["lease_id": lease.lease_id, "secret": lease.secret, "confirmed": true])
+                    guard hasFullAccess, revision == generation, document == textDocumentProxy.documentIdentifier, view.window != nil else { status.text = "输入框已变化，未插入，请重新准备草稿"; return }
+                    guard let draft = result["draft"] as? String else { throw LensError.message("响应无效") }
+                    textDocumentProxy.insertText(draft); status.text = "已插入，请检查并自行发送"
+                } catch { status.text = error.localizedDescription }
+            }
+        } catch { status.text = error.localizedDescription }
+    }
+}

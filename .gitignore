@@ -1,0 +1,8 @@
+node_modules/
+runtime/
+output/
+.playwright-cli/
+.env
+*.log
+__pycache__/
+*.pyc

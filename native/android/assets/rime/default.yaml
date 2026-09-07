@@ -1,0 +1,7 @@
+config_version: '1.0'
+schema_list:
+  - schema: lens_pinyin
+menu:
+  page_size: 6
+switcher:
+  hotkeys: []
