@@ -1,6 +1,6 @@
 # 观微 v0.15 统一 UI 工程预览
 
-v0.15.1 安全补丁：断开清理、有界读取与原生专用端口，见 [本轮验收](../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。下方 0.15.0 安装包仍是历史 UI 基线；新包必须按本轮回执核对。
+v0.15.1 安全补丁已通过本地与云端合成验收：[新版双架构 APK](../output/native/conversation-lens-0.15.1-debug.apk)、[本轮回执](../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。SHA256 `b0b0511237ca8f83bcf7b57299cbad78874064e0ed59e5d80cbd761afe1d2580`。下方 0.15.0 安装包仍是历史 UI 基线；真机和生产发布未通过。
 
 新增 [视觉规范](../02_product/MOBILE_UI_SYSTEM.md)、[MADR-036](../03_decisions/MADR-036.md) 和 [v0.15 UI 验收](../07_reviews/V0_15_UI_ACCEPTANCE.md)。[当前 Android 包](../output/native/conversation-lens-0.15.0-debug.apk)；下方 v0.14 包保留为功能基线。
 

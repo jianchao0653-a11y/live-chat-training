@@ -1,7 +1,7 @@
 # MADR-038：移动敏感状态清理、有界读取和原生专用监听器
 
 - 日期：2026-09-08
-- 状态：ACCEPTED FOR IMPLEMENTATION，运行验收见 v0.15.1 回执。
+- 状态：ACCEPTED AND SYNTHETICALLY VERIFIED；运行验收见 v0.15.1 回执，真实环境门槛未关闭。
 - 授权：用户“按计划开展”。
 - depends_on：MADR-032–037。
 - supersedes：MADR-037 将代理标记拒绝作为唯一服务内防护的实现；停止共享口令式局域网管理网页。保持本机单人管理与发布 NOT_READY。
@@ -17,3 +17,5 @@
 不从 Forwarded/Host 推导本机管理权限；一个刻意改写且没有标记的代理与本机进程不可辨识，故采用不同监听入口的能力限制。部署到错误管理端口仍有风险，实际 TLS/域名/upstream 外部验收未完成。多账户登录权限须独立实现。
 
 补充 Node 实际 HTTP 代理与配对/撤销回归，Swift 按需生成大流、长度前置拒绝和文件边界测试，Android 断开后旋转 UI 回归。修复使用 v0.15.1 / build16 标识，不覆盖 v0.15.0 移动包的历史证据。UI 颜色/布局规范沿用 MADR-036。
+
+源码 de4f9e1，GitHub run34175618854 四作业通过：Node 37、每个 Android API 的键盘 18＋稳定性 6、iOS 核心 5＋UI 1。本地双架构 APK 与 API36 稳定性通过。云端 ZIP 下载交付链接返回 403，尚未完成本地 ZIP 归档；日志和本地 APK 证据可用，详见 [验收回执](../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。
