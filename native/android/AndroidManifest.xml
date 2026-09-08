@@ -10,6 +10,7 @@
         android:allowBackup="false" android:debuggable="true" android:usesCleartextTraffic="false" android:supportsRtl="true"
         android:extractNativeLibs="true" android:networkSecurityConfig="@xml/network_security_config">
         <activity android:name=".AssistantActivity" android:exported="false" android:taskAffinity="com.conversationlens.assistant" android:excludeFromRecents="true" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".LibraryActivity" android:exported="false" android:excludeFromRecents="true" android:windowSoftInputMode="adjustResize" />
         <service android:name=".CaptureService" android:exported="false" android:foregroundServiceType="mediaProjection" />
         <activity android:name=".SetupActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
             <intent-filter>

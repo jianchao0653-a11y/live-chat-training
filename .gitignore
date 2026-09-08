@@ -6,3 +6,6 @@ output/
 *.log
 __pycache__/
 *.pyc
+百炼.txt
+*.keystore
+*.jks

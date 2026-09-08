@@ -161,10 +161,10 @@ export function openStore(file) {
         strategy_observations:outcomes.map(({analysis_id,goal,situation,strategy,status}) => ({analysis_id,goal,situation,strategy,status})),
         retrieval_policy:'pair-only / latest 8 active memories, 8 corrections, 12 reviewed hypotheses, 5 outcomes / at most 200 outcome records for statistics' };
     },
-    createPerson: (p) => tx(() => {
+    createPerson: (p, assignedId) => tx(() => {
       // MAX preserves monotonically increasing IDs using a separate sequence even after deletion.
       const previous = Number(get("SELECT value FROM settings WHERE key='person_sequence'")?.value || 0);
-      const id = String(previous + 1).padStart(4, '0');
+      const id = assignedId || String(previous + 1).padStart(4, '0');
       run("INSERT INTO settings VALUES('person_sequence',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value", String(previous + 1));
       run('INSERT INTO people VALUES(?,?,?,?,?,?,?)', id, p.name, p.platform, p.stage, p.notes || '', p.boundary || '', now());
       run('INSERT INTO pairs(id,streamer_id,person_id,stage,notes,boundary) VALUES(?,?,?,?,?,?)', randomUUID(), p.streamer_id || '0001', id, p.stage, p.notes || '', p.boundary || '');

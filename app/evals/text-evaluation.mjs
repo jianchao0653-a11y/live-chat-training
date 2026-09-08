@@ -5,7 +5,7 @@ import {performance} from 'node:perf_hooks';
 import {localAnalysis,modelAnalysis,roles,classify} from '../engine.mjs';
 import {loadTextDataset,loadBuiltinDataset,digest} from './dataset.mjs';
 
-export async function evaluateText({manifestPath,mode='local',limit,apiKey='',model='gpt-6-astra',fetcher=fetch,outputRoot}={}) {
+export async function evaluateText({manifestPath,mode='local',limit,apiKey='',model='gpt-6-astra',provider='openai',baseUrl,fetcher=fetch,outputRoot}={}) {
   if(!['local','live','validate'].includes(mode))throw new Error('Use mode local|live|validate');
   if(!outputRoot)throw new Error('An output directory is required');
   // Validate every file before slicing or issuing a paid request.
@@ -13,7 +13,7 @@ export async function evaluateText({manifestPath,mode='local',limit,apiKey='',mo
   limit=limit??(mode==='live'?Math.min(5,dataset.cases.length):dataset.cases.length);
   if(!Number.isInteger(limit)||limit<1||limit>dataset.cases.length)throw new Error('Invalid case limit');
   const selected=dataset.cases.slice(0,limit),runId=randomUUID();
-  const report={runId,createdAt:new Date().toISOString(),mode,model,datasetId:dataset.datasetId,datasetHash:dataset.datasetHash,
+  const report={runId,createdAt:new Date().toISOString(),mode,model,provider,datasetId:dataset.datasetId,datasetHash:dataset.datasetHash,
     sourceKind:dataset.sourceKind,scope:'engine-only-minimal-context',dataClass:dataset.dataClass,synthetic:dataset.dataClass==='synthetic',authorizationRef:dataset.authorizationRef,
     reviewPlanId:dataset.reviewPlanId,totalCases:dataset.cases.length,selectedCases:selected.length,fullDataset:limit===dataset.cases.length,
     humanReviewed:false,qualityAccepted:false,requests:0,maxRequests:mode==='live'?2*selected.length:0,
@@ -23,7 +23,7 @@ export async function evaluateText({manifestPath,mode='local',limit,apiKey='',mo
     if(report.requests>=report.maxRequests)throw new Error('Evaluation request budget exhausted');
     report.requests++;const response=await fetcher(url,options);
     try {
-      const body=await response.clone().json(),u=body.usage;
+      const body=await response.clone().json(),u=provider==='bailian'?{input_tokens:body.usage?.prompt_tokens,output_tokens:body.usage?.completion_tokens,input_tokens_details:body.usage?.prompt_tokens_details}:body.usage;
       if(u&&[u.input_tokens,u.output_tokens].every(v=>Number.isSafeInteger(v)&&v>=0)){
         report.usage.reportedCalls++;report.usage.input_tokens+=u.input_tokens;report.usage.output_tokens+=u.output_tokens;
         const cached=u.input_tokens_details?.cached_tokens;if(Number.isSafeInteger(cached)&&cached>=0)report.usage.cached_tokens+=cached;
@@ -38,7 +38,7 @@ export async function evaluateText({manifestPath,mode='local',limit,apiKey='',mo
     const start=performance.now();
     try {
       const person={name:'样本人物',stage:'未提供',claims:[],outcomes:[],boundary:c.boundary};
-      const result=mode==='live'?await modelAnalysis(c.text,person,c.goal,{key:apiKey,model},tracked):localAnalysis(c.text,person,c.goal);
+      const result=mode==='live'?await modelAnalysis(c.text,person,c.goal,{key:apiKey,model,provider,baseUrl},tracked):localAnalysis(c.text,person,c.goal);
       row.checks={evidenceGrounded:result.evidence.every(e=>c.text.includes(e.quote)),rolesCovered:roles.every(role=>result.reviews.filter(r=>r.role===role).length===1),
         stoppedWithoutCandidates:result.route!=='SAFE_STOP'||result.candidates.length===0,
         independentJudge:mode!=='live'||result.judge.source==='独立模型调用'||(classify(c.text,c.goal)==='stop'&&result.judge.source==='独立规则检查'),

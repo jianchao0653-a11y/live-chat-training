@@ -16,7 +16,7 @@ OUT = ROOT / 'output/native'
 ADB = SDK / ('platform-tools/adb.exe' if os.name=='nt' else 'platform-tools/adb')
 SERIAL = os.environ.get('LENS_QA_SERIAL','emulator-5556')
 if not re.fullmatch(r'emulator-\d+',SERIAL): raise RuntimeError('QA only supports emulators')
-APK = OUT / 'conversation-lens-0.15.1-debug.apk'
+APK = OUT / 'conversation-lens-0.16.0-debug.apk'
 
 def adb(*args, binary=False, timeout=45):
     result = subprocess.run([str(ADB), '-s', SERIAL, *map(str,args)], capture_output=True, timeout=timeout)

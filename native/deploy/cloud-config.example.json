@@ -1,0 +1,14 @@
+{
+  "provider": "bailian",
+  "model": "qwen-plus",
+  "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "budget": {
+    "currency": "CNY",
+    "verified": false,
+    "dailyCount": 20,
+    "dailyMicros": 0,
+    "monthlyMicros": 0,
+    "inputPerMillion": 0,
+    "outputPerMillion": 0
+  }
+}

@@ -1,0 +1,26 @@
+[Unit]
+Description=Conversation Lens cloud native API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lens
+Group=lens
+WorkingDirectory=/opt/conversation-lens
+Environment=LENS_CLOUD_DATA=/var/lib/conversation-lens/data
+Environment=LENS_CLOUD_CONFIG=/etc/conversation-lens/cloud-config.json
+Environment=LENS_MODEL_KEY_FILE=/etc/conversation-lens/model-key
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning app/cloud.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=110
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/conversation-lens
+
+[Install]
+WantedBy=multi-user.target

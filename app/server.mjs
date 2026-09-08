@@ -18,10 +18,10 @@ const choice = (v, options) => { if (!options.includes(v)) throw Object.assign(n
 const fault = (status, message) => { throw Object.assign(new Error(message), { status }); };
 const isLocal = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress);
 
-export function createApplication({ database = resolve(root, '../runtime/lens.sqlite'), apiKey = process.env.OPENAI_API_KEY || '', model = process.env.OPENAI_MODEL || 'gpt-6-astra', fetcher = fetch, clock = Date.now } = {}) {
+export function createApplication({ database = resolve(root, '../runtime/lens.sqlite'), apiKey = process.env.OPENAI_API_KEY || '', model = process.env.OPENAI_MODEL || 'gpt-6-astra', fetcher = fetch, clock = Date.now, provider = 'openai', baseUrl, authorize, modelHooks = {} } = {}) {
   const store = openStore(database);
   const csrf = randomUUID();
-  let configuration = { key: apiKey, model };
+  let configuration = { key: apiKey, model, provider, baseUrl, ...modelHooks };
   const active = new Map();
   let modelActive = 0, reservations = [];
   // Shared by web and all devices. Reserve generation and judge together.
@@ -88,7 +88,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
         return extracted;
         } finally { release(); }
   };
-  const native = createNativeBridge({store,analyze,extract,revision:contextKey,config:configPublic});
+  const native = createNativeBridge({store,analyze,extract,revision:contextKey,config:configPublic,clock,authorize});
   const handle = nativeOnly => async (req, res) => {
     try {
       const host = req.headers.host || '';
@@ -204,7 +204,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
       if (!storeClosed && liveListeners.size===0) {storeClosed=true;store.close();}
     });
   }
-  return { server, nativeServer, store };
+  return { server, nativeServer, store, native, analyze, isActive: id => active.has(id) };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

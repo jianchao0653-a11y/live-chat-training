@@ -5,6 +5,7 @@ import re
 import sys
 root=Path(__file__).resolve().parents[2]
 allowed={'.mjs','.js','.html','.css','.svg','.webmanifest','.json','.java','.cpp','.h','.xml','.yaml','.yml','.py','.swift','.plist','.entitlements','.md','.txt','.ps1'}
+allowed.update({'.service','.timer','.example'})
 paths=[]
 for folder in ['app','native','.github']:
     for path in (root/folder).rglob('*'):
@@ -15,6 +16,7 @@ paths += [root/'03_decisions/MADR-036.md',root/'02_product/MOBILE_UI_SYSTEM.md',
 paths += [root/'03_decisions/MADR-037.md',root/'07_reviews/V0_15_SECURITY_REVIEW.md']
 paths += [root/'03_decisions/MADR-038.md',root/'07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md']
 paths += [root/'03_decisions/MADR-039.md',root/'07_reviews/GOLD_TEXT_ACCEPTANCE.md']
+paths += [root/'03_decisions/MADR-040.md',root/'07_reviews/CLOUD_V016_ACCEPTANCE.md']
 paths += [root/'01_inputs/REFERENCE_REUSE_V014.md',root/'07_reviews/V0_14_ACCEPTANCE.md']
 entries=[]
 for p in sorted(set(paths)):

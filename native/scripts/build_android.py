@@ -13,6 +13,7 @@ import subprocess
 import zipfile
 import tempfile
 import sys
+from urllib.parse import urlparse
 
 SOURCE_ROOT = Path(__file__).resolve().parents[2]
 # Android's bundled Ninja emits Windows response files in the active code page.
@@ -72,7 +73,17 @@ def notices():
     text += '\nDependency commits and source archive checksums:\n' + (ROOT / 'native/dependencies.lock.json').read_text()
     return text
 
-def build(abis, native_only=False):
+def build(abis, native_only=False, cloud_url='', release=False):
+    if release and not cloud_url:
+        raise RuntimeError('Release requires a deployed cloud HTTPS endpoint')
+    if cloud_url:
+        endpoint = urlparse(cloud_url)
+        if endpoint.username or endpoint.password or endpoint.query or endpoint.fragment or endpoint.path not in ['', '/']:
+            raise RuntimeError('Cloud endpoint must be a service root, without credentials')
+        if endpoint.scheme != 'https' and not (not release and endpoint.scheme == 'http' and endpoint.hostname == '127.0.0.1'):
+            raise RuntimeError('Cloud endpoint requires HTTPS (debug loopback only)')
+        if not endpoint.hostname or (release and ('.' not in endpoint.hostname or endpoint.hostname.endswith(('.example', '.test', '.invalid', '.localhost', 'example.com')))):
+            raise RuntimeError('Release requires a real deployment hostname')
     OUT.mkdir(parents=True, exist_ok=True)
     TOOLS.mkdir(parents=True, exist_ok=True)
     BUILD.mkdir(parents=True, exist_ok=True)
@@ -88,6 +99,11 @@ def build(abis, native_only=False):
     if native_only: return
     assets = BUILD / 'assets'
     shutil.copytree(APP / 'assets', assets, dirs_exist_ok=True)
+    cloud_asset = assets / 'cloud-config.json'
+    if cloud_url:
+        cloud_asset.write_text(json.dumps({'endpoint':cloud_url.rstrip('/')}), encoding='utf-8')
+    elif cloud_asset.exists():
+        cloud_asset.unlink()
     shutil.copy2(VENDOR / 'rime-pinyin-simp/pinyin_simp.dict.yaml', assets / 'rime')
     (assets / 'THIRD_PARTY_NOTICES.txt').write_text(notices(), encoding='utf-8')
     ndk_notices = (ndk / 'NOTICE.toolchain').read_text(encoding='utf-8')
@@ -103,8 +119,14 @@ def build(abis, native_only=False):
     run([bt / 'aapt2.exe', 'compile', '--dir', APP / 'res', '-o', BUILD / 'resources.zip'])
     unsigned = BUILD / 'unsigned.apk'
     resources_apk = BUILD / 'resources.apk'
+    manifest = BUILD / 'build-manifest.xml'
+    manifest_text = (APP / 'AndroidManifest.xml').read_text(encoding='utf-8')
+    manifest_text = manifest_text.replace('android:versionCode="16"', 'android:versionCode="17"').replace('0.15.1-native-preview', '0.16.0-cloud-preview' if cloud_url else '0.16.0-native-preview')
+    if release:
+        manifest_text = manifest_text.replace('android:debuggable="true"', 'android:debuggable="false"').replace('0.16.0-cloud-preview', '0.16.0').replace('·测试', '')
+    manifest.write_text(manifest_text, encoding='utf-8')
     run([bt / 'aapt2.exe', 'link', '-o', resources_apk, '-I', android_jar,
-         '--manifest', APP / 'AndroidManifest.xml', '--java', generated,
+         '--manifest', manifest, '--java', generated,
          '-A', assets, BUILD / 'resources.zip'])
     java = Path(shutil.which('javac')).parent
     sources = list((APP / 'java').rglob('*.java')) + list(generated.rglob('*.java'))
@@ -135,17 +157,25 @@ def build(abis, native_only=False):
     aligned = BUILD / 'aligned.apk'
     run([bt / 'zipalign.exe', '-f', '-P', '16', '4', unsigned, aligned])
     keystore = TOOLS / 'lens-local-debug.keystore'
-    if not keystore.exists():
+    if not release and not keystore.exists():
         run([java / 'keytool.exe', '-genkeypair', '-keystore', keystore, '-storepass', 'android', '-keypass', 'android',
              '-alias', 'androiddebugkey', '-keyalg', 'RSA', '-keysize', '2048', '-validity', '3650',
              '-dname', 'CN=Conversation Lens Local Debug,O=Local Test,C=CN'])
-    apk = OUT / 'conversation-lens-0.15.1-debug.apk'
+    apk = OUT / ('conversation-lens-0.16.0-' + ('cloud-' if cloud_url else '') + ('release' if release else 'debug') + '.apk')
     signer = [java / 'java.exe', '-jar', bt / 'lib/apksigner.jar']
-    run(signer + ['sign', '--ks', keystore, '--ks-pass', 'pass:android', '--key-pass', 'pass:android', '--out', apk, aligned])
+    if release:
+        keystore = Path(os.environ['LENS_RELEASE_KEYSTORE'])
+        if not keystore.is_file() or keystore.name == 'lens-local-debug.keystore':
+            raise RuntimeError('A separate production signing keystore is required')
+        if not os.environ.get('LENS_RELEASE_STORE_PASSWORD') or not os.environ.get('LENS_RELEASE_KEY_PASSWORD'):
+            raise RuntimeError('Signing passwords must be supplied through environment variables')
+        run(signer + ['sign', '--ks', keystore, '--ks-key-alias', os.environ['LENS_RELEASE_ALIAS'], '--ks-pass', 'env:LENS_RELEASE_STORE_PASSWORD', '--key-pass', 'env:LENS_RELEASE_KEY_PASSWORD', '--out', apk, aligned])
+    else:
+        run(signer + ['sign', '--ks', keystore, '--ks-pass', 'pass:android', '--key-pass', 'pass:android', '--out', apk, aligned])
     run(signer + ['verify', '--verbose', apk])
     run([bt / 'zipalign.exe', '-c', '-P', '16', '4', apk])
     receipt = {'apk':apk.name, 'sha256':hashlib.file_digest(apk.open('rb'), 'sha256').hexdigest(),
-        'abis':abis, 'minSdk':26, 'targetSdk':36, 'runtimeVerified':False,
+        'abis':abis, 'minSdk':26, 'targetSdk':36, 'runtimeVerified':False, 'releaseSigned':release, 'cloudEndpoint':cloud_url, 'productionReady':False,
         'tools':json.loads((TOOLS / 'receipts.json').read_text()) if (TOOLS / 'receipts.json').exists() else {'source':'CI Android SDK','sdk':str(SDK)},
         'dependencies':json.loads((ROOT / 'native/dependencies.lock.json').read_text())}
     (OUT / 'build-receipt.json').write_text(json.dumps(receipt, indent=2), encoding='utf-8')
@@ -155,5 +185,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--abis', nargs='+', default=['arm64-v8a', 'x86_64'], choices=['arm64-v8a', 'x86_64'])
     parser.add_argument('--native-only', action='store_true')
+    parser.add_argument('--cloud-url', default='')
+    parser.add_argument('--release', action='store_true')
     args = parser.parse_args()
-    build(args.abis, args.native_only)
+    build(args.abis, args.native_only, args.cloud_url, args.release)

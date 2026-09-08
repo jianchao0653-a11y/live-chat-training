@@ -6,7 +6,7 @@ const equal = (a,b) => { const x=Buffer.from(a || ''), y=Buffer.from(b || ''); r
 
 // Device authority is deliberately memory-only and scoped to one streamer.
 // Server restart, expiry or local revocation invalidates every related ticket.
-export function createNativeBridge({store, analyze, extract, revision, config, clock=Date.now}) {
+export function createNativeBridge({store, analyze, extract, revision, config, clock=Date.now, authorize}) {
   const devices=new Map(), tickets=new Map(), leases=new Map();
   let pairing=null;
   const sweep=()=>{
@@ -18,11 +18,18 @@ export function createNativeBridge({store, analyze, extract, revision, config, c
   const pairInfo=d=>store.person(d.person_id,d.streamer_id);
   function authenticate(req) {
     sweep(); const token=(req.headers.authorization || '').replace(/^Bearer /,'');
+    if(authorize) {
+      const identity=authorize(token);
+      let current=devices.get(identity.id);
+      if(!current){current={...identity,token};devices.set(identity.id,current);}
+      current.expires_at=identity.expires_at;
+      return current;
+    }
     const device=[...devices.values()].find(d=>equal(d.token,token));
     if(!device) fail(401,'设备连接已失效，请在电脑上重新配对。');
     return device;
   }
-  const assertDevice=d=>{ if(devices.get(d.id)!==d || d.expires_at<=clock()) fail(401,'设备授权已撤销或过期。'); };
+  const assertDevice=d=>{ if(authorize)authorize(d.token); if(devices.get(d.id)!==d || d.expires_at<=clock()) fail(401,'设备授权已撤销或过期。'); };
   function start(d,b) {
     assertDevice(d);
     const context=text(b.context,80), host=text(b.host,200);
@@ -100,7 +107,7 @@ export function createNativeBridge({store, analyze, extract, revision, config, c
       }
       if(path==='/api/native/analyze' && req.method==='POST') {
         if(b.approved!==true)fail(400,'请先核对聊天片段与人物。');
-        const p=store.person(text(b.person_id,30),d.streamer_id);
+        const p=store.person(text(b.person_id,80),d.streamer_id);
         if(!p?.relationship || b.pair_id!==p.relationship.id)fail(404,'人物不属于设备授权的这段关系。');
         const session=start(d,b);
         const result=await analyze({...b,streamer_id:d.streamer_id},session.assert);session.assert();

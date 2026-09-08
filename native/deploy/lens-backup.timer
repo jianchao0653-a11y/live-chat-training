@@ -1,0 +1,7 @@
+[Unit]
+Description=Daily Conversation Lens encrypted backup
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+[Install]
+WantedBy=timers.target

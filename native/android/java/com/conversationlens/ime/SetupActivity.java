@@ -42,20 +42,22 @@ public final class SetupActivity extends Activity {
         title.setText("观微输入法");LensStyle.text(title,28,true);
         body.addView(title);
         TextView info = new TextView(this);
-        info.setText("离线中文输入 · 可连接电脑分析服务\n批准片段后才提交，消息由你发送。\n");
+        boolean cloud=CloudSettings.enabled(this);
+        info.setText(cloud?"离线中文输入 · 联网获取聊天建议\n主动提供片段，编辑后由你决定发送。\n":"离线中文输入 · 可连接电脑分析服务\n批准片段后才提交，消息由你发送。\n");
         LensStyle.text(info,15,false);body.addView(info,LensStyle.space(this));
+        if(cloud)button(body,"登录与人物资料",()->startActivity(new Intent(this,LibraryActivity.class)));
         button(body, "1 · 在系统设置中启用", () -> startActivity(new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)));
         button(body, "2 · 选择观微输入法", () -> ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).showInputMethodPicker());
-        button(body, "连接分析服务", () -> startActivity(new Intent(this, AssistantActivity.class)));
+        if(!cloud)button(body, "连接分析服务", () -> startActivity(new Intent(this, AssistantActivity.class)));
         EditText practice = new EditText(this);
         practice.setHint("在这里试打 nihao、zhongguo、xiexie");
         practice.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
         practice.setMinLines(3); practice.setId(1001); practice.setSaveEnabled(false);
         LensStyle.field(practice);body.addView(practice,2,LensStyle.space(this));
-        EditText password = new EditText(this);
+        if(!cloud){EditText password = new EditText(this);
         password.setHint("合成密码测试框（英文模式）");
         password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        password.setId(1002); password.setSaveEnabled(false); LensStyle.field(password);body.addView(password,3,LensStyle.space(this));
+        password.setId(1002); password.setSaveEnabled(false); LensStyle.field(password);body.addView(password,3,LensStyle.space(this));}
         button(body, "切回熟悉的输入法", () -> ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).showInputMethodPicker());
         button(body, "开源组件与许可证", () -> showLicense("THIRD_PARTY_NOTICES.txt"));
         button(body, "Android C++ 运行库许可证", () -> showLicense("NDK-NOTICES.txt"));

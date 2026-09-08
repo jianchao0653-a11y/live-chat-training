@@ -28,6 +28,8 @@ public final class AssistantActivity extends Activity {
     private JSONArray roster=new JSONArray();
     private int work;
     private boolean setting;
+    private boolean cloud;
+    private String pendingRequest;
     private JSONObject feedbackResult;
     private LinearLayout imagePanel;
     private TransientForm restored;
@@ -35,27 +37,28 @@ public final class AssistantActivity extends Activity {
         String text, personId; int goal, mode;
     }
     @Override public void onCreate(Bundle state){
-        super.onCreate(state);LensStyle.window(this);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        super.onCreate(state);LensStyle.window(this);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);cloud=CloudSettings.enabled(this);
         session=AssistSession.current;
         restored=(TransientForm)getLastNonConfigurationInstance();
         ScrollView scroll=new ScrollView(this);body=new LinearLayout(this);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(LensStyle.dp(this,20),LensStyle.dp(this,20),LensStyle.dp(this,20),LensStyle.dp(this,24));body.setBackgroundColor(LensStyle.BG);scroll.setFillViewport(true);scroll.addView(body);
         scroll.setOnApplyWindowInsetsListener((v,i)->{int top=i.getSystemWindowInsetTop(),bottom=i.getSystemWindowInsetBottom();if(android.os.Build.VERSION.SDK_INT>=30){top=i.getInsets(android.view.WindowInsets.Type.systemBars()).top;bottom=i.getInsets(android.view.WindowInsets.Type.systemBars()|android.view.WindowInsets.Type.ime()).bottom;}v.setPadding(0,top,0,bottom);return i;});
         label("观微 · 聊天建议",24);label("仅分析你核对并批准的片段。返回聊天后再次确认人物，候选只插入输入框，发送由你完成。",15);
         status=label("请连接服务，再准备聊天片段",14);status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
-        LensStyle.section(body,"设备连接");
+        LensStyle.section(body,cloud?"账号与人物":"设备连接");
         endpoint=edit("服务地址",2101,false);endpoint.setText("http://127.0.0.1:4317");endpoint.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_URI);
         code=edit("电脑设置页的六位配对码",2102,false);code.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_VARIATION_PASSWORD);
-        button("配对连接",()->pair());button("断开并清除本机连接",()->disconnect());
+        if(cloud){endpoint.setVisibility(View.GONE);code.setVisibility(View.GONE);button("登录与人物资料",()->{changed();startActivity(new Intent(this,LibraryActivity.class));});}
+        else {button("配对连接",()->pair());button("断开并清除本机连接",()->disconnect());}
         try{client=NativeClient.load(this);if(client!=null){endpoint.setText(client.endpoint);loadRoster();}}catch(Exception e){status.setText("连接凭据不可用，请重新配对");}
         feedbackControls();
         if(session==null || !session.alive()){label("连接后，请回到聊天输入框，点击键盘上的“建议”。",16);setContentView(scroll);return;}
         label("原输入应用："+session.host,13);
         LensStyle.section(body,"01  核对人物与目标");
-        label("人物",13);people=spinner(new String[]{"正在加载人物"});label("本次目标",13);goal=spinner(new String[]{"自然接话","关心近况","修复误会","表达边界"});label("分析方式",13);mode=spinner(new String[]{"本机服务规则试算","GPT 分析（需电脑配置）"});
+        label("人物",13);people=spinner(new String[]{"正在加载人物"});label("本次目标",13);goal=spinner(new String[]{"自然接话","关心近况","修复误会","表达边界"});label("分析方式",13);mode=spinner(cloud?new String[]{"联网聊天建议"}:new String[]{"本机服务规则试算","GPT 分析（需电脑配置）"});
         LensStyle.section(body,"02  准备聊天片段");
         transcript=edit("粘贴或输入你批准的聊天片段，标明说话人",2103,true);
-        button("截取一次屏幕（系统授权）",()->requestCapture());
-        button("选择一张聊天截图",()->{changed();startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),42);});
+        if(!cloud){button("截取一次屏幕（系统授权）",()->requestCapture());
+        button("选择一张聊天截图",()->{changed();startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),42);});}
         imagePanel=new LinearLayout(this);imagePanel.setOrientation(LinearLayout.VERTICAL);body.addView(imagePanel);
         approved=new CheckBox(this);approved.setText("已核对人物和片段，同意提交给连接的服务");approved.setTextColor(LensStyle.INK);approved.setTextSize(15);approved.setMinHeight(LensStyle.dp(this,48));approved.setButtonTintList(android.content.res.ColorStateList.valueOf(LensStyle.GREEN));body.addView(approved,LensStyle.space(this));
         button("分析已批准片段",()->analyze());
@@ -73,9 +76,9 @@ public final class AssistantActivity extends Activity {
     @Override public Object onRetainNonConfigurationInstance(){
         if(transcript==null||session==null||client==null)return null;TransientForm form=new TransientForm();form.text=transcript.getText().toString();form.goal=goal.getSelectedItemPosition();form.mode=mode.getSelectedItemPosition();int index=people.getSelectedItemPosition();form.personId=index>=0&&index<roster.length()?roster.optJSONObject(index).optString("id"):"";return form;
     }
-    @Override protected void onResume(){super.onResume();AssistSession.helperShowing=true;showImage();}
+    @Override protected void onResume(){super.onResume();AssistSession.helperShowing=true;showImage();if(cloud){try{NativeClient loaded=NativeClient.load(this);if(loaded!=null){if(client==null||!loaded.token.equals(client.token))changed();client=loaded;loadRoster();}else{client=null;changed();status.setText("请先登录并建立人物资料。");}}catch(Exception e){status.setText("请重新登录。");}}}
     @Override protected void onPause(){AssistSession.helperShowing=false;super.onPause();}
-    private void changed(){if(setting)return;work++;feedbackResult=null;if(session!=null)session.invalidate();if(results!=null)results.removeAllViews();if(approved!=null){setting=true;approved.setChecked(false);setting=false;}}
+    private void changed(){if(setting)return;work++;pendingRequest=null;feedbackResult=null;if(session!=null)session.invalidate();if(results!=null)results.removeAllViews();if(approved!=null){setting=true;approved.setChecked(false);setting=false;}}
     private void pair(){
         changed();final int token=++work;final String url=endpoint.getText().toString(),pin=code.getText().toString();status.setText("正在配对…");
         NativeClient.IO.execute(()->{try{NativeClient pending=new NativeClient(url,"");JSONObject response=pending.call("pair",new JSONObject().put("code",pin).put("name",android.os.Build.MODEL));NativeClient connected=new NativeClient(pending.endpoint,response.getString("token"));runOnUiThread(()->{if(isDestroyed()||token!=work)return;try{NativeClient.save(this,connected);client=connected;code.setText("");loadRoster();}catch(Exception e){error(e);}});}catch(Exception e){report(token,e);}});
@@ -94,21 +97,23 @@ public final class AssistantActivity extends Activity {
     }
     private void loadRoster(){
         final NativeClient c=client;final int token=work;
-        NativeClient.IO.execute(()->{try{JSONObject response=c.call("roster",null);runOnUiThread(()->{if(isDestroyed()||c!=client)return;roster=response.optJSONArray("people");status.setText("已连接 · 主播 "+response.optJSONObject("device").optString("streamer_id")+" · 授权最长 8 小时");if(people!=null){String[] names=new String[roster.length()];int selected=0;for(int i=0;i<names.length;i++){names[i]=roster.optJSONObject(i).optString("name")+" · "+roster.optJSONObject(i).optString("platform");if(restored!=null&&roster.optJSONObject(i).optString("id").equals(restored.personId))selected=i;}people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));people.setSelection(selected);}if(session!=null)session.client=c;});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&c==client)error(e);});}});
+        NativeClient.IO.execute(()->{try{JSONObject response=c.call("roster",null);runOnUiThread(()->{if(isDestroyed()||c!=client)return;roster=response.optJSONArray("people");status.setText(cloud?"已登录 · "+roster.length()+" 位人物 · 今日已用 "+response.optJSONObject("budget").optInt("used_today")+" 次":"已连接 · 主播 "+response.optJSONObject("device").optString("streamer_id")+" · 授权最长 8 小时");if(people!=null){String[] names=new String[roster.length()];int selected=0;for(int i=0;i<names.length;i++){names[i]=roster.optJSONObject(i).optString("name")+" · "+roster.optJSONObject(i).optString("platform");if(restored!=null&&roster.optJSONObject(i).optString("id").equals(restored.personId))selected=i;}people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));people.setSelection(selected);}if(session!=null)session.client=c;});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&c==client)error(e);});}});
     }
     private void analyze(){
         if(session==null||!session.alive()){status.setText("输入现场已失效，请返回聊天重新点击建议");return;}
-        if(client==null||roster.length()==0||people.getSelectedItemPosition()<0){status.setText("请先配对，并在电脑建立人物关系");return;}
+        if(client==null||roster.length()==0||people.getSelectedItemPosition()<0){status.setText(cloud?"请先登录，并在人物资料中新建人物":"请先配对，并在电脑建立人物关系");return;}
         if(!approved.isChecked()){status.setText("请先核对并批准片段");return;}
-        changed();final int token=++work;final AssistSession s=session;final int revision=s.revision;final NativeClient c=client;s.client=c;
+        final String requestId=pendingRequest==null?java.util.UUID.randomUUID().toString():pendingRequest;
+        changed();pendingRequest=requestId;final int token=++work;final AssistSession s=session;final int revision=s.revision;final NativeClient c=client;s.client=c;
         try{
-            JSONObject person=roster.getJSONObject(people.getSelectedItemPosition());JSONObject payload=new JSONObject().put("person_id",person.getString("id")).put("pair_id",person.getString("pair_id")).put("context",s.context).put("host",s.host).put("approved",true).put("text",transcript.getText().toString()).put("goal",goal.getSelectedItem().toString()).put("mode",mode.getSelectedItemPosition()==0?"local":"model");
+            JSONObject person=roster.getJSONObject(people.getSelectedItemPosition());JSONObject payload=new JSONObject().put("person_id",person.getString("id")).put("pair_id",person.getString("pair_id")).put("context",s.context).put("host",s.host).put("approved",true).put("text",transcript.getText().toString()).put("goal",goal.getSelectedItem().toString()).put("mode",cloud||mode.getSelectedItemPosition()!=0?"model":"local");
+            if(cloud)payload.put("request_id",requestId);
             status.setText("正在分析…");hideKeyboard();
             NativeClient.IO.execute(()->{try{JSONObject response=c.call("analyze",payload);runOnUiThread(()->{if(isDestroyed()||token!=work||!s.alive()||s.revision!=revision)return;s.result=response;s.deadline=SystemClock.elapsedRealtime()+120000;showResult(response);});}catch(Exception e){report(token,e);}});
         }catch(Exception e){error(e);}
     }
     private void showResult(JSONObject response){
-        status.setText(response.optString("mode").equals("model")?"GPT 分析完成 · 请审阅候选":"规则试算完成 · 未调用 GPT");results.removeAllViews();feedbackResult=response;
+        status.setText(response.optString("mode").equals("model")?(cloud?"聊天建议已生成 · 请审阅候选":"GPT 分析完成 · 请审阅候选"):"规则试算完成 · 未调用 GPT");results.removeAllViews();feedbackResult=response;
         TextView summary=new TextView(this);summary.setText(response.optString("summary"));LensStyle.text(summary,15,false);results.addView(summary,LensStyle.space(this));
         JSONArray candidates=response.optJSONArray("candidates");
         if(candidates==null||candidates.length()==0){summary.append("\n本次没有可插入候选。");return;}
