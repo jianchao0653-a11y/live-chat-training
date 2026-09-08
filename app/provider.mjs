@@ -32,7 +32,7 @@ export async function bailianCall(config,instructions,input,schema,name,fetcher)
   if(!response.ok)throw new Error(`百炼模型请求失败（HTTP ${response.status}）。请检查服务端配置或额度。`);
   const body=await boundedModelJSON(response);
   config.onResponse?.(body);
-  config.onUsage?.({input_tokens:body.usage?.prompt_tokens,output_tokens:body.usage?.completion_tokens,total_tokens:body.usage?.total_tokens,model:body.model});
+  config.onUsage?.({input_tokens:body.usage?.prompt_tokens,output_tokens:body.usage?.completion_tokens,total_tokens:body.usage?.total_tokens,input_tokens_details:body.usage?.prompt_tokens_details,model:body.model});
   const item=body.choices?.[0];
   if(item?.finish_reason!=='stop'||typeof item?.message?.content!=='string')throw new Error('百炼模型未完成输出，本次不提供建议。');
   return JSON.parse(item.message.content);

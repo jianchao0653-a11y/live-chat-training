@@ -9,7 +9,7 @@ import android.widget.*;
 import org.json.*;
 
 public final class LibraryActivity extends Activity {
-    private LinearLayout body;private TextView status;private NativeClient client;private int generation;
+    private LinearLayout body;private TextView status;private NativeClient client;private int generation;private boolean loggingIn;
     private interface Done{void run(JSONObject value)throws Exception;}
     @Override public void onCreate(Bundle state){super.onCreate(state);LensStyle.window(this);getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);try{client=NativeClient.load(this);}catch(Exception ignored){}if(client==null)login();else home();}
     @Override protected void onDestroy(){generation++;super.onDestroy();}
@@ -27,7 +27,14 @@ public final class LibraryActivity extends Activity {
         label("分析与反馈通常保留最多30天；人物与确认记忆保留至删除。备份最多保留7天。可在人物资料中修改和删除；卸载应用不会删除云端资料。",14);
         EditText code=field("一次性邀请码","",3101,false);code.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         CheckBox consent=new CheckBox(this);consent.setText("我已了解并同意上述数据处理方式");body.addView(consent,LensStyle.space(this));
-        button("登录并开始",()->{if(!consent.isChecked()){status.setText("请先阅读并同意数据处理说明。");return;}try{client=new NativeClient(CloudSettings.endpoint(this),"");call("auth/activate",new JSONObject().put("code",value(code)).put("name",android.os.Build.MODEL).put("approved",true),r->{client=new NativeClient(CloudSettings.endpoint(this),r.getString("token"));NativeClient.save(this,client);code.setText("");home();});}catch(Exception e){status.setText("服务配置不可用，请联系安装包提供者。");}});
+        button("登录并开始",()->{if(loggingIn)return;if(!consent.isChecked()){status.setText("请先阅读并同意数据处理说明。");return;}try{
+            final NativeClient pending=new NativeClient(CloudSettings.endpoint(this),"");final JSONObject input=new JSONObject().put("code",value(code)).put("name",android.os.Build.MODEL).put("approved",true);
+            loggingIn=true;status.setText("正在登录…");NativeClient.IO.execute(()->{try{JSONObject r=pending.call("auth/activate",input);NativeClient connected=new NativeClient(pending.endpoint,r.getString("token"));
+                // Persist a successful activation even if rotation destroyed this Activity.
+                NativeClient.save(getApplicationContext(),connected);
+                runOnUiThread(()->{loggingIn=false;if(isDestroyed())return;client=connected;code.setText("");home();});
+            }catch(Exception e){runOnUiThread(()->{loggingIn=false;if(!isDestroyed())status.setText(e.getMessage());});}});
+        }catch(Exception e){status.setText("服务配置不可用，请联系安装包提供者。");}});
     }
     private void home(){page("人物与聊天记忆");button("新建人物",()->editPerson(null));button("返回",()->finish());
         button("退出登录",()->confirm("退出将撤销当前设备登录并清除本机草稿。再次登录需要新的邀请码。",()->call("auth/logout",new JSONObject(),r->{NativeClient.forget(this);AssistSession.clear();AssistSession.feedbackId=null;AssistSession.feedbackName=null;AssistSession.feedbackClient=null;client=null;login();})));

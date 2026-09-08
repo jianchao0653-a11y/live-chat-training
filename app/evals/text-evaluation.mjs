@@ -21,15 +21,13 @@ export async function evaluateText({manifestPath,mode='local',limit,apiKey='',mo
     costNote:'Usage is measured when provided; billing and human quality review remain separate.',cases:[]};
   const tracked=async(url,options)=>{
     if(report.requests>=report.maxRequests)throw new Error('Evaluation request budget exhausted');
-    report.requests++;const response=await fetcher(url,options);
-    try {
-      const body=await response.clone().json(),u=provider==='bailian'?{input_tokens:body.usage?.prompt_tokens,output_tokens:body.usage?.completion_tokens,input_tokens_details:body.usage?.prompt_tokens_details}:body.usage;
+    report.requests++;return fetcher(url,options);
+  };
+  const onUsage=u=>{
       if(u&&[u.input_tokens,u.output_tokens].every(v=>Number.isSafeInteger(v)&&v>=0)){
         report.usage.reportedCalls++;report.usage.input_tokens+=u.input_tokens;report.usage.output_tokens+=u.output_tokens;
         const cached=u.input_tokens_details?.cached_tokens;if(Number.isSafeInteger(cached)&&cached>=0)report.usage.cached_tokens+=cached;
       }
-    }catch{}
-    return response;
   };
   const blocked=mode==='live'&&!apiKey;
   for(const c of selected) {
@@ -38,7 +36,7 @@ export async function evaluateText({manifestPath,mode='local',limit,apiKey='',mo
     const start=performance.now();
     try {
       const person={name:'样本人物',stage:'未提供',claims:[],outcomes:[],boundary:c.boundary};
-      const result=mode==='live'?await modelAnalysis(c.text,person,c.goal,{key:apiKey,model,provider,baseUrl},tracked):localAnalysis(c.text,person,c.goal);
+      const result=mode==='live'?await modelAnalysis(c.text,person,c.goal,{key:apiKey,model,provider,baseUrl,onUsage},tracked):localAnalysis(c.text,person,c.goal);
       row.checks={evidenceGrounded:result.evidence.every(e=>c.text.includes(e.quote)),rolesCovered:roles.every(role=>result.reviews.filter(r=>r.role===role).length===1),
         stoppedWithoutCandidates:result.route!=='SAFE_STOP'||result.candidates.length===0,
         independentJudge:mode!=='live'||result.judge.source==='独立模型调用'||(classify(c.text,c.goal)==='stop'&&result.judge.source==='独立规则检查'),

@@ -8,7 +8,7 @@
 - 人物/记忆/反馈修正与删除使旧分析失效；30天保留清理、AES-GCM备份、新目录恢复、最新删除/费用账本保留及恢复撤销会话。
 - Android原生登录、人物/记忆/反馈页，现有UI与确认插入流程；云端构建隐藏电脑配对与OCR入口。
 - 本地API36模拟器：登录、新建人物/记忆、合成模型分析、编辑、确认单次插入、进程重启后登录、修改记忆、删除人物通过。`output/native/cloud-ui-receipt.json`。
-- 云端调试双架构APK：`output/native/conversation-lens-0.16.0-cloud-debug.apk`，SHA256 `53bca30b7c5f22af3914ea28421f05ad95d6b762ceb049166020162cad910723`。内置loopback，仅工程测试，不是可直接联网的正式包。
+- 云端调试双架构APK：`output/native/conversation-lens-0.16.0-cloud-debug.apk`，最终SHA256 `ae911eae992beb8d96baec6c5149b9dd30acf0d612dedc89cb9845ad9484b730`，约7.7MB。内置loopback，仅工程测试，不是可直接联网的正式包。
 - 百炼真实合成验收：`output/evals/bailian-smoke-506a7e4f-d314-46da-ae30-7131deaf961b/report.json`，两调用，15011ms；输入1522/输出645 token。独立终审PASS，本案例结果为停止、不提供候选；不冒充自然聊天建议质量通过。
 - 前三次真实探测依次因职责拆分或缺证据引用被拒绝；均留合成回执，没有自动付费重试。累计真实用量需含失败调用。
 - 使用用户授权密钥文件但未读取私人聊天、原SQLite或备份；没有对个人手机执行命令。
@@ -17,6 +17,11 @@
 
 - 本地全套Node测试54/54通过（新增9项云端/恢复测试），20合成评测机械通过且0模型调用；键盘策略22断言与像素边界测试通过。
 - 普通接话真实合成案例也通过：`output/evals/bailian-smoke-0976f0c5-5848-4f69-918e-4b58f69d0450/report.json`，两调用20756ms，输入1780/输出907 token，FAST路线、3个候选；仍未经过两位人类评审。
+- 上述普通案例逐条检查发现一条未被模型终审拦截的虚构“我最近也…”经历，故不能作为质量通过证据。已补强生成/终审的第一人称事实约束；复验 `bailian-smoke-dabfc46d-03d9-4c98-a2ed-09767edc6272` 两调用20363ms、输入1914/输出881 token、FAST/3候选，没有再出现原虚构经历。此修正不能替代黄金集与双人评审。
+- 旧电脑凭据与云端凭据分型，内置地址不一致时重新登录；成功激活在Activity旋转后仍保存到Keystore保护的私有文件，重新打开可继续。最终APK的cloud_qa再次全部通过。
+- 原模式本地键盘18项、跨App中文、配对/分析编辑/确认插入与6项稳定性全部通过。首次回归被上一合成服务的旧HTTP连接干扰，停止仅本轮旧fixture后通过；没有改变产品规则规避失败。
+- 部署ZIP已生成并逐文件哈希校验：`output/cloud/conversation-lens-0.16.0-server.zip`，22个明确允许的源码/部署文件，不含密钥或私人数据。最终哈希以 `output/cloud/package-receipt.json` 为准。
+- 第一批源码 `f9c28e162af00007e8aced3ffe36fa3eaf07a323` 已推私有Draft PR#3，run34186694879的service已success；后续产品修正有新源码与CI，须以最终记录为准。
 
 最终测试数、私有仓库提交、CI新作业结果、部署包与清理回执将在完成时补记。
 

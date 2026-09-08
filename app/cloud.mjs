@@ -29,7 +29,9 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
   if(!directory)throw new Error('云端必须明确指定独立数据目录。');
   const root=resolve(directory);if(existsSync(join(root,'.restore-incomplete')))throw new Error('恢复未完成，不得启动此数据目录。');
   const unlock=lockDirectory(root);mkdirSync(join(root,'accounts'),{recursive:true,mode:0o700});
-  const auth=openCloudAuth(join(root,'identity.sqlite'),clock),budget=createBudget(auth,budgetConfig);
+  let auth,budget;
+  try{auth=openCloudAuth(join(root,'identity.sqlite'),clock);budget=createBudget(auth,budgetConfig);}
+  catch(e){auth?.close();unlock();throw e;}
   const contexts=new Map(),work=new AsyncLocalStorage();let active=0;
   // A crashed/aborted paid operation is never silently retried after restart.
   auth.run("UPDATE tasks SET state='UNCERTAIN' WHERE state='RUNNING'");

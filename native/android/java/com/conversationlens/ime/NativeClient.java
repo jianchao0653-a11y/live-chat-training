@@ -57,7 +57,7 @@ final class NativeClient {
     }
     static synchronized void save(Context context, NativeClient client) throws Exception {
         Cipher cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.ENCRYPT_MODE,key());
-        JSONObject value=new JSONObject().put("endpoint",client.endpoint).put("token",client.token);
+        JSONObject value=new JSONObject().put("endpoint",client.endpoint).put("token",client.token).put("cloud",CloudSettings.enabled(context));
         JSONObject encrypted=new JSONObject().put("iv",Base64.encodeToString(cipher.getIV(),Base64.NO_WRAP)).put("data",Base64.encodeToString(cipher.doFinal(value.toString().getBytes(StandardCharsets.UTF_8)),Base64.NO_WRAP));
         android.util.AtomicFile file=new android.util.AtomicFile(new File(context.getNoBackupFilesDir(),"device.enc"));
         FileOutputStream out=file.startWrite();
@@ -68,6 +68,7 @@ final class NativeClient {
         byte[] bytes=new android.util.AtomicFile(file).readFully();JSONObject encrypted=new JSONObject(new String(bytes,StandardCharsets.UTF_8));
         Cipher cipher=Cipher.getInstance("AES/GCM/NoPadding");cipher.init(Cipher.DECRYPT_MODE,key(),new GCMParameterSpec(128,Base64.decode(encrypted.getString("iv"),Base64.NO_WRAP)));
         JSONObject value=new JSONObject(new String(cipher.doFinal(Base64.decode(encrypted.getString("data"),Base64.NO_WRAP)),StandardCharsets.UTF_8));
+        if(CloudSettings.enabled(context)&&(!value.optBoolean("cloud")||!CloudSettings.endpoint(context).equals(value.optString("endpoint")))){forget(context);return null;}
         return new NativeClient(value.getString("endpoint"),value.getString("token"));
     }
     static synchronized void forget(Context context){new android.util.AtomicFile(new File(context.getNoBackupFilesDir(),"device.enc")).delete();}
