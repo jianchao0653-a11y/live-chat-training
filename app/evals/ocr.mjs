@@ -1,9 +1,10 @@
 // Runs the production OCR HTTP route on a separate memory-only application.
-import {readFile,mkdir,writeFile} from 'node:fs/promises';
+import {mkdir,writeFile} from 'node:fs/promises';
 import {resolve,dirname,extname,relative,isAbsolute} from 'node:path';
 import {once} from 'node:events';
 import {createApplication} from '../server.mjs';
 import {ocrMetrics} from './ocr-metrics.mjs';
+import {readBoundedFile,readContainedFile} from './dataset.mjs';
 const args=process.argv.slice(2),index=args.indexOf('--manifest');
 const folder=new URL('../../output/evals/',import.meta.url);await mkdir(folder,{recursive:true});
 const report={createdAt:new Date().toISOString(),status:'BLOCKED',model:process.env.OPENAI_MODEL||'gpt-6-astra',qualityAccepted:false,humanReviewed:false,requests:0,usage:{input_tokens:0,output_tokens:0,cached_tokens:0},costUSD:null,cases:[]};
@@ -12,7 +13,7 @@ if(!process.env.OPENAI_API_KEY) {
 } else {
   if(index<0||!args[index+1])throw new Error('Provide --manifest with explicitly approved image samples');
   const manifestPath=resolve(args[index+1]);
-  const manifest=JSON.parse(await readFile(manifestPath,'utf8'));
+  const manifest=JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(await readBoundedFile(manifestPath,128000)));
   if(manifest.approvedForCloud!==true||!['synthetic','deidentified'].includes(manifest.dataClass)||!Array.isArray(manifest.cases)||manifest.cases.length<1||manifest.cases.length>50)throw new Error('Manifest requires explicit cloud approval, data class, and 1–50 cases');
   report.dataClass=manifest.dataClass;
   // Validate every input before issuing a paid request.
@@ -22,7 +23,8 @@ if(!process.env.OPENAI_API_KEY) {
     const path=resolve(dirname(manifestPath),c.image),rel=relative(dirname(manifestPath),path);
     if(isAbsolute(rel)||rel==='..'||rel.startsWith('..'+(process.platform==='win32'?'\\':'/')))throw new Error('Image must stay within the manifest directory');
     const mime={'.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp'}[extname(path).toLowerCase()];
-    const bytes=await readFile(path);if(!mime||bytes.length>4_400_000)throw new Error('Unsupported or oversized image');
+    if(!mime)throw new Error('Unsupported image');
+    const bytes=await readContainedFile(dirname(manifestPath),c.image,4_400_000);
     samples.push({...c,image:'data:'+mime+';base64,'+bytes.toString('base64')});
   }
   const tracked=async(url,options)=>{
