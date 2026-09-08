@@ -9,3 +9,7 @@
 用户已说明使用小米手机，但尚无型号/系统版本或真机运行结果。已提供 [小米首次测试指南](../native/XIAOMI_TEST_GUIDE.md)，使用既有 0.15.1 APK，先离线中文、再 USB→4318 原生入口和合成规则建议；没有代替用户操作手机。模型密钥尚未配置，GPT/OCR 真验仍待资源。
 
 账号/治理核对：当前 store 没有账号、会话、角色或租户登录表；Pair 是业务检索范围，人物级删除仍跨全部主播级联，自动保留/备份删除未实现。架构中的权限分区仍是设计意图。下一实现包应覆盖认证身份→授权 Pair/Person 范围→逐接口负向测试，再定义保留/备份清理和恢复演练；不能把本轮评测工具完成写成多人试点已可启动。
+
+源码 `8f7263292fc1d3e3412b1d935fef03f268709451` 已推私有 Draft PR #3；[run34183221873](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34183221873) 的 service 作业已 success，覆盖45项Node测试与20合成机械场景。记录时移动作业仍由原工作流运行，不能宣称本轮四作业完成；移动产品源码没有变更，既有 v0.15.1 APK 与 run34175618854 的已验收基线仍有效。
+
+另已将仓库合成示例复制到新建 output/evals 子目录，实际 CLI validate 返回 VALIDATED_NOT_EVALUATED、requests=0、qualityAccepted=false；示例的云端批准保持 false。未替换内置 cases，也未读取私人样本。
