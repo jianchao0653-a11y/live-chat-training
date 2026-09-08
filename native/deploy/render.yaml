@@ -1,0 +1,26 @@
+# Review paid charges before importing this Blueprint from the private repository.
+# https://render.com/docs/blueprint-spec (checked 2026-09-08).
+services:
+  - type: web
+    name: conversation-lens-pilot
+    runtime: node
+    region: singapore
+    plan: 0.5c-512mb
+    branch: codex/mobile-acceptance-v014
+    numInstances: 1
+    buildCommand: node --version
+    startCommand: node --disable-warning=ExperimentalWarning app/hosted.mjs
+    healthCheckPath: /api/native/health
+    maxShutdownDelaySeconds: 120
+    autoDeployTrigger: 'off'
+    disk:
+      name: lens-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: 24.15.0
+      - key: LENS_CLOUD_DATA
+        value: /var/data/conversation-lens/data
+# Initially model calls are disabled. Add DASHSCOPE_API_KEY privately after creation.
+# Set LENS_CLOUD_CONFIG_JSON only after verifying rates and approved budgets.

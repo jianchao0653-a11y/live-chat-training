@@ -3,6 +3,8 @@
 尚未部署到真实服务器。生产域名、TLS证书和预算仍需实际配置；本地生产签名身份已准备，尚未签出正式APK，示例配置默认禁止付费调用。
 用户手机只安装 APK、邀请码登录并启用输入法。下面步骤由项目维护者执行。
 
+前期采用托管服务与平台HTTPS域名的准备方案见 [HOSTED_PILOT.md](HOSTED_PILOT.md)，Blueprint为 `render.yaml`。该方案尚待账号和预算后创建；以下systemd步骤用于自管Linux，不要在托管平台直接照搬。
+
 ## 服务
 
 使用 Linux + Node.js 24，单个服务进程；云端账户各有独立 SQLite 文件，身份/删除/费用账本独立存放。不接触原电脑 `runtime/lens.sqlite`，不自动迁移私人数据。

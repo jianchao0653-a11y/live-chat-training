@@ -32,4 +32,6 @@ OCR/截图入口、iOS新功能、离线库同步、语音/贴纸、九键、换
 
 ## 验证
 
+2026-09-08托管补充：用户要求前期服务器/域名先托管。准备Render常驻Node24单实例、1 GB持久磁盘及平台HTTPS域名，复用现有云端库，不迁移到Workers/D1。新增独立hosted入口适配PORT与优雅停止，原自管loopback入口不变。实际账号、费用额度、平台创建、手机网络与备份运维现场待验；不把Blueprint准备视为上线。详见 `native/deploy/HOSTED_PILOT.md`。
+
 参见 `07_reviews/CLOUD_V016_ACCEPTANCE.md`、`native/CLOUD_ACCEPTANCE_PACKET.md` 与 `native/deploy/README.md`。
