@@ -46,3 +46,11 @@
 优先顺序：安全收口 → 准备真机签名与黄金样本 → 双端六组合和真实模型验收 → 首轮试点 → 修复扩人 → 发布评审。认证/保留/备份治理必须在对应多人真实数据使用前到位，不能等公开发布才处理。
 
 `native/release-readiness.json` 的 16 个发布验收包仍未全部关闭；数量不是完成百分比。按 V 模型，已有单元/集成/受控系统证据，缺使用环境与真人验证，故仍为 **NOT_READY**。UI 继续遵守 MADR-036，不把未验收工作改成反复换配色。
+
+## 本轮仓库与 CI 回执
+
+修复源码提交：`826617485377105ba7d0bafab2d5b3c1964a5299`，私有 [Draft PR #3](https://github.com/jianchao0653-a11y/live-chat-training/pull/3)，未合并。仅上传 9 个选定源码、测试与工程文档文件。
+
+[GitHub run 34174136792](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34174136792)：本次记录时 **service 作业 success**（Node 全套测试＋20 合成机械场景）；Android API34/36 与 iOS 尚在运行，本轮不宣称四作业全绿。之前已验收的移动源码未改动，最终移动回执需待该 run 完成后另行记录。
+
+发布检查脚本再次返回预期退出码 1 / `NOT_READY`，16 个未完全关闭验收包，`automaticReleaseApproved:false`。这属于正确的发布阻断，不是新增测试失败。
