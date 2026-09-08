@@ -9,6 +9,7 @@ On 2026-09-08, an archive downloaded from the link provided on https://ngrok.com
 - Download URL: https://bin.ngrok.com/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
 - ZIP size: 12257844 bytes
 - ZIP SHA256: 699bbf1932ec43a573b764bd03e6568efa2c4e45955eb3cc2089c19bb4be4464
+- Subsequent read-only verification: this ZIP hash matches the official archive entry for version 3.39.11 Windows amd64 at https://dl.equinox.io/ngrok/ngrok-v3/stable/archive (checked 2026-09-08). This does not establish that the detection is a false positive.
 - Detected extracted filename: ngrok.exe
 - Detection: Trojan:Win32/Kepavll!rfn
 - Defender engine: 1.1.26080.3

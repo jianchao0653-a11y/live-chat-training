@@ -19,6 +19,7 @@ paths += [root/'03_decisions/MADR-039.md',root/'07_reviews/GOLD_TEXT_ACCEPTANCE.
 paths += [root/'03_decisions/MADR-040.md',root/'07_reviews/CLOUD_V016_ACCEPTANCE.md']
 paths += [root/'03_decisions/MADR-041.md',root/'02_product/ANDROID_FIRST_RELEASE_FLOW.md']
 paths += [root/'07_reviews/PC_HTTPS_ACCEPTANCE.md']
+paths += [root/'AGENTS.md',root/'03_decisions/MADR-042.md',root/'07_reviews/NGROK_SECURITY_REPORT.md']
 paths += [root/'01_inputs/REFERENCE_REUSE_V014.md',root/'07_reviews/V0_14_ACCEPTANCE.md']
 entries=[]
 for p in sorted(set(paths)):
