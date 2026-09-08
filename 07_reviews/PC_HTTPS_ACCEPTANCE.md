@@ -35,6 +35,14 @@
 
 ## 续作验证
 
+### 安全情报更新后的实测（2026-09-08）
+
+- 按微软官方 `Update-MpSignature` 文档执行系统默认更新来源，安全情报从1.459.103.0更新至1.459.107.0；引擎1.1.26080.3，防病毒与实时保护均开启。
+- 按官方 `Start-MpScan -ScanType CustomScan -ScanPath` 对已核验哈希的现有ZIP定向扫描；未重新下载、解压或执行。事件1000/1001确认扫描完成；1116/1117确认ZIP内ngrok.exe仍命中Trojan:Win32/Kepavll!rfn，隔离成功。压缩包扫描启用。安全情报更新未解决拦截，不能宣称安全验证通过。
+- 新发现公开社区记录 https://github.com/cammo22/DaProdSuite/pull/58 报告相同ngrok检测及签名读取被阻碍。它未提供厂商修正结论；所述Cloudflare临时地址在电脑重启后改变，不满足本项目固定入口要求，不照搬。
+- 下一步为厂商针对官方3.39.11/该哈希和检测的核实。脱敏报告已补充，未发送、未上传样本。停止无新证据的重复下载/扫描。
+- 官方执行依据：https://learn.microsoft.com/en-us/powershell/module/defender/update-mpsignature 及 https://learn.microsoft.com/en-us/powershell/module/defender/start-mpscan ，2026-09-08读取。
+
 2026-09-08网络检索补充：按MADR-042从ngrok FAQ进入官方版本归档，核对HTML中SHA256字段，确认本机ZIP哈希与3.39.11 Windows amd64 ZIP完全一致。这补足了发布包完整性证据，不能替代EXE签名或安全检测结论。微软官方建议识别检测来源、提交疑似误报分析；提交入口本轮HTTP403，未发送资料。下一步为正常渠道安全情报更新/厂商核实，再验证客户端；本轮未更新防护、未恢复隔离。详细来源与适用限制见[MADR-042](../03_decisions/MADR-042.md)。
 
 - 官方FAQ（https://ngrok.com/docs/faq ，2026-09-08读取）说明ngrok有时被杀毒软件标记，建议检查官方来源与向安全厂商报告。它不是针对当前ZIP或Kepavll检测的核验结论；本次阻碍未解决。

@@ -16,6 +16,8 @@ On 2026-09-08, an archive downloaded from the link provided on https://ngrok.com
 - Security intelligence: 1.459.103.0
 - Defender events: 1116 (detection), 1117 (quarantine successful)
 
+Follow-up on 2026-09-08: Microsoft Update-MpSignature completed and security intelligence advanced to 1.459.107.0, with antivirus and real-time protection enabled. A targeted Start-MpScan of the already hash-verified ZIP completed (events 1000/1001). Events 1116/1117 again detected Trojan:Win32/Kepavll!rfn inside the ZIP and successfully quarantined the archive. No re-extraction, execution, exclusions, or quarantine restoration was performed. Updating security intelligence did not resolve the detection.
+
 Please confirm whether this exact archive hash matches an official release and investigate this detection with the security vendor. Please provide verifiable release integrity/signing information and a remediation path that preserves antivirus protection. We have not classified this as a false positive, restored the file, or added an exclusion.
 
 参考：https://ngrok.com/docs/faq 。正式发送或提交样本需要用户明确授权；本草稿不代表已联系厂商或已获回复。
