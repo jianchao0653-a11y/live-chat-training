@@ -5,6 +5,25 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {openStore} from '../store.mjs';
 import {verifySnapshot,restoreToNewFile} from '../recovery.mjs';
+import {DatabaseSync} from 'node:sqlite';
+
+test('recovery rejects table-name impostors, incompatible versions and modified schema without copying',()=>{
+  const dir=mkdtempSync(join(tmpdir(),'lens-recovery-schema-'));
+  try {
+    const fake=join(dir,'fake.sqlite'),db=new DatabaseSync(fake);
+    for(const table of ['people','pairs','streamers','analyses','claims','outcomes','settings'])db.exec(`CREATE TABLE ${table}(fake TEXT)`);
+    db.close();assert.throws(()=>verifySnapshot(fake),/snapshot|schema/i);
+    for(const [name,change] of [
+      ['version','PRAGMA user_version=999'],
+      ['column','ALTER TABLE people ADD COLUMN unexpected TEXT'],
+      ['trigger',"CREATE TRIGGER injected AFTER INSERT ON people BEGIN DELETE FROM claims; END"],
+      ['missing','DROP TABLE beliefs'],
+    ]) {
+      const path=join(dir,name+'.sqlite');const store=openStore(path);store.db.exec(change);store.close();
+      assert.throws(()=>restoreToNewFile(path,join(dir,name+'-copy.sqlite')),/snapshot|schema/i);
+    }
+  } finally {rmSync(dir,{recursive:true,force:true});}
+});
 test('recovery validates an isolated snapshot and refuses overwrite or invalid input',()=>{
   const dir=mkdtempSync(join(tmpdir(),'lens-recovery-'));
   try {

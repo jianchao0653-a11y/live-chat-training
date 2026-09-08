@@ -12,6 +12,7 @@ for folder in ['app','native','.github']:
 paths += [root/'package.json',root/'.gitignore']
 paths += [root/'03_decisions/MADR-032-035.md']
 paths += [root/'03_decisions/MADR-036.md',root/'02_product/MOBILE_UI_SYSTEM.md',root/'07_reviews/V0_15_UI_ACCEPTANCE.md']
+paths += [root/'03_decisions/MADR-037.md',root/'07_reviews/V0_15_SECURITY_REVIEW.md']
 paths += [root/'01_inputs/REFERENCE_REUSE_V014.md',root/'07_reviews/V0_14_ACCEPTANCE.md']
 entries=[]
 for p in sorted(set(paths)):

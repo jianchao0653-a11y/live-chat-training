@@ -119,7 +119,7 @@ export async function callModel(config, instructions, input, schema, name, fetch
 export function validateSchema(value, schema) {
   if (schema.type === 'object') {
     if (!value || Array.isArray(value) || typeof value !== 'object') throw new Error('模型输出格式错误');
-    if (Object.keys(value).some(k => !(k in schema.properties))) throw new Error('模型输出含未知字段');
+    if (Object.keys(value).some(k => !Object.hasOwn(schema.properties, k))) throw new Error('模型输出含未知字段');
     for (const key of schema.required) validateSchema(value[key], schema.properties[key]);
   } else if (schema.type === 'array') {
     if (!Array.isArray(value) || value.length > 100) throw new Error('模型列表格式错误');
