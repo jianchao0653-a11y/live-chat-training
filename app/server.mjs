@@ -3,7 +3,7 @@ import { createNativeBridge } from './native.mjs';
 import { readFile } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { randomUUID, timingSafeEqual } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { openStore, now, hash } from './store.mjs';
 import { localAnalysis, modelAnalysis, makeBelief, platforms, stages, goals, callModel, classify } from './engine.mjs';
 import { CONTEXT_VERSION, packContext, expressionPlan } from './context.mjs';
@@ -17,9 +17,8 @@ const field = (v, max, required = false) => {
 const choice = (v, options) => { if (!options.includes(v)) throw Object.assign(new Error('请选择有效选项。'), { status: 400 }); return v; };
 const fault = (status, message) => { throw Object.assign(new Error(message), { status }); };
 const isLocal = (req) => ['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(req.socket.remoteAddress);
-const eq = (a, b) => { const x = Buffer.from(a || ''), y = Buffer.from(b || ''); return x.length === y.length && timingSafeEqual(x, y); };
 
-export function createApplication({ database = resolve(root, '../runtime/lens.sqlite'), apiKey = process.env.OPENAI_API_KEY || '', model = process.env.OPENAI_MODEL || 'gpt-6-astra', accessToken = process.env.LENS_ACCESS_TOKEN || '', fetcher = fetch, clock = Date.now } = {}) {
+export function createApplication({ database = resolve(root, '../runtime/lens.sqlite'), apiKey = process.env.OPENAI_API_KEY || '', model = process.env.OPENAI_MODEL || 'gpt-6-astra', fetcher = fetch, clock = Date.now } = {}) {
   const store = openStore(database);
   const csrf = randomUUID();
   let configuration = { key: apiKey, model };
@@ -35,7 +34,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
     reservations.push({time,cost}); modelActive++;
     return () => { modelActive--; };
   };
-  const configPublic = () => ({ configured: Boolean(configuration.key), model: configuration.model, provider: 'OpenAI', keyStorage: 'server-memory', version: '0.14.0' });
+  const configPublic = () => ({ configured: Boolean(configuration.key), model: configuration.model, provider: 'OpenAI', keyStorage: 'server-memory', version: '0.15.1' });
   const streamerId = value => { const id = field(value || '0001', 4, true); if (!store.get('SELECT id FROM streamers WHERE id=?', id)) fault(404, '主播配置不存在。'); return id; };
   const contextKey = p => hash(JSON.stringify({ version:CONTEXT_VERSION, id:p.id, name:p.name, platform:p.platform, pair:p.relationship, streamer:p.streamer }));
   const send = (res, status, body, type = 'application/json; charset=utf-8') => {
@@ -90,13 +89,15 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
         } finally { release(); }
   };
   const native = createNativeBridge({store,analyze,extract,revision:contextKey,config:configPublic});
-  const server = http.createServer(async (req, res) => {
+  const handle = nativeOnly => async (req, res) => {
     try {
       const host = req.headers.host || '';
       // Reject unexpected Host headers on loopback (DNS rebinding); LAN mode requires token.
-      if (isLocal(req) && !/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host)) fault(403, '不支持此访问地址。');
+      if (!nativeOnly && isLocal(req) && !/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host)) fault(403, '不支持此访问地址。');
       if (req.headers.origin && req.headers.origin !== `http://${host}` && req.headers.origin !== `https://${host}`) fault(403, '跨站请求已拒绝。');
       const url = new URL(req.url, `http://${host || 'localhost'}`); const path = url.pathname;
+      if (nativeOnly && !path.startsWith('/api/native/')) fault(403, '此入口仅允许原生设备接口。');
+      if (!nativeOnly && !isLocal(req)) fault(403, '工作区仅允许本机访问，请通过原生设备入口连接。');
       if (!path.startsWith('/api/')) {
         if (req.method !== 'GET') fault(405, '请求方法不支持。');
         const files = { '/': ['index.html','text/html; charset=utf-8'], '/app.js': ['app.js','text/javascript; charset=utf-8'], '/style.css': ['style.css','text/css; charset=utf-8'], '/icon.svg': ['icon.svg','image/svg+xml'], '/manifest.webmanifest': ['manifest.webmanifest','application/manifest+json'] };
@@ -107,7 +108,6 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
       // Never promote a recognized proxy request to loopback owner authority.
       // Proxies must expose only /api/native/; headerless proxies cannot be detected.
       if (Object.keys(req.headers).some(h => h === 'forwarded' || h === 'x-real-ip' || h.startsWith('x-forwarded-'))) fault(403, '管理接口不接受代理转发，请在服务电脑直接访问。');
-      if (!isLocal(req) && (!accessToken || !eq(req.headers['x-access-token'], accessToken))) fault(401, '请输入启动服务时设置的设备访问口令。');
       if (req.method !== 'GET' && req.headers['x-csrf-token'] !== csrf) fault(403, '会话已更新，请刷新页面。');
       if(path.startsWith('/api/devices')) { if(!isLocal(req)) fault(403,'Device management is local only.'); return send(res,200,await native.manage(path,req.method,['GET','DELETE'].includes(req.method)?{}:await bodyOf(req))); }
       if (path === '/api/bootstrap' && req.method === 'GET') return send(res, 200, { csrf, ...configPublic(), local: isLocal(req), streamers:store.streamers(), people: store.people(streamerId(url.searchParams.get('streamer_id'))), stats: {
@@ -182,7 +182,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
       }
       if (path === '/api/extract' && req.method === 'POST') return send(res,200,await extract(await bodyOf(req)));
       if (path === '/api/export' && req.method === 'GET') return send(res, 200, {
-        version: '0.14.0', exported_at: now(), people: store.all('SELECT id,name,platform,created_at FROM people ORDER BY id'),
+        version: '0.15.1', exported_at: now(), people: store.all('SELECT id,name,platform,created_at FROM people ORDER BY id'),
         streamers:store.streamers(), relationships:store.all('SELECT * FROM pairs'), claims:store.all('SELECT * FROM claims'),
         context_events:store.all('SELECT * FROM context_events ORDER BY seq'),
         analyses: store.all('SELECT id FROM analyses ORDER BY created_at').map(a => store.analysis(a.id)),
@@ -192,16 +192,30 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
     } catch (e) {
       if (!res.headersSent) send(res, e.status || 500, { error: e.status || /模型|证据|审核|JSON/.test(e.message) ? e.message : '操作失败，请检查服务状态后重试。' });
     }
-  });
-  server.on('close', () => store.close());
-  return { server, store };
+  };
+  const server = http.createServer(handle(false));
+  const nativeServer = http.createServer(handle(true));
+  let storeClosed = false;
+  const liveListeners = new Set();
+  for (const listener of [server,nativeServer]) {
+    listener.on('listening', () => liveListeners.add(listener));
+    listener.on('close', () => {
+      liveListeners.delete(listener);
+      if (!storeClosed && liveListeners.size===0) {storeClosed=true;store.close();}
+    });
+  }
+  return { server, nativeServer, store };
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const host = process.env.LENS_HOST || '127.0.0.1';
-  if (!['127.0.0.1','localhost','::1'].includes(host) && !process.env.LENS_ACCESS_TOKEN) throw new Error('局域网模式请先设置 LENS_ACCESS_TOKEN。');
-  const { server } = createApplication();
+  if (!['127.0.0.1','localhost','::1'].includes(host)) throw new Error('管理工作区仅允许本机监听；HTTPS 代理请转发到原生专用端口。');
   const port = Number(process.env.PORT || 4317);
-  server.listen(port, host, () => console.log(`Conversation Lens v0.14.0 ready: http://${host}:${port}`));
-  server.on('error', e => { console.error(e.code === 'EADDRINUSE' ? `端口 ${port} 已使用，请直接打开 http://localhost:${port} 或更换 PORT。` : e.message); process.exitCode = 1; });
+  const nativePort = Number(process.env.LENS_NATIVE_PORT || 4318);
+  if (![port,nativePort].every(p=>Number.isInteger(p)&&p>0&&p<=65535) || port===nativePort) throw new Error('管理与原生端口必须是不同的有效端口。');
+  const { server, nativeServer } = createApplication();
+  server.listen(port, host, () => console.log(`Conversation Lens v0.15.1 ready: http://${host}:${port}`));
+  nativeServer.listen(nativePort, '127.0.0.1', () => console.log(`Native-only upstream: http://127.0.0.1:${nativePort}`));
+  const failed = e => {console.error(e.message);process.exitCode=1;server.close();nativeServer.close();};
+  server.on('error', failed);nativeServer.on('error', failed);
 }

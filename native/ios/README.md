@@ -1,5 +1,7 @@
 # iPhone 原生工程 · v0.15
 
+v0.15.1 补丁使用有界 HTTP 字节流与共享文件读取；响应仍须小于 2 MB、草稿文件小于 64 KB。HTTPS 服务须连接到 [原生专用端口 4318](../../app/DEPLOYMENT.md)，本轮新增测试状态见 [安全验收](../../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。
+
 v0.15 统一清爽浅色与低饱和绿，主 App 分为人物/片段/候选三个步骤，建议扩展使用可滚动的长草稿预览。见 [视觉规范](../../02_product/MOBILE_UI_SYSTEM.md) 与 [UI 验收](../../07_reviews/V0_15_UI_ACCEPTANCE.md)。
 
 主 App：Keychain 保存设备授权、HTTPS 配对、人物选择、批准片段分析、系统照片选择与明确批准 OCR、草稿编辑。建议键盘：只显示主 App 批准的最小草稿，核对人物后兑换一次短期授权并插入，不触发发送。

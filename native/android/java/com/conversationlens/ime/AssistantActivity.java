@@ -71,7 +71,7 @@ public final class AssistantActivity extends Activity {
         setContentView(scroll);
     }
     @Override public Object onRetainNonConfigurationInstance(){
-        if(transcript==null)return null;TransientForm form=new TransientForm();form.text=transcript.getText().toString();form.goal=goal.getSelectedItemPosition();form.mode=mode.getSelectedItemPosition();int index=people.getSelectedItemPosition();form.personId=index>=0&&index<roster.length()?roster.optJSONObject(index).optString("id"):"";return form;
+        if(transcript==null||session==null||client==null)return null;TransientForm form=new TransientForm();form.text=transcript.getText().toString();form.goal=goal.getSelectedItemPosition();form.mode=mode.getSelectedItemPosition();int index=people.getSelectedItemPosition();form.personId=index>=0&&index<roster.length()?roster.optJSONObject(index).optString("id"):"";return form;
     }
     @Override protected void onResume(){super.onResume();AssistSession.helperShowing=true;showImage();}
     @Override protected void onPause(){AssistSession.helperShowing=false;super.onPause();}
@@ -80,7 +80,18 @@ public final class AssistantActivity extends Activity {
         changed();final int token=++work;final String url=endpoint.getText().toString(),pin=code.getText().toString();status.setText("正在配对…");
         NativeClient.IO.execute(()->{try{NativeClient pending=new NativeClient(url,"");JSONObject response=pending.call("pair",new JSONObject().put("code",pin).put("name",android.os.Build.MODEL));NativeClient connected=new NativeClient(pending.endpoint,response.getString("token"));runOnUiThread(()->{if(isDestroyed()||token!=work)return;try{NativeClient.save(this,connected);client=connected;code.setText("");loadRoster();}catch(Exception e){error(e);}});}catch(Exception e){report(token,e);}});
     }
-    private void disconnect(){changed();AssistSession.clear();session=null;client=null;AssistSession.feedbackId=null;AssistSession.feedbackClient=null;NativeClient.forget(this);stopService(new Intent(this,CaptureService.class));status.setText("本机连接已清除；电脑设置页可撤销该设备授权");if(results!=null)results.removeAllViews();showImage();}
+    private void disconnect(){
+        changed();AssistSession.clear();session=null;client=null;restored=null;roster=new JSONArray();
+        AssistSession.feedbackId=null;AssistSession.feedbackName=null;AssistSession.feedbackClient=null;
+        NativeClient.forget(this);stopService(new Intent(this,CaptureService.class));
+        setting=true;
+        if(transcript!=null)transcript.setText("");if(draft!=null)draft.setText("");code.setText("");
+        if(people!=null)people.setAdapter(null);
+        setting=false;hideKeyboard();
+        // Recreate the disconnected page to remove feedback closures and all private views.
+        // onRetainNonConfigurationInstance must not carry a disconnected transcript forward.
+        recreate();
+    }
     private void loadRoster(){
         final NativeClient c=client;final int token=work;
         NativeClient.IO.execute(()->{try{JSONObject response=c.call("roster",null);runOnUiThread(()->{if(isDestroyed()||c!=client)return;roster=response.optJSONArray("people");status.setText("已连接 · 主播 "+response.optJSONObject("device").optString("streamer_id")+" · 授权最长 8 小时");if(people!=null){String[] names=new String[roster.length()];int selected=0;for(int i=0;i<names.length;i++){names[i]=roster.optJSONObject(i).optString("name")+" · "+roster.optJSONObject(i).optString("platform");if(restored!=null&&roster.optJSONObject(i).optString("id").equals(restored.personId))selected=i;}people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));people.setSelection(selected);}if(session!=null)session.client=c;});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&c==client)error(e);});}});

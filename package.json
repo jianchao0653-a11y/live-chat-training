@@ -1,5 +1,5 @@
 {
-  "name": "conversation-lens", "version": "0.14.0", "private": true, "type": "module",
+  "name": "conversation-lens", "version": "0.15.1", "private": true, "type": "module",
   "description": "Conversation Lens local relationship workspace",
   "engines": { "node": ">=24.0.0" },
   "scripts": { "start": "node --disable-warning=ExperimentalWarning app/server.mjs", "test": "node --disable-warning=ExperimentalWarning --test app/tests/*.test.mjs", "backup":"node --disable-warning=ExperimentalWarning app/backup.mjs" }

@@ -1,5 +1,7 @@
 # 观微 v0.15 统一 UI 工程预览
 
+v0.15.1 安全补丁：断开清理、有界读取与原生专用端口，见 [本轮验收](../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。下方 0.15.0 安装包仍是历史 UI 基线；新包必须按本轮回执核对。
+
 新增 [视觉规范](../02_product/MOBILE_UI_SYSTEM.md)、[MADR-036](../03_decisions/MADR-036.md) 和 [v0.15 UI 验收](../07_reviews/V0_15_UI_ACCEPTANCE.md)。[当前 Android 包](../output/native/conversation-lens-0.15.0-debug.apk)；下方 v0.14 包保留为功能基线。
 
 [Android 安装包](../output/native/conversation-lens-0.14.0-debug.apk) · [v0.14 验收与剩余工作](../07_reviews/V0_14_ACCEPTANCE.md) · [iPhone 工程](ios/README.md) · [v0.13 历史验收](../07_reviews/V0_13_ACCEPTANCE.md)
@@ -17,7 +19,7 @@ v0.14 增加 Android 旋转/大字号恢复、截图帧边界检查、断网恢�
 3. 当前最直接的连接方式是 USB 调试转发。开启手机开发者选项中的 USB 调试，连接电脑，在手机确认这台电脑，然后运行：
 
    ```powershell
-   & runtime/android-tools/sdk/platform-tools/adb.exe reverse tcp:4317 tcp:4317
+   & runtime/android-tools/sdk/platform-tools/adb.exe reverse tcp:4317 tcp:4318
    ```
 
    多设备连接时为 adb 添加 `-s 设备序列号`。测试结束可运行 `adb reverse --remove tcp:4317` 并关闭 USB 调试。此步骤不会自动读取聊天。
@@ -28,6 +30,8 @@ v0.14 增加 Android 旋转/大字号恢复、截图帧边界检查、断网恢�
 7. 后续再次打开建议，可记录上次插入对应的实际观察。未发送或尚未收到回应时使用“未知”，不得把插入当作积极反馈。
 
 局域网明文 HTTP 地址不被 Android 客户端接受。远程连接必须使用系统信任的 HTTPS 服务根地址，客户端拒绝重定向和证书绕过；HTTPS 部署、手机厂商兼容性不属于本次已验证范围。USB 转发实测仅限项目模拟器，物理手机仍需现场测试。
+
+HTTPS upstream 仅允许指向原生专用端口 4318；不要转发管理工作区 4317。见 [部署边界](../app/DEPLOYMENT.md)。
 
 ## 截图使用
 

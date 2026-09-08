@@ -33,6 +33,20 @@ def main():
         assert '保留草稿并返回原聊天' not in offline; snapshot('stability-offline');checks.append('offline_has_no_insertable_result')
         config=json.loads((OUT/'fixture.json').read_text(encoding='utf-8'));adb('reverse','tcp:4317','tcp:'+config['base'].rsplit(':',1)[1])
         analyze();insert();checks.append('network_recovery_reanalysis_insert')
+        tap_text('建议');wait_labels(lambda values:any('已连接 · 主播 0001' in x for x in values))
+        marker='合成断开清理标记'
+        fill('粘贴或输入你批准的聊天片段，标明说话人',marker)
+        assert any(marker in x for x in labels()),labels()
+        tap_text('断开并清除本机连接',scroll_find('断开并清除本机连接'))
+        def disconnected():
+            tree=snapshot('stability-disconnected')
+            nodes=[n for n in tree.iter('node') if n.get('package')=='com.conversationlens.ime']
+            assert not any(marker in n.get('text','') or '已连接 · 主播' in n.get('text','') or '上次插入 ·' in n.get('text','') for n in nodes)
+            assert not any(n.get('hint') in ['粘贴或输入你批准的聊天片段，标明说话人','实际观察到的后续（非未知反馈必填）'] for n in nodes)
+        wait_labels(lambda values:'请连接服务，再准备聊天片段' in values);disconnected()
+        adb('shell','settings','put','system','user_rotation','1');time.sleep(1);disconnected()
+        adb('shell','settings','put','system','user_rotation','0');time.sleep(.5);disconnected()
+        checks.append('disconnect_clears_transcript_feedback_and_rotation_state')
         assert 'FATAL EXCEPTION' not in adb('shell','logcat','-d','-b','crash')
         (OUT/'stability-receipt.json').write_text(json.dumps({'checks':checks,'apkSha256':hashlib.file_digest(APK.open('rb'),'sha256').hexdigest(),'synthetic':True,'realPhone':False},indent=2))
         print('STABILITY_PASS '+str(len(checks)),flush=True)
