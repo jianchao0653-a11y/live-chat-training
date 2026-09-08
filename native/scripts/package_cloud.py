@@ -5,7 +5,7 @@ ROOT=Path(__file__).resolve().parents[2]
 files=[ROOT/'package.json']
 files+=list((ROOT/'app').glob('*.mjs'))
 files+=list((ROOT/'native/deploy').iterdir())
-files+=[ROOT/'native/CLOUD_ACCEPTANCE_PACKET.md',ROOT/'03_decisions/MADR-040.md']
+files+=[ROOT/'native/CLOUD_ACCEPTANCE_PACKET.md',ROOT/'03_decisions/MADR-040.md',ROOT/'03_decisions/MADR-041.md',ROOT/'02_product/ANDROID_FIRST_RELEASE_FLOW.md']
 entries=[]
 for p in sorted(files):
     if not p.is_file() or p.is_symlink() or not p.resolve().is_relative_to(ROOT):raise RuntimeError('Unexpected deploy source')

@@ -1,12 +1,12 @@
 {
   "version": "0.16.0",
   "status": "NOT_READY",
-  "decision": "MADR-040",
+  "decision": "MADR-041",
   "gates": [
     {"id":"cloud-auth-isolation", "status":"SYNTHETIC_PASSED", "evidence":"9 added cloud/provider/recovery tests; persistent identity and scoped account databases"},
     {"id":"android-cloud-workflow", "status":"EMULATOR_PASSED", "evidence":"API36 login/person/memory/analyze/edit/confirm/restart/delete"},
     {"id":"bailian-real-smoke", "status":"MECHANICAL_PASSED", "evidence":"Synthetic rest-boundary and ordinary cases; two calls each; humanReviewed=false"},
-    {"id":"https-deployment", "status":"BLOCKED_ACCOUNT_BUDGET", "evidence":"User requested managed hosting. Render Node24 single instance + persistent disk + platform HTTPS blueprint prepared; account login, cost limit and actual deployment pending"},
+    {"id":"https-deployment", "status":"PENDING_DEPLOYMENT_ACCOUNT", "evidence":"MADR-041: current PC backend plus stable public HTTPS; phone installs only this APK. ngrok account-assigned dev domain verified in official docs; account/domain/tunnel/cellular validation pending. No phone Tailscale requirement or cloud resource purchase"},
     {"id":"production-budget", "status":"PENDING", "evidence":"Limits implemented; actual rate card and project amounts not set"},
     {"id":"production-signing-upgrade", "status":"PARTIAL", "evidence":"Separate RSA3072 key prepared locally, password sealed with current-user DPAPI; off-machine backup, production APK and upgrade not verified"},
     {"id":"latest-github-ci", "status":"NOT_PASSED", "evidence":"597b753 run34188076307: all four jobs failure before steps; annotation endpoint unsupported by connector, cause unconfirmed. Prior f76c911: service/API36/iOS passed, API34 cloud memory-button test failed; latest API34 fix awaits verification"},
