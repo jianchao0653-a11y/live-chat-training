@@ -1,6 +1,6 @@
 # 云端手机首版部署包（v0.16.0）
 
-尚未部署到真实服务器。生产域名、证书、预算及签名仍需实际配置；示例配置默认禁止付费调用。
+尚未部署到真实服务器。生产域名、TLS证书和预算仍需实际配置；本地生产签名身份已准备，尚未签出正式APK，示例配置默认禁止付费调用。
 用户手机只安装 APK、邀请码登录并启用输入法。下面步骤由项目维护者执行。
 
 ## 服务
@@ -61,6 +61,10 @@ python native/scripts/build_android.py --cloud-url https://YOUR-REAL-DOMAIN --re
 需事先通过受保护环境配置 `LENS_RELEASE_KEYSTORE`、`LENS_RELEASE_ALIAS`、`LENS_RELEASE_STORE_PASSWORD`、`LENS_RELEASE_KEY_PASSWORD`；密码不出现在命令行。正式构建拒绝缺失域名或调试签名文件，关闭 debuggable，输出签名与对齐校验结果及APK哈希。
 
 保留同一正式签名用于所有更新。旧0.15调试包与正式签名不同，首次切换不能原地覆盖；在确认云端资料可用后卸载旧调试包再安装。正式包后续同签名升级须真机验证。私有仓库仅供源码/构建，不作为公网业务服务器。
+
+Windows本地已经执行一次 `native/scripts/prepare_release_key.py`，生成独立RSA3072生产签名身份，密码受当前Windows用户DPAPI保护；重复执行会拒绝覆盖。部署完成后，可执行 `python native/scripts/build_release.py https://YOUR-REAL-DOMAIN` 使用该身份构建，密码不写入命令行或回执。上述脚本位于源码仓库，部署ZIP不含移动构建工具。
+
+当前公钥证书SHA256为 `0ce1d2c5fd366f7b441296fa483a2af20be18f5b5dd1f10c791f6b4eb4cd692e`。私钥与受保护密码仅在本地 `runtime/release-signing/`，不得上传仓库或随APK分发。尚未验证异机备份与恢复：直接复制DPAPI文件到其他Windows账号不能解密，正式交付前必须完成安全保管和恢复演练。签名身份准备成功不等于正式包或升级验收完成。
 
 ## 外部验收
 

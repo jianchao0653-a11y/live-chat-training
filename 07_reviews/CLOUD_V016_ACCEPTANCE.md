@@ -8,12 +8,12 @@
 - 人物/记忆/反馈修正与删除使旧分析失效；30天保留清理、AES-GCM备份、新目录恢复、最新删除/费用账本保留及恢复撤销会话。
 - Android原生登录、人物/记忆/反馈页，现有UI与确认插入流程；云端构建隐藏电脑配对与OCR入口。
 - 本地API36模拟器：登录、新建人物/记忆、合成模型分析、编辑、确认单次插入、进程重启后登录、修改记忆、删除人物通过。`output/native/cloud-ui-receipt.json`。
-- 云端调试双架构APK：`output/native/conversation-lens-0.16.0-cloud-debug.apk`，最终SHA256 `ae911eae992beb8d96baec6c5149b9dd30acf0d612dedc89cb9845ad9484b730`，约7.7MB。内置loopback，仅工程测试，不是可直接联网的正式包。
+- 云端调试双架构APK：`output/native/conversation-lens-0.16.0-cloud-debug.apk`，最终SHA256 `1b9f9e58f0155acca65342b7b815367dbe2c4e84151fef9f815be62ca55be572`，约7.7MB。内置loopback，仅工程测试，不是可直接联网的正式包。
 - 百炼真实合成验收：`output/evals/bailian-smoke-506a7e4f-d314-46da-ae30-7131deaf961b/report.json`，两调用，15011ms；输入1522/输出645 token。独立终审PASS，本案例结果为停止、不提供候选；不冒充自然聊天建议质量通过。
 - 前三次真实探测依次因职责拆分或缺证据引用被拒绝；均留合成回执，没有自动付费重试。累计真实用量需含失败调用。
 - 使用用户授权密钥文件但未读取私人聊天、原SQLite或备份；没有对个人手机执行命令。
 
-## 待最终补充
+## 验证详情
 
 - 本地全套Node测试54/54通过（新增9项云端/恢复测试），20合成评测机械通过且0模型调用；键盘策略22断言与像素边界测试通过。
 - 普通接话真实合成案例也通过：`output/evals/bailian-smoke-0976f0c5-5848-4f69-918e-4b58f69d0450/report.json`，两调用20756ms，输入1780/输出907 token，FAST路线、3个候选；仍未经过两位人类评审。
@@ -23,7 +23,14 @@
 - 部署ZIP已生成并逐文件哈希校验：`output/cloud/conversation-lens-0.16.0-server.zip`，22个明确允许的源码/部署文件，不含密钥或私人数据。最终哈希以 `output/cloud/package-receipt.json` 为准。
 - 第一批源码 `f9c28e162af00007e8aced3ffe36fa3eaf07a323` 已推私有Draft PR#3，run34186694879的service已success；后续产品修正有新源码与CI，须以最终记录为准。
 
-最终测试数、私有仓库提交、CI新作业结果、部署包与清理回执将在完成时补记。
+## 本轮最终核验
+
+- 产品与QA源码 `597b75365b2e557697f4d7047bc249277ab64f57`：资料页沿用共享dp间距，测试等待人物详情并依据可达按钮位置操作。最新APK在本地API36完整cloud_qa通过，回执已复制至 `output/cloud-v016/cloud-ui-receipt.json`；新启动模拟器未完成开机时的首轮安装失败，确认 `sys.boot_completed=1` 后复验通过。合成fixture与本项目模拟器均已停止。
+- GitHub上一轮 `34187342644` / `f76c911625d3b035423a97ba0415477f5f5bf1f1`：service、Android API36、iOS全部success；Android API34在云端重启后的“修改记忆”按钮定位失败，此前登录、生成、编辑与确认插入已通过。dp/测试等待修正针对该问题，但API34修正结果尚未验证。
+- 最新 `34188076307` / `597b753`：四作业均failure且steps为空。连接器拒绝读取annotations端点，无法确认具体启动失败原因；不能推断为费用不足，也不能把该轮称为测试通过。不重复空跑、不修改GitHub付费额度。
+- 百炼累计探测10次调用尝试，其中9次报告用量，输入7319/输出5042 token；包括失败探测。实际账单金额未知，见 `output/cloud-v016/bailian-usage-summary.json`，humanReviewed/qualityAccepted均false。
+- 本地独立生产签名身份已生成，RSA3072，密码受当前Windows用户DPAPI保护。公钥证书SHA256 `0ce1d2c5fd366f7b441296fa483a2af20be18f5b5dd1f10c791f6b4eb4cd692e`；异机备份未验证，未签出生产APK。新增准备/构建助手仅完成语法与本地密钥准备验证，生产构建需真实HTTPS地址。
+- 后续文档与签名助手提交不改变上述APK源码；远端PR保持Draft、未合并，不能用历史绿色检查替代本轮未通过项。
 
 ## 未完成且不能由代码替代
 
