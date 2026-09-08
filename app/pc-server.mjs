@@ -1,4 +1,4 @@
-// Personal-computer pilot. Only Tailscale Serve should expose this loopback API.
+// Personal-computer pilot. Expose only this loopback API via the MADR-041 HTTPS gateway.
 import {readFileSync,writeFileSync,existsSync,mkdirSync,unlinkSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {fileURLToPath} from 'node:url';
@@ -39,7 +39,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
       if(keys?.length!==1)throw new Error('Invalid key file');apiKey=keys[0];
     }
     const service=await startPc({directory,apiKey,model:config.model,baseUrl:config.baseUrl,budget:config.budget});
-    console.log('PC native API ready on loopback:4318; use private Tailscale Serve for phone access');
+    console.log('PC native API ready on loopback:4318; public HTTPS gateway acceptance is required for phone access');
     const stop=()=>service.close().catch(()=>{console.error('PC shutdown failed');process.exitCode=1;});
     process.once('SIGINT',stop);process.once('SIGTERM',stop);
   }catch{console.error('PC service did not start; check port, data lock and local configuration. No secret contents are logged.');process.exitCode=1;}

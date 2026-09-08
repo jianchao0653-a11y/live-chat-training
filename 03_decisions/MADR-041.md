@@ -31,7 +31,7 @@
 
 完成标准：同一地址在电脑服务与隧道重启后保持有效；证书由Android系统信任；小米关闭Wi-Fi后通过手机流量可达；未登录库401、管理路径403；断线有明确提示且不自动重复付费。网关不向手机返回HTML提示页作为API响应；按实测客户端行为和官方说明处理。外网建立前不宣称可交付。
 
-当前：已核实官方域名和额度规则，本机4318可达。部署账号、实际域名、隧道及手机流量尚未验收。停止要求用户登录Tailscale；已安装Windows客户端未登录、未启用Serve/Funnel。
+当前：账号与固定域名outreach-alibi-reformer.ngrok-free.dev已确认，本机4318可达。客户端被Defender隔离，隧道及手机流量尚未验收。停止要求用户登录Tailscale；已安装Windows客户端未登录、未启用Serve/Funnel。
 
 ## 决策三：交付
 
@@ -62,3 +62,5 @@
 - [ngrok免费开发计划](https://ngrok.com/docs/pricing-limits/free-plan-limits)，2026-09-08读取。
 - [ngrok域名规则](https://ngrok.com/docs/universal-gateway/domains)，2026-09-08读取。
 - 当前发布状态：NOT_READY；下一项实际工作为取得部署账号与固定地址、建立HTTPS入口，再签包及真机验收。
+
+执行补充：用户已完成ngrok注册，控制台固定域名已确认；Windows官方入口下载的客户端被Defender隔离，公网隧道未启动。整页凭据导出被自动审批拒绝，后续仅走单项凭据本机配置。详见 [PC_HTTPS_ACCEPTANCE](../07_reviews/PC_HTTPS_ACCEPTANCE.md)，不能把账号和域名取得当作连接验收通过。

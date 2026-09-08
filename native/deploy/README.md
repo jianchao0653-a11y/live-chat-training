@@ -3,7 +3,7 @@
 尚未部署到真实服务器。生产域名、TLS证书和预算仍需实际配置；本地生产签名身份已准备，尚未签出正式APK，示例配置默认禁止付费调用。
 用户手机只安装 APK、邀请码登录并启用输入法。下面步骤由项目维护者执行。
 
-当前个人电脑先行试点以 [PC_PILOT.md](PC_PILOT.md) 为准：电脑运行服务，小米通过Tailscale私人网络连接，手机还需一次安装/登录Tailscale；暂缓付费托管采购。
+当前个人电脑先行试点以 [MADR-041](../../03_decisions/MADR-041.md) 为准：电脑运行服务，固定公网HTTPS仅代理4318；手机只安装本项目APK，无需Tailscale。暂缓付费托管采购。连接验收见 [PC_HTTPS_ACCEPTANCE](../../07_reviews/PC_HTTPS_ACCEPTANCE.md)。PC_PILOT中的私人网络方案仅为历史记录。
 
 前期采用托管服务与平台HTTPS域名的准备方案见 [HOSTED_PILOT.md](HOSTED_PILOT.md)，Blueprint为 `render.yaml`。该方案尚待账号和预算后创建；以下systemd步骤用于自管Linux，不要在托管平台直接照搬。
 

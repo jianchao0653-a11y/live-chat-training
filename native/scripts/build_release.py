@@ -8,6 +8,9 @@ u=urlparse(sys.argv[1])
 if u.scheme!='https' or not u.hostname or u.username or u.password or u.query or u.fragment or u.path not in ['','/']:
     raise SystemExit('A deployed HTTPS service root is required')
 if os.name!='nt':raise SystemExit('Use build_android.py --release with securely provisioned signing environment on this platform')
+from https_acceptance import probe
+if not probe(sys.argv[1])['passed']:
+    raise SystemExit('HTTPS API acceptance failed; signing key was not opened. Check gateway health and authorization boundaries.')
 directory=ROOT/'runtime/release-signing'
 environment={**os.environ,'LENS_SIGNING_DPAPI_FILE':str(directory/'password.dpapi')}
 password=subprocess.check_output(['powershell.exe','-NoProfile','-Command',
