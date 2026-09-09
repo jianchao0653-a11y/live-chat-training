@@ -62,7 +62,13 @@ export async function restoreCloud(backupFile,key,currentDirectory,destination) 
         const s=openStore(file);
         try {
           // Conservative replay: an edited/deleted person's old snapshot is wholly removed.
-          for(const d of auth.all('SELECT DISTINCT person FROM deletions WHERE account=? AND seq>?',a.id,data.deletion_seq)){s.deletePerson(d.person);discarded++;}
+          for(const d of auth.all('SELECT DISTINCT person FROM deletions WHERE account=? AND seq>?',a.id,data.deletion_seq)){
+            if(d.person==='@streamer'){
+              s.run("UPDATE streamers SET name='待设置主播',tone='',phrases='',emojis='',boundary='',goal='',tags='',input_layout='SYSTEM',revision=revision+1");
+              s.run('DELETE FROM analyses');
+              s.run('DELETE FROM context_events');
+            }else{s.deletePerson(d.person);discarded++;}
+          }
           s.run('DELETE FROM analyses WHERE created_at<?',new Date(Date.now()-30*86400000).toISOString());
         }finally{s.close();}
       }

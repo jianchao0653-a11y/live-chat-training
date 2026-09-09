@@ -37,9 +37,9 @@ export function packContext(person, text, goal, situation) {
   const observed = observeConversation(text);
   const learning = strategyLearning(person.strategy_observations, goal, situation).slice(0,8);
   // Bounded text, deterministic selection; model sees only this pair, not the full database.
-  const compactClaim = c => ({ id:c.id, kind:c.kind, content:c.content.slice(0,600), source:c.source.slice(0,200), created_at:c.created_at });
+  const compactClaim = c => ({ id:c.id, kind:c.kind, category:c.category||'MEMORY', review_state:c.review_state||'CONFIRMED', content:c.content.slice(0,600), source:c.source.slice(0,200), created_at:c.created_at });
   const streamer = person.streamer ? { id:person.streamer.id, name:person.streamer.name,
-    tone:person.streamer.tone, phrases:person.streamer.phrases, emojis:person.streamer.emojis, boundary:person.streamer.boundary } : null;
+    tone:person.streamer.tone, phrases:person.streamer.phrases, emojis:person.streamer.emojis, boundary:person.streamer.boundary,goal:person.streamer.goal||'',tags:person.streamer.tags||'' } : null;
   const context = { id:person.id, name:person.name, platform:person.platform, stage:person.stage,
     notes:person.notes.slice(0,3000), boundary:person.boundary, streamer,
     relationship:person.relationship ? { id:person.relationship.id, streamer_id:person.relationship.streamer_id } : null,

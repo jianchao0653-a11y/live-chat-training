@@ -197,4 +197,13 @@ if __name__ == '__main__':
     parser.add_argument('--release', action='store_true')
     parser.add_argument('--prepare-release', action='store_true')
     args = parser.parse_args()
-    build(args.abis, args.native_only, args.cloud_url, args.release, args.prepare_release)
+    if args.native_only:
+        build(args.abis, native_only=True)
+    else:
+        if args.prepare_release and not args.release: parser.error('--prepare-release requires --release')
+        command=[sys.executable,str(SOURCE_ROOT/'native/scripts/build_android_ocr.py'),'--abis',*args.abis]
+        if args.cloud_url: command+=['--cloud-url',args.cloud_url]
+        if args.release: command+=['--release']
+        subprocess.run(command,check=True)
+        if args.release and not args.prepare_release:
+            subprocess.run([sys.executable,str(SOURCE_ROOT/'native/scripts/sign_prepared_release.py'),args.cloud_url],check=True)

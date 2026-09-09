@@ -34,7 +34,8 @@ test('legacy database migrates atomically to default pair without copying it to 
   assert.equal(s.person('0009').notes,'旧关系原文');assert.equal(s.streamers().length,6);
   assert.equal(s.person('0009','0002').relationship,null);assert.equal(s.person('0009','0002').notes,'');
   assert.equal(s.createPerson(person),'0010');s.close();s=openStore(file);
-  assert.equal(s.get('PRAGMA user_version').user_version,1);assert.equal(s.all('SELECT * FROM pairs').length,2);s.close();
+  assert.equal(s.get('PRAGMA user_version').user_version,2);assert.equal(s.all('SELECT * FROM pairs').length,2);
+  assert.equal(s.streamers()[0].goal,'');assert.equal(s.streamers()[0].tags,'');s.close();
 });
 
 test('pair-scoped memories, hypotheses and feedback do not leak between streamers', async t => {

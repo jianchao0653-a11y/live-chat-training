@@ -42,6 +42,35 @@ async function fixture(t,options={}) {
 }
 const payload=p=>({request_id:randomUUID(),person_id:p.id,pair_id:p.relationship.id,context:'editor-one',host:'com.synthetic.chat',approved:true,text:chat,goal:'关心近况',mode:'model'});
 
+test('streamer profile persists per account and changes invalidate existing suggestions',async t=>{
+  const f=await fixture(t),a=await f.activate(),b=await f.activate(),p=await f.person(a);
+  const prior=(await f.request('/api/native/analyze',payload(p),a.token)).body;
+  const value={name:'合成主播甲',tone:'简短自然',goal:'关心近况',boundary:'不承诺见面',tags:'本人填写：直率'};
+  assert.equal((await f.request('/api/native/library/streamer',value,a.token)).status,200);
+  assert.equal(f.app.application(a.account_id).store.analysis(prior.analysis_id),null);
+  assert.equal((await f.request(`/api/native/tickets/${prior.ticket_id}/consume`,{...payload(p),confirmed:true,draft:'旧建议'},a.token)).status,409);
+  await f.restart();
+  const mine=(await f.request('/api/native/library/streamer',null,a.token)).body;
+  assert.equal(mine.account_id,a.account_id);assert.equal(mine.profile.goal,value.goal);
+  assert.notEqual((await f.request('/api/native/library/streamer',null,b.token)).body.profile.name,value.name);
+});
+
+test('inferred tags require explicit confirmation and retain their origin after confirmation',async t=>{
+  const f=await fixture(t),a=await f.activate(),b=await f.activate(),p=await f.person(a);
+  const c=(await f.request(`/api/native/library/people/${p.id}/memories`,{content:'可能偏好简短回复',source:'合成推测',kind:'INFERRED',category:'TAG'},a.token)).body;
+  const s=f.app.application(a.account_id).store;
+  assert.equal(c.review_state,'PENDING');assert.equal(s.context(p.id).claims.length,0);
+  const route=`/api/native/library/memories/${c.id}/confirm`;
+  assert.equal((await f.request(route,{confirmed:true},b.token)).status,404);
+  assert.equal((await f.request(route,{},a.token)).status,400);
+  assert.equal((await f.request(route,{confirmed:true},a.token)).status,200);
+  assert.equal(s.context(p.id).claims[0].kind,'INFERRED');
+  await f.request(`/api/native/library/memories/${c.id}/save`,{content:'修订推测',source:'新的合成线索'},a.token);
+  assert.equal(s.context(p.id).claims.length,0);
+  await f.request(`/api/native/library/memories/${c.id}/delete`,{},a.token);
+  assert.equal(s.person(p.id).claims.length,0);
+});
+
 test('cloud activation is single use, persistent and revocable; private routes require identity',async t=>{
   const f=await fixture(t);const invite=f.app.auth.invite();
   const body={code:invite.invite,name:'test',approved:true};
@@ -104,19 +133,21 @@ test('cloud backup is encrypted, requires service stop, and restore replays late
   t.after(()=>rmSync(root,{recursive:true,force:true}));
   let app=createCloud({directory,budget});const account=app.auth.invite(),d=app.auth.activate(account.invite,'test'),s=app.application(account.account_id).store;
   const id=s.createPerson({name:'synthetic secret',platform:'微信',stage:'初识'},randomUUID());
+  s.updateStreamer('0001',{name:'synthetic old profile',tone:'old tone',phrases:'',emojis:'',boundary:'old boundary',goal:'old goal',tags:'old tags',input_layout:'NINE'});
   await assert.rejects(()=>backupCloud(directory,join(root,'backups'),key));await app.close();
   const snap=await backupCloud(directory,join(root,'backups'),key);
   assert(!readFileSync(snap.destination).includes(Buffer.from('synthetic secret')));
   app=createCloud({directory,budget});
   app.auth.run('INSERT INTO deletions(account,person,entire,created) VALUES(?,?,1,?)',account.account_id,id,Date.now());
   app.application(account.account_id).store.deletePerson(id);
+  app.auth.run('INSERT INTO deletions(account,person,entire,created) VALUES(?,?,0,?)',account.account_id,'@streamer',Date.now());
   const taskId=randomUUID();app.budget.reserve(taskId,account.account_id,'synthetic-fingerprint');
   await app.close();
   await assert.rejects(()=>restoreCloud(snap.destination,Buffer.alloc(32,8),directory,join(root,'wrong-key')));
   const target=join(root,'restored'),result=await restoreCloud(snap.destination,key,directory,target);
   assert.equal(result.discarded_person_snapshots,1);assert.equal(result.budgetRolledBack,false);
   const restored=openStore(join(target,'accounts',account.account_id+'.sqlite'));
-  try{assert.equal(restored.person(id),null);}finally{restored.close();}
+  try{assert.equal(restored.person(id),null);const profile=restored.streamers()[0];assert.equal(profile.name,'待设置主播');assert.equal(profile.goal,'');assert.equal(profile.tags,'');assert.equal(profile.input_layout,'SYSTEM');assert.equal(restored.all('SELECT * FROM context_events').length,0);}finally{restored.close();}
   const auth=openCloudAuth(join(target,'identity.sqlite'));
   try{assert(auth.get('SELECT reserved FROM tasks WHERE id=?',taskId).reserved>0);assert.throws(()=>auth.authorize(d.token),e=>e.status===401);}finally{auth.close();}
   await assert.rejects(()=>restoreCloud(snap.destination,key,directory,target));

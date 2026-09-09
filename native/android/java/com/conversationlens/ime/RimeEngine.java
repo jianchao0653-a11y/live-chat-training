@@ -13,8 +13,8 @@ final class RimeEngine {
     static native String[] step(long session, int action, int value);
 
     static long prepare(Context context) throws Exception {
-        File shared = new File(context.getFilesDir(), "rime-shared-v1");
-        File user = new File(context.getNoBackupFilesDir(), "rime-user-v1");
+        File shared = new File(context.getFilesDir(), "rime-shared-v2");
+        File user = new File(context.getNoBackupFilesDir(), "rime-user-v2");
         if ((!shared.isDirectory() && !shared.mkdirs()) || (!user.isDirectory() && !user.mkdirs()))
             throw new IllegalStateException("Cannot prepare input data");
         File marker = new File(shared, ".ready");

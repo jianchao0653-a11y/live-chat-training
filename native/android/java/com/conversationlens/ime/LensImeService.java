@@ -25,7 +25,8 @@ public final class LensImeService extends InputMethodService {
     private long session; // Engine worker only.
     private boolean ready, chinese, numeric, upper, symbols, sensitive;
     private boolean composing;
-    private LinearLayout root, candidates, keyboard, toolbar;
+    private boolean nine;
+    private LinearLayout root, candidates, keyboard, toolbar, candidateRow;
     private TextView status;
     private Button previousPage, nextPage;
     private Button assist;
@@ -33,7 +34,7 @@ public final class LensImeService extends InputMethodService {
     private int pending;
     private final ArrayList<Button> modeButtons = new ArrayList<>();
 
-    @Override public void onCreate() { setTheme(R.style.LensKeyboardTheme); super.onCreate(); }
+    @Override public void onCreate() { setTheme(R.style.LensKeyboardTheme); super.onCreate(); nine=getSharedPreferences("keyboard-layout",MODE_PRIVATE).getBoolean("nine",false); }
 
     @Override public View onCreateInputView() {
         getWindow().getWindow().setNavigationBarColor(LensStyle.NAVIGATION);
@@ -59,7 +60,7 @@ public final class LensImeService extends InputMethodService {
         assist.setOnClickListener(v -> assistAction());
         HorizontalScrollView scroller = new HorizontalScrollView(this);scroller.setHorizontalScrollBarEnabled(false);
         candidates = new LinearLayout(this); scroller.addView(candidates);
-        LinearLayout candidateRow = new LinearLayout(this);
+        candidateRow = new LinearLayout(this);
         candidateRow.addView(scroller, new LinearLayout.LayoutParams(0, -1, 1));
         previousPage = new Button(this); previousPage.setText("‹");
         nextPage = new Button(this); nextPage.setText("›");
@@ -89,6 +90,7 @@ public final class LensImeService extends InputMethodService {
         render();
     }
     private void startSession(int token) {
+        final boolean useNine=nine;
         worker.execute(() -> {
             if (session != 0) { RimeEngine.close(session); session = 0; }
             if (token != generation) return;
@@ -96,6 +98,7 @@ public final class LensImeService extends InputMethodService {
             if (!chinese) { main.post(() -> { if (token == generation) { ready = true; render(); } }); return; }
             try {
                 session = RimeEngine.prepare(this);
+                RimeEngine.step(session,5,useNine?1:0);
                 main.post(() -> { if (token == generation) { ready = true; render(); } });
             } catch (Exception | LinkageError error) {
                 main.post(() -> { if (token == generation) {
@@ -218,22 +221,34 @@ public final class LensImeService extends InputMethodService {
         keyboard.removeAllViews(); modeButtons.clear();
         String[] rows = numeric ? new String[]{"123", "456", "789", "+0."}
             : symbols ? new String[]{"1234567890", "@#￥%&*-+=", "，。？！、：；（）"}
-            : new String[]{"qwertyuiop", "asdfghjkl", "zxcvbnm"};
+            : chinese && nine ? new String[]{"123","456","789"} : new String[]{"qwertyuiop", "asdfghjkl", "zxcvbnm"};
         for (String row : rows) {
             LinearLayout line = row();
-            if(!numeric && !symbols && row.equals(rows[1]))line.setPadding(dp(14),0,dp(14),0);
+            if(!numeric && !symbols && !(chinese&&nine) && row.equals(rows[1]))line.setPadding(dp(14),0,dp(14),0);
             for (int i = 0; i < row.length(); i++) {
                 String key = row.substring(i, i + 1);
-                addKey(line, upper && !chinese ? key.toUpperCase(java.util.Locale.ROOT) : key, () -> key(key), 1);
+                boolean nineKey=chinese&&nine&&!symbols&&!numeric;
+                String[] labels={"分词 ' ","2 ABC","3 DEF","4 GHI","5 JKL","6 MNO","7 PQRS","8 TUV","9 WXYZ"};
+                String caption=nineKey?labels[Integer.parseInt(key)-1]:upper&&!chinese?key.toUpperCase(java.util.Locale.ROOT):key;
+                Button letter=addKey(line,caption,()->key(nineKey&&key.equals("1")?"'":key),1);
+                if(nineKey)LensStyle.key(letter,false);
             }
-            if (row.equals(rows[rows.length - 1])) addKey(line, "⌫", () -> {
+            if (row.equals(rows[rows.length - 1]) && !(chinese&&nine&&!symbols&&!numeric)) addKey(line, "⌫", () -> {
                 if (chinese) engine(0, 0xff08, "\b"); else queuedDirect("\b");
             }, 1.4f);
         }
         LinearLayout controls = row();
+        if(chinese&&nine&&!symbols&&!numeric)addKey(controls,"⌫",()->engine(0,0xff08,"\b"),1);
         addKey(controls, "切换", () -> ((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).showInputMethodPicker(), 1.2f).setEnabled(true);
         if (!numeric) {
             modeButtons.add(addKey(controls, chinese ? "中" : "英", this::toggleMode, .8f));
+            if(chinese)modeButtons.add(addKey(controls,nine?"全键":"九宫",()->{
+                if(pending!=0)return;
+                // Resolve the old composition before switching schemas on the same worker.
+                if(composing)engine(4,0,null);
+                nine=!nine;getSharedPreferences("keyboard-layout",MODE_PRIVATE).edit().putBoolean("nine",nine).apply();
+                engine(5,nine?1:0,null);render();
+            },1));
             modeButtons.add(addKey(controls, symbols ? "ABC" : "123", () -> {
                 // Flush composition before changing layouts so punctuation cannot reorder it.
                 if (composing) engine(4, 0, null);
@@ -252,6 +267,7 @@ public final class LensImeService extends InputMethodService {
     private void renderCandidates() {
         renderAssist();
         if (candidates == null) return;
+        candidateRow.setVisibility(chinese&&(composing||pending>0)?View.VISIBLE:View.GONE);
         candidates.removeAllViews();
         previousPage.setVisibility(View.GONE); nextPage.setVisibility(View.GONE);
         if (!chinese || latest == null || pending != 0) return;

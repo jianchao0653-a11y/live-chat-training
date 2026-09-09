@@ -42,6 +42,36 @@ int main(int argc, char** argv) {
   api->destroy_session(session);
   session = api->create_session();
   if (!api->select_schema(session, "lens_pinyin") || std::string(api->get_input(session)) != "") return 10;
+  if (!api->select_schema(session, "lens_nine")) return 11;
+  const char* digits[] = {"64426", "94664486", "943943"};
+  for (int n = 0; n < 3; ++n) {
+    api->clear_composition(session);
+    for (const char* c = digits[n]; *c; ++c) api->process_key(session, *c, 0);
+    bool selected = false;
+    for (int page = 0; page < 20 && !selected; ++page) {
+      RIME_STRUCT(RimeContext, ctx);
+      if (!api->get_context(session, &ctx)) return 12;
+      int match = -1;
+      for (int i = 0; i < ctx.menu.num_candidates; ++i)
+        if (std::string(ctx.menu.candidates[i].text) == expected[n]) match = i;
+      bool last = ctx.menu.is_last_page;
+      api->free_context(&ctx);
+      if (match >= 0) { selected = api->select_candidate_on_current_page(session, match); break; }
+      if (last || !api->change_page(session, False)) break;
+    }
+    if (!selected) { printf("Missing nine-key candidate: %s\n", digits[n]); return 13; }
+    RIME_STRUCT(RimeCommit, result);
+    if (!api->get_commit(session, &result)) return 14;
+    bool correct = result.text && std::string(result.text) == expected[n];
+    api->free_commit(&result);
+    if (!correct) return 15;
+    printf("nine %s -> expected candidate committed\n", digits[n]);
+  }
+  api->process_key(session, '6', 0);api->process_key(session, '4', 0);
+  api->process_key(session, 0xff08, 0);
+  if (std::string(api->get_input(session)) != "6") return 16;
+  api->clear_composition(session);
+  if (!api->select_schema(session, "lens_pinyin") || std::string(api->get_input(session)) != "") return 17;
   api->destroy_session(session);
   api->finalize();
   puts("RIME_SMOKE_PASS");

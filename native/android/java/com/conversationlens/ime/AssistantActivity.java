@@ -26,7 +26,7 @@ public final class AssistantActivity extends Activity {
     private NativeClient client;
     private AssistSession session;
     private JSONArray roster=new JSONArray();
-    private int work;
+    private int work, rosterWork;
     private boolean setting;
     private boolean cloud;
     private String pendingRequest;
@@ -57,8 +57,9 @@ public final class AssistantActivity extends Activity {
         label("人物",13);people=spinner(new String[]{"正在加载人物"});label("本次目标",13);goal=spinner(new String[]{"自然接话","关心近况","修复误会","表达边界"});label("分析方式",13);mode=spinner(cloud?new String[]{"联网聊天建议"}:new String[]{"本机服务规则试算","GPT 分析（需电脑配置）"});
         LensStyle.section(body,"02  准备聊天片段");
         transcript=edit("粘贴或输入你批准的聊天片段，标明说话人",2103,true);
-        if(!cloud){button("截取一次屏幕（系统授权）",()->requestCapture());
-        button("选择一张聊天截图",()->{changed();startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),42);});}
+        label("截图在本机识别。请将发言校对为“我：”和“对方：”，删除标题、时间等内容；受保护的黑屏请改用粘贴。",14);
+        button("截取一次屏幕（系统授权）",()->requestCapture());
+        button("选择一张聊天截图",()->{changed();startActivityForResult(new Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*").addCategory(Intent.CATEGORY_OPENABLE),42);});
         imagePanel=new LinearLayout(this);imagePanel.setOrientation(LinearLayout.VERTICAL);body.addView(imagePanel);
         approved=new CheckBox(this);approved.setText("已核对人物和片段，同意提交给连接的服务");approved.setTextColor(LensStyle.INK);approved.setTextSize(15);approved.setMinHeight(LensStyle.dp(this,48));approved.setButtonTintList(android.content.res.ColorStateList.valueOf(LensStyle.GREEN));body.addView(approved,LensStyle.space(this));
         button("分析已批准片段",()->analyze());
@@ -76,7 +77,13 @@ public final class AssistantActivity extends Activity {
     @Override public Object onRetainNonConfigurationInstance(){
         if(transcript==null||session==null||client==null)return null;TransientForm form=new TransientForm();form.text=transcript.getText().toString();form.goal=goal.getSelectedItemPosition();form.mode=mode.getSelectedItemPosition();int index=people.getSelectedItemPosition();form.personId=index>=0&&index<roster.length()?roster.optJSONObject(index).optString("id"):"";return form;
     }
-    @Override protected void onResume(){super.onResume();AssistSession.helperShowing=true;showImage();if(cloud){try{NativeClient loaded=NativeClient.load(this);if(loaded!=null){if(client==null||!loaded.token.equals(client.token))changed();client=loaded;loadRoster();}else{client=null;changed();status.setText("请先登录并建立人物资料。");}}catch(Exception e){status.setText("请重新登录。");}}}
+    @Override protected void onResume(){super.onResume();AssistSession.helperShowing=true;showImage();if(cloud){try{NativeClient loaded=NativeClient.load(this);if(loaded!=null){if(client==null||!loaded.token.equals(client.token))resetAccountForm();client=loaded;loadRoster();}else{client=null;resetAccountForm();status.setText("请先登录并建立人物资料。");}}catch(Exception e){client=null;resetAccountForm();status.setText("请重新登录。");}}}
+    private void resetAccountForm(){changed();rosterWork++;roster=new JSONArray();restored=null;
+        if(transcript!=null)transcript.setText("");if(draft!=null)draft.setText("");
+        if(people!=null)people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,new String[0]));
+        if(session!=null){session.clearImage();session.captureMessage="";}showImage();
+        AssistSession.feedbackId=null;AssistSession.feedbackName=null;AssistSession.feedbackClient=null;
+    }
     @Override protected void onPause(){AssistSession.helperShowing=false;super.onPause();}
     private void changed(){if(setting)return;work++;pendingRequest=null;feedbackResult=null;if(session!=null)session.invalidate();if(results!=null)results.removeAllViews();if(approved!=null){setting=true;approved.setChecked(false);setting=false;}}
     private void pair(){
@@ -96,13 +103,30 @@ public final class AssistantActivity extends Activity {
         recreate();
     }
     private void loadRoster(){
-        final NativeClient c=client;final int token=work;
-        NativeClient.IO.execute(()->{try{JSONObject response=c.call("roster",null);runOnUiThread(()->{if(isDestroyed()||c!=client)return;roster=response.optJSONArray("people");status.setText(cloud?"已登录 · "+roster.length()+" 位人物 · 今日已用 "+response.optJSONObject("budget").optInt("used_today")+" 次":"已连接 · 主播 "+response.optJSONObject("device").optString("streamer_id")+" · 授权最长 8 小时");if(people!=null){String[] names=new String[roster.length()];int selected=0;for(int i=0;i<names.length;i++){names[i]=roster.optJSONObject(i).optString("name")+" · "+roster.optJSONObject(i).optString("platform");if(restored!=null&&roster.optJSONObject(i).optString("id").equals(restored.personId))selected=i;}people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));people.setSelection(selected);}if(session!=null)session.client=c;});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&c==client)error(e);});}});
+        final NativeClient c=client;final int ticket=++rosterWork;
+        final int oldIndex=people==null?-1:people.getSelectedItemPosition();
+        final String selectedId=oldIndex>=0&&oldIndex<roster.length()?roster.optJSONObject(oldIndex).optString("id"):restored==null?"":restored.personId;
+        NativeClient.IO.execute(()->{try{JSONObject response=c.call("roster",null);runOnUiThread(()->{
+            if(isDestroyed()||c!=client||ticket!=rosterWork)return;
+            JSONArray next=response.optJSONArray("people");if(next==null){status.setText("人物列表不可用，请重试。");return;}
+            JSONObject streamer=response.optJSONObject("streamer");String name=streamer==null?"待设置主播":streamer.optString("name","待设置主播");
+            JSONObject budget=response.optJSONObject("budget");
+            status.setText(cloud?"主播："+name+" · "+next.length()+" 位客户 · 今日已用 "+(budget==null?0:budget.optInt("used_today"))+" 次":"已连接 · 主播 "+name);
+            if(!next.toString().equals(roster.toString()) || people!=null&&people.getAdapter().getCount()!=next.length()){
+                changed();roster=next;
+                if(people!=null){String[] names=new String[roster.length()];int selected=0;
+                    for(int i=0;i<names.length;i++){JSONObject p=roster.optJSONObject(i);names[i]=p.optString("name")+" · "+p.optString("platform");if(p.optString("id").equals(selectedId))selected=i;}
+                    people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));people.setSelection(selected);
+                }
+            }
+            if(session!=null)session.client=c;
+        });}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&c==client&&ticket==rosterWork)error(e);});}});
     }
     private void analyze(){
         if(session==null||!session.alive()){status.setText("输入现场已失效，请返回聊天重新点击建议");return;}
         if(client==null||roster.length()==0||people.getSelectedItemPosition()<0){status.setText(cloud?"请先登录，并在人物资料中新建人物":"请先配对，并在电脑建立人物关系");return;}
         if(!approved.isChecked()){status.setText("请先核对并批准片段");return;}
+        if(transcript.getText().toString().contains("待核对")){status.setText("请先校对识别结果：将发言标为“我：”或“对方：”，删除标题、时间等非聊天内容。");return;}
         final String requestId=pendingRequest==null?java.util.UUID.randomUUID().toString():pendingRequest;
         changed();pendingRequest=requestId;final int token=++work;final AssistSession s=session;final int revision=s.revision;final NativeClient c=client;s.client=c;
         try{
@@ -155,17 +179,19 @@ public final class AssistantActivity extends Activity {
         if(!session.captureMessage.isEmpty())status.setText(session.captureMessage);
         if(session.image==null)return;
         ImageView preview=new ImageView(this);preview.setImageBitmap(session.image);preview.setAdjustViewBounds(true);preview.setMaxHeight(600);preview.setContentDescription("待批准的截图预览");imagePanel.addView(preview);
-        Button upload=new Button(this);LensStyle.button(upload,true);upload.setText("批准此图并提交转写");upload.setOnClickListener(v->extractImage());imagePanel.addView(upload,LensStyle.space(this));
+        Button upload=new Button(this);LensStyle.button(upload,true);upload.setText("在本机识别文字");upload.setOnClickListener(v->extractImage());imagePanel.addView(upload,LensStyle.space(this));
         Button discard=new Button(this);LensStyle.button(discard,false);discard.setText("丢弃截图");discard.setOnClickListener(v->{changed();session.clearImage();showImage();status.setText("截图已丢弃");});imagePanel.addView(discard,LensStyle.space(this));
     }
     private void extractImage(){
-        if(session==null||!session.alive()||session.image==null||client==null){status.setText("请先连接服务并选择截图");return;}
-        changed();final int token=++work;final AssistSession s=session;final int revision=s.revision;final NativeClient c=client;s.client=c;
-        try{
-            ByteArrayOutputStream out=new ByteArrayOutputStream();s.image.compress(Bitmap.CompressFormat.JPEG,85,out);
-            JSONObject payload=new JSONObject().put("context",s.context).put("host",s.host).put("approved",true).put("image","data:image/jpeg;base64,"+android.util.Base64.encodeToString(out.toByteArray(),android.util.Base64.NO_WRAP));
-            status.setText("正在转写截图…");NativeClient.IO.execute(()->{try{JSONObject response=c.call("extract",payload);runOnUiThread(()->{if(isDestroyed()||token!=work||!s.alive()||s.revision!=revision)return;transcript.setText(response.optString("text"));status.setText("请人工校对说话人和原话，再批准文字分析。"+response.optString("warning"));});}catch(Exception e){report(token,e);}});
-        }catch(Exception e){error(e);}
+        if(session==null||!session.alive()||session.image==null){status.setText("请先选择截图");return;}
+        changed();final int token=++work;final AssistSession s=session;final int revision=s.revision;
+        status.setText("正在本机识别… 图片不提交给分析服务");
+        try{LocalChatOcr.recognize(s.image,new LocalChatOcr.Done(){
+            public void success(String text){if(isDestroyed()||token!=work||!s.alive()||s.revision!=revision)return;
+                if(text.trim().isEmpty()){status.setText("未识别到文字，可能是受保护画面。请改为粘贴聊天片段。");return;}
+                transcript.setText(text);status.setText("请结合预览校对：改为“我：”或“对方：”，删除非聊天内容，再批准分析。");}
+            public void failure(){if(!isDestroyed()&&token==work)status.setText("本机识别失败，请重试或粘贴聊天片段。");}
+        });}catch(RuntimeException e){status.setText("本机识别无法启动，请粘贴聊天片段。");}
     }
     private void feedbackControls(){
         if(AssistSession.feedbackId==null)return;

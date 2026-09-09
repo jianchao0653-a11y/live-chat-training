@@ -23,7 +23,7 @@ class AcceptanceTest(unittest.TestCase):
             return probe('https://example.com')
 
     def test_healthy_api(self):
-        result = self.run_probe(Response(200, b'{"status":"ok","version":"0.16.0"}'))
+        result = self.run_probe(Response(200, b'{"status":"ok","version":"0.17.0"}'))
         self.assertTrue(result['passed'])
         self.assertFalse(result['productionReady'])
         self.assertFalse(result['phoneNetworkVerified'])

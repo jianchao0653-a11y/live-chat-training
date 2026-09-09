@@ -77,6 +77,14 @@ export function openStore(file) {
     db.exec('PRAGMA user_version=1');
   });
   const pair = (personId, streamerId = '0001') => get('SELECT * FROM pairs WHERE person_id=? AND streamer_id=?', personId, streamerId);
+  if (get('PRAGMA user_version').user_version < 2) tx(() => {
+    db.exec(`ALTER TABLE streamers ADD COLUMN goal TEXT NOT NULL DEFAULT '';
+      ALTER TABLE streamers ADD COLUMN tags TEXT NOT NULL DEFAULT '';
+      ALTER TABLE claims ADD COLUMN review_state TEXT NOT NULL DEFAULT 'CONFIRMED';
+      ALTER TABLE claims ADD COLUMN category TEXT NOT NULL DEFAULT 'MEMORY';
+      UPDATE claims SET review_state='PENDING' WHERE kind='INFERRED';
+      PRAGMA user_version=2;`);
+  });
   const event = (pairId, type, subjectId, payload) => {
     run('INSERT INTO context_events(pair_id,type,subject_id,payload,created_at) VALUES(?,?,?,?,?)', pairId, type, subjectId, JSON.stringify(payload), now());
     run('UPDATE pairs SET revision=revision+1 WHERE id=?', pairId);
@@ -103,7 +111,7 @@ export function openStore(file) {
     people: (streamerId = '0001') => all(`SELECT p.id,p.name,p.platform,p.created_at,r.id AS pair_id,COALESCE(r.stage,'未建立') AS stage,
       (SELECT COUNT(*) FROM analyses WHERE pair_id=r.id) as analysis_count FROM people p
       LEFT JOIN pairs r ON r.person_id=p.id AND r.streamer_id=? ORDER BY p.id`, streamerId),
-    updateStreamer: (id, s) => run('UPDATE streamers SET name=?,tone=?,phrases=?,emojis=?,boundary=?,input_layout=?,revision=revision+1 WHERE id=?', s.name, s.tone, s.phrases, s.emojis, s.boundary, s.input_layout, id),
+    updateStreamer: (id, s) => run('UPDATE streamers SET name=?,tone=?,phrases=?,emojis=?,boundary=?,input_layout=?,goal=?,tags=?,revision=revision+1 WHERE id=?', s.name, s.tone, s.phrases, s.emojis, s.boundary, s.input_layout, s.goal||'', s.tags||'', id),
     updatePerson: (id, streamerId, p) => tx(() => {
       run('UPDATE people SET name=?,platform=? WHERE id=?', p.name, p.platform, id);
       // Keep old columns as a migration-only snapshot, not a second live source of truth.
@@ -113,7 +121,7 @@ export function openStore(file) {
       event(pair(id, streamerId).id, 'RELATIONSHIP_UPDATED', id, {});
     }),
     addClaim: (c) => tx(() => {
-      run('INSERT INTO claims(id,person_id,kind,content,source,created_at,pair_id) VALUES(?,?,?,?,?,?,?)', c.id, c.person_id, c.kind, c.content, c.source, c.created_at, c.pair_id);
+      run('INSERT INTO claims(id,person_id,kind,content,source,created_at,pair_id,review_state,category) VALUES(?,?,?,?,?,?,?,?,?)', c.id, c.person_id, c.kind, c.content, c.source, c.created_at, c.pair_id,c.review_state||(c.kind==='INFERRED'?'PENDING':'CONFIRMED'),c.category||'MEMORY');
       event(c.pair_id, 'MEMORY_ADDED', c.id, { kind: c.kind });
     }),
     setClaimStatus: (id, kind) => tx(() => {
@@ -155,7 +163,7 @@ export function openStore(file) {
       const beliefRows = all(`SELECT b.* FROM beliefs b JOIN analyses a ON a.id=b.analysis_id WHERE a.pair_id=?
         AND b.status IN ('SUPPORTED','DISPUTED','RETIRED') ORDER BY
         COALESCE((SELECT MAX(seq) FROM context_events e WHERE e.subject_id=b.analysis_id AND e.type='BELIEF_STATUS'),0) DESC,b.created_at DESC,a.rowid DESC LIMIT 12`, pairId);
-      return { ...p, claims:p.claims.filter(c => ['FACT','SELF_DECLARED','INFERRED'].includes(c.kind)).slice(0,8),
+      return { ...p, claims:p.claims.filter(c => c.review_state==='CONFIRMED' && ['FACT','SELF_DECLARED','INFERRED'].includes(c.kind)).slice(0,8),
         excluded_memories:p.claims.filter(c => ['DISPUTED','EXPIRED'].includes(c.kind)).slice(0,8),
         beliefs:beliefRows, outcomes:outcomes.slice(0,5),
         strategy_observations:outcomes.map(({analysis_id,goal,situation,strategy,status}) => ({analysis_id,goal,situation,strategy,status})),

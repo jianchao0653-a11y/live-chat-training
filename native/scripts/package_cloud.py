@@ -13,8 +13,9 @@ for p in sorted(files):
     if re.search(rb'sk-(?:proj-)?[A-Za-z0-9_-]{30,}|-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',data):raise RuntimeError('Potential secret in deploy source')
     entries.append((p.relative_to(ROOT).as_posix(),data))
 out=ROOT/'output/cloud';out.mkdir(parents=True,exist_ok=True)
-archive=out/'conversation-lens-0.16.0-server.zip'
-manifest={'version':'0.16.0','productionReady':False,'credentialsIncluded':False,'files':[{'path':name,'sha256':hashlib.sha256(data).hexdigest()} for name,data in entries]}
+version=json.loads((ROOT/'package.json').read_text(encoding='utf-8'))['version']
+archive=out/f'conversation-lens-{version}-server.zip'
+manifest={'version':version,'productionReady':False,'credentialsIncluded':False,'files':[{'path':name,'sha256':hashlib.sha256(data).hexdigest()} for name,data in entries]}
 with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED) as z:
     for name,data in entries:z.writestr(name,data)
     z.writestr('DEPLOY-MANIFEST.json',json.dumps(manifest,indent=2))

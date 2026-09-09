@@ -6,10 +6,11 @@ import sys
 root=Path(__file__).resolve().parents[2]
 allowed={'.mjs','.js','.html','.css','.svg','.webmanifest','.json','.java','.cpp','.h','.xml','.yaml','.yml','.py','.swift','.plist','.entitlements','.md','.txt','.ps1'}
 allowed.update({'.service','.timer','.example','.cmd'})
+allowed.update({'.gradle','.properties','.lockfile'})
 paths=[]
 for folder in ['app','native','.github']:
     for path in (root/folder).rglob('*'):
-        if path.is_file() and path.suffix in allowed and '__pycache__' not in path.parts and not any(x in path.parts for x in ['.xcodeproj','DerivedData']):paths.append(path)
+        if path.is_file() and path.suffix in allowed and '__pycache__' not in path.parts and not any(x in path.parts for x in ['.xcodeproj','DerivedData','build','.gradle']):paths.append(path)
 paths += [root/'package.json',root/'.gitignore']
 paths += [root/'03_decisions/MADR-032-035.md']
 paths += [root/'03_decisions/MADR-036.md',root/'02_product/MOBILE_UI_SYSTEM.md',root/'07_reviews/V0_15_UI_ACCEPTANCE.md']
@@ -21,6 +22,8 @@ paths += [root/'03_decisions/MADR-041.md',root/'02_product/ANDROID_FIRST_RELEASE
 paths += [root/'07_reviews/PC_HTTPS_ACCEPTANCE.md']
 paths += [root/'AGENTS.md',root/'03_decisions/MADR-042.md',root/'07_reviews/NGROK_SECURITY_REPORT.md']
 paths += [root/'03_decisions/MADR-043.md']
+paths += [root/'03_decisions/MADR-044.md']
+paths += [root/'07_reviews/V0_17_ACCEPTANCE.md']
 paths += [root/'01_inputs/REFERENCE_REUSE_V014.md',root/'07_reviews/V0_14_ACCEPTANCE.md']
 entries=[]
 for p in sorted(set(paths)):

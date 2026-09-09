@@ -78,6 +78,13 @@ Java_com_conversationlens_ime_RimeEngine_step(JNIEnv* env, jclass, jlong session
       case 2: api->clear_composition(session); break;
       case 3: handled = api->change_page(session, value < 0); break;
       case 4: handled = api->commit_composition(session); break;
+      case 5:
+        api->clear_composition(session);
+        if (!api->select_schema(session, value == 1 ? "lens_nine" : "lens_pinyin"))
+          throw std::runtime_error("Rime layout deployment failed");
+        api->set_option(session, "ascii_mode", False);
+        api->set_option(session, "incognito_mode", True);
+        break;
     }
     std::vector<std::string> result(5);
     result[0] = handled ? "1" : "0";

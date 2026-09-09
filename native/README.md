@@ -1,5 +1,9 @@
 # 观微 v0.15 统一 UI 工程预览
 
+当前版本：**v0.17.0 测试升级包**，详见 [MADR-044](../03_decisions/MADR-044.md) 与 [验收记录](../07_reviews/V0_17_ACCEPTANCE.md)。新增主播档案/来源标记、九宫拼音、本机中文 OCR；签名包和后端已更新，OCR 精确文字及小米真机验收未通过/待完成。下面的版本说明保留为历史记录。
+
+Android 构建入口仍是 `python native/scripts/build_android.py`，Java/资源/随包 OCR 改由锁定的 Gradle8.13/AGP8.13.2 打包，原生仍用现有 CMake。首次自动准备校验过哈希的 Gradle；`build_android_ocr.py --with-tests` 构建30张合成图片的仪器测试。正式包先 `--release --prepare-release --cloud-url HTTPS_ROOT`，再执行 HTTPS 验收和 `sign_prepared_release.py HTTPS_ROOT`；分阶段适用于本机网络与 DPAPI 的不同执行身份，必须使用既有正式密钥。
+
 最新 v0.16 云端手机首版见 [MADR-040](../03_decisions/MADR-040.md)、[验收](../07_reviews/CLOUD_V016_ACCEPTANCE.md)、[部署](deploy/README.md)。已实现邀请码登录与手机人物管理，云端调试包仅内置本地测试地址；生产域名、签名、小米真机和七天试点未完成。下方为原电脑服务模式说明。
 
 v0.15.1 安全补丁已通过本地与云端合成验收：[新版双架构 APK](../output/native/conversation-lens-0.15.1-debug.apk)、[本轮回执](../07_reviews/V0_15_1_SECURITY_ACCEPTANCE.md)。SHA256 `b0b0511237ca8f83bcf7b57299cbad78874064e0ed59e5d80cbd761afe1d2580`。下方 0.15.0 安装包仍是历史 UI 基线；真机和生产发布未通过。

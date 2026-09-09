@@ -41,7 +41,6 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
       const app=createApplication({database:join(root,'accounts',account+'.sqlite'),apiKey,model,provider,baseUrl,fetcher,clock,
         authorize:token=>{const d=auth.authorize(token);if(d.account_id!==account)fail(403,'账号不一致。');return d;},
         modelHooks:{beforeCall:b=>work.getStore()?.beforeCall(b),onUsage:u=>work.getStore()?.onUsage(u)}});
-      app.store.run("UPDATE streamers SET name='我的聊天' WHERE id='0001'");
       contexts.set(account,app);
     }
     return contexts.get(account);
@@ -61,6 +60,16 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
   }
   function library(app,account,path,method,b) {
     const s=app.store;
+    if(path==='/api/native/library/streamer'){
+      if(method==='GET')return {account_id:account,profile:s.get("SELECT * FROM streamers WHERE id='0001'")};
+      if(method!=='POST')fail(405,'请求方法不支持。');
+      const people=s.people('0001').filter(p=>p.pair_id);
+      if(people.some(p=>app.isActive(p.id)))fail(409,'正在分析，请完成后再修改主播资料。');
+      const value={name:text(b.name,60,true),tone:text(b.tone,500),phrases:text(b.phrases,1000),emojis:text(b.emojis,100),boundary:text(b.boundary,1000),goal:text(b.goal,500),tags:text(b.tags,500),input_layout:pick(b.input_layout||'SYSTEM',['SYSTEM','FULL','NINE'])};
+      auth.run('INSERT INTO deletions(account,person,entire,created) VALUES(?,?,?,?)',account,'@streamer',0,clock());
+      s.tx(()=>{for(const p of people)purgeDerived(s,person(app,p.id));s.updateStreamer('0001',value);});
+      return {account_id:account,profile:s.get("SELECT * FROM streamers WHERE id='0001'")};
+    }
     if(path==='/api/native/library/people') {
       if(method==='GET')return {people:s.people('0001').filter(p=>p.pair_id).slice(0,100),platforms,stages};
       if(method==='POST') {
@@ -83,17 +92,24 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
       if(action==='delete'){journal(account,p,true);return s.deletePerson(p.id);}
       if(action==='memories'){
         if(s.get('SELECT COUNT(*) n FROM claims WHERE person_id=?',p.id).n>=100)fail(409,'每位人物最多保存 100 条记忆。');
-        const c={id:randomUUID(),person_id:p.id,pair_id:p.relationship.id,kind:'FACT',content:text(b.content,1000,true),source:text(b.source,500,true),created_at:new Date(clock()).toISOString()};
+        const kind=pick(b.kind||'FACT',['FACT','SELF_DECLARED','INFERRED','DISPUTED','EXPIRED']);
+        const c={id:randomUUID(),person_id:p.id,pair_id:p.relationship.id,kind,review_state:kind==='INFERRED'?'PENDING':'CONFIRMED',category:pick(b.category||'MEMORY',['MEMORY','TAG']),content:text(b.content,1000,true),source:text(b.source,500,true),created_at:new Date(clock()).toISOString()};
         s.addClaim(c);return c;
       }
     }
-    m=path.match(/^\/api\/native\/library\/memories\/([^/]+)\/(save|delete)$/);
+    m=path.match(/^\/api\/native\/library\/memories\/([^/]+)\/(save|delete|confirm)$/);
     if(m&&method==='POST') {
       const c=s.get('SELECT * FROM claims WHERE id=?',m[1]);if(!c)fail(404,'记忆不存在。');
       const p=person(app,c.person_id);if(app.isActive(p.id))fail(409,'正在分析，请稍后修改。');
+      if(m[2]==='confirm'){
+        if(b.confirmed!==true)fail(400,'请明确确认此条推测。');
+        journal(account,p);s.tx(()=>{purgeDerived(s,p);s.run("UPDATE claims SET review_state='CONFIRMED' WHERE id=?",c.id);});return {saved:true};
+      }
       const content=m[2]==='save'?text(b.content,1000,true):'',source=m[2]==='save'?text(b.source,500,true):'';
+      const kind=m[2]==='save'?pick(b.kind||c.kind,['FACT','SELF_DECLARED','INFERRED','DISPUTED','EXPIRED']):c.kind;
+      const category=m[2]==='save'?pick(b.category||c.category,['MEMORY','TAG']):c.category;
       journal(account,p);
-      s.tx(()=>{purgeDerived(s,p);if(m[2]==='delete')s.run('DELETE FROM claims WHERE id=?',c.id);else s.run("UPDATE claims SET content=?,source=?,kind='FACT',created_at=? WHERE id=?",content,source,new Date(clock()).toISOString(),c.id);});
+      s.tx(()=>{purgeDerived(s,p);if(m[2]==='delete')s.run('DELETE FROM claims WHERE id=?',c.id);else s.run("UPDATE claims SET content=?,source=?,kind=?,category=?,review_state=?,created_at=? WHERE id=?",content,source,kind,category,kind==='INFERRED'?'PENDING':'CONFIRMED',new Date(clock()).toISOString(),c.id);});
       return {saved:true,history_cleared:true};
     }
     m=path.match(/^\/api\/native\/library\/feedback\/([^/]+)\/(save|delete)$/);
@@ -117,7 +133,7 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
       if(!['GET','POST'].includes(req.method))fail(405,'请求方法不支持。');
       const u=new URL(req.url,'http://localhost'),path=u.pathname;
       if(u.search||!path.startsWith('/api/native/'))fail(403,'此入口仅供原生应用使用。');
-      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.16.0',quality_accepted:false});
+      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.17.0',quality_accepted:false});
       if(path==='/api/native/auth/activate'&&req.method==='POST'){
         const b=await bodyOf(req);if(b.approved!==true)fail(400,'请先同意必要的数据处理说明。');
         return send(res,200,auth.activate(b.code,b.name||'Android'));
