@@ -41,4 +41,8 @@
 
 本次数据损失、重试及恢复复现已消除。正式投放仍需小米实际安装升级与流量网络体验、真实建议人工质量评审、连续试用。OCR既有精确匹配22/30仍未达标，需要人工校对；不把本次审核修复当成OCR质量修复。ngrok云端正文记录设置仍未独立核验。
 
-远端同步与CI回执将在文末登记；原CI run34315683151未分配runner且无steps，不代表当前源码通过CI。允许继续合成验收和受控测试，productionReady=false。
+源码与决策已同步私有仓库 `jianchao0653-a11y/live-chat-training` 的 `codex/mobile-acceptance-v014`，提交 `a94bbd9e734af9b0fb86e2062c3a18bfcf0772e1`，32个明确源/文档文件，原Draft PR #3未合并。
+
+本次CI [run34324558250](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34324558250) 四作业都在分配runner/执行step之前失败（runner_name为空，steps=[]）。这是当前实际回执，不是旧run结果，也不能称为代码测试失败或CI通过。具体平台原因未取得；既有连接器不允许读取check-run annotations，不盲目重跑。所有通过结论来自上述本机实测。
+
+项目模拟器已关闭，PC后端继续运行。允许继续合成验收和受控测试，productionReady=false。
