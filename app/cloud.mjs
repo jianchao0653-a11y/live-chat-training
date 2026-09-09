@@ -137,7 +137,7 @@ export function createCloud({directory,backupDirectory,apiKey='',model='qwen-plu
       if(!['GET','POST'].includes(req.method))fail(405,'请求方法不支持。');
       const u=new URL(req.url,'http://localhost'),path=u.pathname;
       if(u.search||!path.startsWith('/api/native/'))fail(403,'此入口仅供原生应用使用。');
-      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.17.2',quality_accepted:false});
+      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.17.3',quality_accepted:false});
       if(path==='/api/native/auth/activate'&&req.method==='POST'){
         const b=await bodyOf(req);if(b.approved!==true)fail(400,'请先同意必要的数据处理说明。');
         return send(res,200,auth.activate(b.code,b.name||'Android'));

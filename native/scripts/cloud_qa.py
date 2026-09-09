@@ -12,16 +12,30 @@ def click(label):
         for n in tree.iter('node'):
             if n.get('text')==label and n.get('enabled')=='true':
                 left,top,right,bottom=map(int,re.findall(r'-?\d+',n.get('bounds')))
-                if right>left and bottom>top and 48<(top+bottom)//2<height-80:
+                if right>left and bottom>top and height*.05<(top+bottom)//2<height*.90:
                     tap_node(n);return
-        adb('shell','input','swipe','620',str(height-220),'620','400','300')
+        # Use the visible scroll viewport: on older Android the IME occupies
+        # the old fixed swipe start, so that gesture only hits keyboard keys.
+        viewports=[]
+        for n in tree.iter('node'):
+            if n.get('class')=='android.widget.ScrollView':
+                left,top,right,bottom=map(int,re.findall(r'-?\d+',n.get('bounds')))
+                if right>left and bottom-top>160:viewports.append((left,top,right,bottom))
+        if viewports:
+            left,top,right,bottom=max(viewports,key=lambda r:(r[2]-r[0])*(r[3]-r[1]))
+            # Edge-to-edge view bounds may include system navigation space.
+            # Keep gestures in the interior, away from Home/back gesture edges.
+            x=(left+right)//2;start=min(int(top+(bottom-top)*.75),int(height*.85));end=max(int(top+(bottom-top)*.25),int(height*.10))
+        else:
+            x=int(size[0])//2;start=height-220;end=min(400,start-100)
+        adb('shell','input','swipe',str(x),str(start),str(x),str(end),'300')
         time.sleep(.2)
     raise AssertionError('Cloud control not reachable: '+label+'; state='+json.dumps(last,ensure_ascii=False))
 
 def run():
     fixture=json.loads((OUT/'cloud-fixture.json').read_text(encoding='utf-8'))
     adb('reverse','tcp:4317','tcp:'+fixture['base'].rsplit(':',1)[1])
-    adb('install','--no-incremental','-r',OUT/'conversation-lens-0.17.2-cloud-debug.apk')
+    adb('install','--no-incremental','-r',OUT/'conversation-lens-0.17.3-cloud-debug.apk')
     # This helper is constrained to the synthetic emulator; start a fresh test account.
     adb('shell','pm','clear','com.conversationlens.ime')
     adb('shell','am','force-stop','com.conversationlens.ime')
@@ -51,7 +65,7 @@ def run():
     fill('粘贴或输入你批准的聊天片段，标明说话人','对方：今天加班很累，想安静休息。')
     click('已核对人物和片段，同意提交给连接的服务');click('分析已批准片段')
     click('查看策略、风险与原话依据');wait_labels(lambda x:'本次建议的依据' in x)
-    assert any('风险：' in v and '原话依据：' in v and '今天加班很累' in v for v in labels())
+    wait_labels(lambda values:any('风险：' in v and '原话依据：' in v and '今天加班很累' in v for v in values))
     click('关闭');fill('选择候选后可修改','合成草稿：你先好好休息。')
     click('保留草稿并返回原聊天');time.sleep(1);insert()
     tap_text('建议');wait_labels(lambda x:'记录实际反馈' in x)

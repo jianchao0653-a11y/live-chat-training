@@ -16,3 +16,5 @@ subprocess.run([str(java/('javac'+suffix)), '-encoding', 'UTF-8', '-d', str(outp
 subprocess.run([str(java/('java'+suffix)),'-cp',str(output),'com.conversationlens.ime.FramePixelsTest'],check=True)
 subprocess.run([str(java/('javac'+suffix)),'-encoding','UTF-8','-d',str(output),str(root/'native/android/java/com/conversationlens/ime/OcrReview.java'),str(root/'native/android/tests/OcrReviewTest.java')],check=True)
 subprocess.run([str(java/('java'+suffix)),'-cp',str(output),'com.conversationlens.ime.OcrReviewTest'],check=True)
+subprocess.run([str(java/('javac'+suffix)),'-encoding','UTF-8','-d',str(output),str(root/'native/android/java/com/conversationlens/ime/ImageDecodePolicy.java'),str(root/'native/android/tests/ImageDecodePolicyTest.java')],check=True)
+subprocess.run([str(java/('java'+suffix)),'-cp',str(output),'com.conversationlens.ime.ImageDecodePolicyTest'],check=True)

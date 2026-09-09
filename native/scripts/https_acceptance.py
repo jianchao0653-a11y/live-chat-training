@@ -44,7 +44,7 @@ def probe(root, local=False):
             payload = json.loads(data) if len(data) <= 16384 and is_json else None
             result['passed'] = (result['status'] == expected and isinstance(payload, dict)
                                 and (expected != 200 or (payload.get('status') == 'ok'
-                                     and payload.get('version') == '0.17.2')))
+                                     and payload.get('version') == '0.17.3')))
         except Exception as error:
             # Never print response content, request headers or exception URLs.
             result['error'] = type(error).__name__

@@ -18,7 +18,7 @@ if len(sys.argv)!=2: raise SystemExit('Usage: sign_prepared_release.py https://D
 receipt=json.loads((OUT/'prepared-release.json').read_text(encoding='utf-8'))
 if receipt['cloudEndpoint'].rstrip('/')!=sys.argv[1].rstrip('/') or not sys.argv[1].startswith('https://'):
     raise SystemExit('Prepared endpoint mismatch')
-if receipt['apk']!='conversation-lens-0.17.2-cloud-unsigned.apk': raise SystemExit('Unexpected prepared artifact')
+if receipt['apk']!='conversation-lens-0.17.3-cloud-unsigned.apk': raise SystemExit('Unexpected prepared artifact')
 source=OUT/receipt['apk']
 if hashlib.file_digest(source.open('rb'),'sha256').hexdigest()!=receipt['sha256']:raise SystemExit('Prepared APK hash mismatch')
 directory=ROOT/'runtime/release-signing'
@@ -34,7 +34,7 @@ if not environment.get('LENS_RELEASE_STORE_PASSWORD'):
     environment['LENS_RELEASE_KEY_PASSWORD']=environment['LENS_RELEASE_STORE_PASSWORD']
 sdk=ROOT/'runtime/android-tools/sdk'
 bt=sdk/'build-tools/36.0.0'
-target=OUT/'conversation-lens-0.17.2-cloud-release.apk'
+target=OUT/'conversation-lens-0.17.3-cloud-release.apk'
 signer=[shutil.which('java'),'-jar',str(bt/'lib/apksigner.jar')]
 subprocess.run(signer+['sign','--ks',str(key),'--ks-key-alias','lensproduction','--ks-pass','env:LENS_RELEASE_STORE_PASSWORD','--key-pass','env:LENS_RELEASE_KEY_PASSWORD','--out',str(target),str(source)],env=environment,check=True)
 verification=subprocess.check_output(signer+['verify','--verbose','--print-certs',str(target)],text=True)
@@ -42,6 +42,6 @@ match=re.search(r'certificate SHA-256 digest: ([a-fA-F0-9]+)',verification)
 expected='0ce1d2c5fd366f7b441296fa483a2af20be18f5b5dd1f10c791f6b4eb4cd692e'
 if not match or match.group(1).lower()!=expected:raise SystemExit('Signing certificate differs from the installed pilot')
 subprocess.run([str(bt/'zipalign.exe'),'-c','-P','16','4',str(target)],check=True)
-receipt.update(apk=target.name,sha256=hashlib.file_digest(target.open('rb'),'sha256').hexdigest(),certificateSHA256=expected,releaseSigned=True,version='0.17.2',versionCode=20,qualityAccepted=False,productionReady=False)
+receipt.update(apk=target.name,sha256=hashlib.file_digest(target.open('rb'),'sha256').hexdigest(),certificateSHA256=expected,releaseSigned=True,version='0.17.3',versionCode=21,qualityAccepted=False,productionReady=False)
 (OUT/'release-receipt.json').write_text(json.dumps(receipt,indent=2),encoding='utf-8')
 print(json.dumps(receipt))

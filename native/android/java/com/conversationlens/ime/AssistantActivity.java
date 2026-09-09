@@ -171,7 +171,7 @@ public final class AssistantActivity extends Activity {
             NativeClient.IO.execute(()->{try{
                 ByteArrayOutputStream out=new ByteArrayOutputStream();try(InputStream in=getContentResolver().openInputStream(uri)){byte[] buffer=new byte[8192];int n;while((n=in.read(buffer))!=-1){if(out.size()+n>15000000)throw new Exception("图片过大，请选择 15 MB 以内的截图");out.write(buffer,0,n);}}
                 byte[] bytes=out.toByteArray();BitmapFactory.Options options=new BitmapFactory.Options();options.inJustDecodeBounds=true;BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);
-                if(options.outWidth<=0 || options.outHeight<=0)throw new Exception("不支持此图片格式");options.inSampleSize=1;while(Math.max(options.outWidth,options.outHeight)/options.inSampleSize>1600)options.inSampleSize*=2;
+                options.inSampleSize=ImageDecodePolicy.stableSampleSize(options.outWidth,options.outHeight);
                 options.inJustDecodeBounds=false;Bitmap image=BitmapFactory.decodeByteArray(bytes,0,bytes.length,options);if(image==null)throw new Exception("图片无法读取");
                 runOnUiThread(()->{if(isDestroyed()||token!=work||!s.alive()){image.recycle();return;}s.clearImage();s.image=image;s.captureMessage="已读取你选择的图片 · 尚未上传";showImage();});
             }catch(Exception e){report(token,e);}});
