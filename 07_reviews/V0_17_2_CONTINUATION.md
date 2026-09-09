@@ -31,3 +31,9 @@
 | ngrok正文捕获 | 官方默认元数据、Full Capture主动开启；本地inspect关闭 | 当前账户Full Capture关闭的实际设置核验；浏览器连接工具本轮未能启动 |
 
 持续预算仍20次/日、1元/日、10元/月，不因验收放宽。productionReady=false。所有测试与网页夹具使用合成数据，个人小米未由代理操作。
+
+## 仓库与收尾回执
+
+19个明确源/决策/验收文件已推私有分支 `codex/mobile-acceptance-v014`，源码提交 `e27779367a4aca90ca10d3220860bf7e1e995069`，Draft PR #3保持未合并。本次触发run34326766926，四作业仍未分配runner且无steps即失败，不能记为CI通过，未手工重跑。更新后的文档单独skip ci提交。
+
+Playwright合成快照归档 `output/playwright/v0172-*.yml`，隔离断言回执 `output/continuation-20260909/web-sample-receipt.json`。独立网页夹具、浏览器和模拟器已结束。PC服务PID16332继续运行，以控制器status实时结果为准。
