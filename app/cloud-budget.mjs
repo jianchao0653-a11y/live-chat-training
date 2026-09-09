@@ -9,9 +9,12 @@ export function createBudget(auth,config) {
   const day=()=>Math.floor(auth.clock()/86400000)*86400000;
   const month=()=>{const d=new Date(auth.clock());return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),1);};
   const spent=since=>auth.get('SELECT COALESCE(SUM(MAX(reserved,charged)),0) n FROM tasks WHERE created>=?',since).n;
-  const reserve=(id,account,fingerprint)=>auth.tx(()=>{
+  const reserve=(id,account,fingerprint,retryOf)=>auth.tx(()=>{
     if(!uuid(id))fail(400,'缺少有效请求编号。');
-    const old=auth.get('SELECT * FROM tasks WHERE id=?',id)||auth.get('SELECT * FROM tasks WHERE account=? AND fingerprint=? ORDER BY created DESC LIMIT 1',account,fingerprint);
+    let old=auth.get('SELECT * FROM tasks WHERE id=?',id)||auth.get('SELECT * FROM tasks WHERE account=? AND fingerprint=? ORDER BY created DESC,rowid DESC LIMIT 1',account,fingerprint);
+    if(old && old.account===account && old.fingerprint===fingerprint && ['FAILED','UNCERTAIN'].includes(old.state) && old.calls===0 && old.charged===0){auth.run('DELETE FROM tasks WHERE id=?',old.id);old=null;}
+    // Explicitly acknowledged retry retains the original charge/reservation and consumes a new budget slot.
+    if(retryOf && old?.id===retryOf && id!==old.id && old.account===account && old.fingerprint===fingerprint && ['FAILED','UNCERTAIN'].includes(old.state))old=null;
     if(old){if(old.account!==account||old.fingerprint!==fingerprint)fail(409,'请求编号不能重复用于不同内容。');return {existing:old};}
     if(c.verified!==true||!reservation||!c.dailyMicros||!c.monthlyMicros||auth.get("SELECT value FROM control WHERE key='budget_blocked'")?.value==='1')fail(503,'模型预算尚未配置或已暂停。');
     const n=auth.get('SELECT COUNT(*) n FROM tasks WHERE account=? AND created>=?',account,day()).n;

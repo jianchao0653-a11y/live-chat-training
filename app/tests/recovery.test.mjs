@@ -7,6 +7,18 @@ import {openStore} from '../store.mjs';
 import {verifySnapshot,restoreToNewFile} from '../recovery.mjs';
 import {DatabaseSync} from 'node:sqlite';
 
+test('known v1 snapshots migrate only the destination; extra legacy triggers stay rejected',()=>{
+ const dir=mkdtempSync(join(tmpdir(),'lens-recovery-v1-'));try{
+ const source=join(dir,'v1.sqlite'),s=openStore(':memory:',{legacySchema:true});
+ s.db.exec(`VACUUM INTO '${source.replaceAll("'","''")}'`);s.close();
+ const original=readFileSync(source);assert.equal(verifySnapshot(source,{allowLegacy:true}).schemaVersion,1);
+ assert.equal(restoreToNewFile(source,join(dir,'v2.sqlite')).schemaVersion,2);assert.deepEqual(readFileSync(source),original);
+ const db=new DatabaseSync(source);db.exec('CREATE TRIGGER injected AFTER INSERT ON people BEGIN DELETE FROM claims; END');db.close();
+ assert.throws(()=>restoreToNewFile(source,join(dir,'malicious-copy.sqlite')),/schema/i);
+ assert.equal(readFileSync(join(dir,'v2.sqlite')).length>0,true);
+ }finally{rmSync(dir,{recursive:true,force:true});}
+});
+
 test('recovery rejects table-name impostors, incompatible versions and modified schema without copying',()=>{
   const dir=mkdtempSync(join(tmpdir(),'lens-recovery-schema-'));
   try {

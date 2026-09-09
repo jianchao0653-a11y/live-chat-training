@@ -24,7 +24,7 @@ public final class LibraryActivity extends Activity {
     private void call(String path,JSONObject input,Done done){final int ticket=++generation;final NativeClient c=client;status.setText("正在处理…");NativeClient.IO.execute(()->{try{JSONObject result=c.call(path,input);runOnUiThread(()->{if(isDestroyed()||ticket!=generation)return;try{done.run(result);}catch(Exception e){status.setText("资料格式不正确，请重试。");}});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&ticket==generation)status.setText(e.getMessage());});}});}
     private void confirm(String message,Runnable action){new AlertDialog.Builder(this).setTitle("请确认").setMessage(message).setNegativeButton("取消",null).setPositiveButton("确认",(d,w)->action.run()).show();}
     private void login(){page("登录观微");label("输入收到的一次性邀请码。试用期资料保存在项目提供者的电脑后端，网络请求经过 ngrok HTTPS 网关，网关可处理请求内容。只有你批准的聊天片段与必要人物背景会提交给阿里云百炼分析。建议由你编辑、确认并发送。",15);
-        label("分析与反馈通常保留最多30天；人物与确认记忆保留至删除。备份最多保留7天。可在人物资料中修改和删除；卸载应用不会删除云端资料。",14);
+        label("分析与反馈保留期30天；人物与确认记忆保留至删除。备份保留期7天，服务运行时每小时清理，停机后恢复时清理。可在人物资料中修改和删除；卸载应用不会删除云端资料。",14);
         EditText code=field("一次性邀请码","",3101,false);code.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         CheckBox consent=new CheckBox(this);consent.setText("我已了解并同意上述数据处理方式");body.addView(consent,LensStyle.space(this));
         button("登录并开始",()->{if(loggingIn)return;if(!consent.isChecked()){status.setText("请先阅读并同意数据处理说明。");return;}try{
@@ -52,7 +52,7 @@ public final class LibraryActivity extends Activity {
     }
     private void detail(String id){page("人物资料");button("返回人物列表",()->home());call("library/people/"+id,null,p->{status.setText(p.getString("name")+" · "+p.getString("platform"));label("关系："+p.optString("stage")+"\n背景："+p.optString("notes")+"\n边界："+p.optString("boundary"),15);
         button("修改人物与关系",()->editPerson(p));button("添加记忆或标记",()->memory(id,null));button("查看分析与反馈",()->history(id));
-        button("删除人物及关联资料",()->confirm("删除此人物、关系、记忆、分析及反馈。生效后无法在 App 中撤销；备份最多7天清除，恢复时也不得重新出现。",()->call("library/people/"+id+"/delete",new JSONObject(),r->home())));
+        button("删除人物及关联资料",()->confirm("删除此人物、关系、记忆、分析及反馈。生效后无法在 App 中撤销；备份按7天保留期定时清理，停机后恢复时清理。恢复备份也不得重新出现已删除资料。",()->call("library/people/"+id+"/delete",new JSONObject(),r->home())));
         JSONArray claims=p.getJSONArray("claims");label("记忆与标记",20);for(int i=0;i<claims.length();i++){JSONObject c=claims.getJSONObject(i);label(("TAG".equals(c.optString("category"))?"标记 · ":"记忆 · ")+kindLabel(c.optString("kind"))+" · "+("PENDING".equals(c.optString("review_state"))?"待确认":"已确认状态")+"\n"+c.optString("content")+"\n来源："+c.optString("source")+"\n"+c.optString("created_at"),15);button("修改或删除",()->memory(id,c));if("PENDING".equals(c.optString("review_state")))button("确认此条推测",()->confirm("确认后可作为推测参考，仍保留推测来源；旧分析与反馈会清除。",()->{try{call("library/memories/"+c.optString("id")+"/confirm",new JSONObject().put("confirmed",true),v->{AssistSession.clear();detail(id);});}catch(Exception e){status.setText("确认失败。");}}));}
     });}
     private static final String[] KINDS={"SELF_DECLARED","FACT","INFERRED","DISPUTED","EXPIRED"};

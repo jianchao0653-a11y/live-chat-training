@@ -21,6 +21,10 @@ final class NativeClient {
     static final ExecutorService IO = Executors.newFixedThreadPool(3);
     private static final String ALIAS = "lens-device-v1";
     final String endpoint, token;
+    static final class RequestFailure extends Exception {
+        final String retryOf;
+        RequestFailure(JSONObject result){super(result.optString("error","请求失败")+(result.has("request_id")?"\n问题编号："+result.optString("request_id"):""));retryOf=result.optString("retry_of");}
+    }
     NativeClient(String endpoint, String token) throws Exception {
         URL url = new URL(endpoint.trim());
         if (url.getUserInfo()!=null || url.getQuery()!=null || url.getRef()!=null || !(url.getPath().isEmpty() || url.getPath().equals("/"))) throw new Exception("请输入服务根地址");
@@ -44,7 +48,7 @@ final class NativeClient {
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             try(InputStream in=stream){byte[] bytes=new byte[8192];int n;while((n=in.read(bytes))!=-1){if(out.size()+n>2000000)throw new Exception("响应过大");out.write(bytes,0,n);}}
             JSONObject result=new JSONObject(new String(out.toByteArray(),StandardCharsets.UTF_8));
-            if(status<200 || status>=300)throw new Exception(result.optString("error","请求失败（"+status+"）"));
+            if(status<200 || status>=300)throw new RequestFailure(result);
             return result;
         } finally { c.disconnect(); }
     }
@@ -71,5 +75,5 @@ final class NativeClient {
         if(CloudSettings.enabled(context)&&(!value.optBoolean("cloud")||!CloudSettings.endpoint(context).equals(value.optString("endpoint")))){forget(context);return null;}
         return new NativeClient(value.getString("endpoint"),value.getString("token"));
     }
-    static synchronized void forget(Context context){new android.util.AtomicFile(new File(context.getNoBackupFilesDir(),"device.enc")).delete();}
+    static synchronized void forget(Context context){AssistSession.clearFeedback();new android.util.AtomicFile(new File(context.getNoBackupFilesDir(),"device.enc")).delete();}
 }

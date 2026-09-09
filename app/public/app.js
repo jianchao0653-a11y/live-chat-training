@@ -195,7 +195,7 @@ document.addEventListener('click',async e=>{
       case 'go-people':await navigate('people');break;
       case 'analyze':await analyze();break;
       case 'sample':
-        if (!state.people.length) { const p=await api('people','POST',{ name:'林间 · 示例', platform:'视频号', stage:'熟悉中', notes:'这是合成测试档案，与真实个人无关。用于体验聊天分析流程。', boundary:'尊重休息时间，不以礼物衡量关系。' }); state.personId=p.id; await refresh(); }
+        { const p=await api('people','POST',{ name:'林间 · 独立示例', platform:'视频号', stage:'熟悉中', notes:'这是合成测试档案，与真实个人无关。用于体验聊天分析流程。', boundary:'尊重休息时间，不以礼物衡量关系。' }); state.personId=p.id; await refresh(); }
         state.text='对方：今天又加班到很晚，有点累。\n我：辛苦了，项目最近很忙吗？\n对方：嗯，事情一直做不完，不太想说话。\n我：那你先休息？\n对方：也不是不想理你，就是想安静一下。'; state.goal='关心近况';state.result=null;state.draft='';renderWorkspace();toast('已填入合成示例，点击分析即可体验。');break;
       case 'upload':$('#imageInput').click();break;
       case 'copy':

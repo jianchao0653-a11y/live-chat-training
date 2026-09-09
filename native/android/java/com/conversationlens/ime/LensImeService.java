@@ -311,7 +311,7 @@ public final class LensImeService extends InputMethodService {
                 NativeClient.IO.execute(()->{try{JSONObject answer=s.client.call("tickets/"+ticket+"/consume",payload);main.post(()->{
                     if(token!=generation || !s.alive() || s.revision!=revision || !s.matches(getCurrentInputEditorInfo()) || pending!=0 || composing){if(AssistSession.current==s)AssistSession.clear();renderAssist();return;}
                     InputConnection connection=getCurrentInputConnection();boolean inserted=connection!=null && connection.commitText(answer.optString("draft"),1);
-                    if(inserted){AssistSession.feedbackId=answer.optString("analysis_id");AssistSession.feedbackName=s.result.optJSONObject("person").optString("name");AssistSession.feedbackClient=s.client;}
+                    if(inserted){AssistSession.feedbackId=answer.optString("analysis_id");AssistSession.feedbackName=s.result.optJSONObject("person").optString("name");AssistSession.feedbackDraft=answer.optString("draft");AssistSession.feedbackClient=s.client;}
                     AssistSession.clear();renderAssist();status.setText(inserted?"已插入草稿 · 请自行检查并发送":"输入框已关闭，请重新生成建议");
                 });}catch(Exception e){main.post(()->{if(AssistSession.current==s){AssistSession.clear();renderAssist();status.setText(e.getMessage()==null?"插入失败，请重新分析":e.getMessage());}});}});
             }catch(Exception e){AssistSession.clear();renderAssist();}

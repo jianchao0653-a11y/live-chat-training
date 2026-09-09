@@ -42,6 +42,41 @@ async function fixture(t,options={}) {
 }
 const payload=p=>({request_id:randomUUID(),person_id:p.id,pair_id:p.relationship.id,context:'editor-one',host:'com.synthetic.chat',approved:true,text:chat,goal:'关心近况',mode:'model'});
 
+test('busy rejection creates no task, preserves the first editor, and retries successfully after completion',async t=>{
+ let release,enter,calls=0;const hold=new Promise(r=>release=r),ready=new Promise(r=>enter=r);
+ const f=await fixture(t,{fetcher:async(_u,o)=>{calls++;if(calls===1){enter();await hold;}const input=JSON.parse(o.body),{judge,...r}=localAnalysis(chat,{name:'synthetic',claims:[]},'关心近况');return new Response(JSON.stringify({model:'synthetic',usage:{prompt_tokens:200,completion_tokens:100,total_tokens:300},choices:[{finish_reason:'stop',message:{content:JSON.stringify(input.max_tokens===512?{verdict:'PASS',reason:'synthetic'}:r)}}]}));}});
+ const account=await f.activate(),p=await f.person(account),one=payload(p),two={...payload(p),text:chat+' 第二段',context:'another-editor'};
+ const pending=f.request('/api/native/analyze',one,account.token);await ready;
+ try{
+ assert.equal((await f.request('/api/native/analyze',two,account.token)).status,409);
+ assert.equal(f.app.auth.get('SELECT id FROM tasks WHERE id=?',two.request_id),undefined);
+ release();assert.equal((await pending).status,200);
+ assert.equal((await f.request('/api/native/analyze',{...two,request_id:randomUUID()},account.token)).status,200);assert.equal(calls,4);
+ }finally{release();await pending;}
+});
+
+test('identical feedback is inert and a correction preserves independent recent histories',async t=>{
+ const f=await fixture(t),account=await f.activate(),p=await f.person(account),s=f.app.application(account.account_id).store;
+ const a=(await f.request('/api/native/analyze',payload(p),account.token)).body;
+ const b=(await f.request('/api/native/analyze',{...payload(p),text:chat+' 独立记录'},account.token)).body;
+ const send=value=>f.request('/api/native/outcome',value,account.token);
+ const feedback={analysis_id:a.analysis_id,status:'POSITIVE',note:'synthetic note',draft:'synthetic draft'};
+ await send(feedback);const revision=s.person(p.id).relationship.revision,events=s.get('SELECT COUNT(*) n FROM context_events').n,journal=f.app.auth.get('SELECT COUNT(*) n FROM deletions').n;
+ assert.equal((await send(feedback)).body.unchanged,true);assert.equal(s.person(p.id).relationship.revision,revision);assert.equal(s.get('SELECT COUNT(*) n FROM context_events').n,events);assert.equal(f.app.auth.get('SELECT COUNT(*) n FROM deletions').n,journal);
+ assert.equal((await send({...feedback,note:'corrected synthetic note'})).status,200);assert.ok(s.analysis(b.analysis_id));assert.equal(s.analysis(a.analysis_id).outcome.note,'corrected synthetic note');
+});
+
+test('uncertain paid request exposes a correlated confirmation flow; acknowledgement retains old ledger',async t=>{
+ let calls=0;
+ const f=await fixture(t,{fetcher:async(_u,o)=>{if(++calls===1)throw Error('synthetic provider transport failure');const input=JSON.parse(o.body),{judge,...r}=localAnalysis(chat,{name:'synthetic',claims:[]},'关心近况');return new Response(JSON.stringify({model:'synthetic',usage:{prompt_tokens:200,completion_tokens:100,total_tokens:300},choices:[{finish_reason:'stop',message:{content:JSON.stringify(input.max_tokens===512?{verdict:'PASS',reason:'synthetic'}:r)}}]}));}});
+ const a=await f.activate(),p=await f.person(a),body=payload(p),send=b=>f.request('/api/native/analyze',b,a.token);
+ const first=await send(body);assert.equal(first.status,500);assert.ok(first.body.request_id);
+ const retry=await send({...body,request_id:randomUUID()});assert.equal(retry.status,409);assert.equal(retry.body.retry_of,body.request_id);assert.equal(calls,1);
+ const original=f.app.auth.get('SELECT * FROM tasks WHERE id=?',body.request_id);
+ assert.equal((await send({...body,request_id:randomUUID(),retry_of:retry.body.retry_of,acknowledge_possible_charge:true})).status,200);
+ assert.deepEqual(f.app.auth.get('SELECT * FROM tasks WHERE id=?',body.request_id),original);assert.equal(calls,3);
+});
+
 test('streamer profile persists per account and changes invalidate existing suggestions',async t=>{
   const f=await fixture(t),a=await f.activate(),b=await f.activate(),p=await f.person(a);
   const prior=(await f.request('/api/native/analyze',payload(p),a.token)).body;

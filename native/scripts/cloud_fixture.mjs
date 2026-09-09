@@ -13,7 +13,7 @@ const app=createCloud({directory,apiKey:'synthetic-key',budget:{verified:true,cu
   return new Response(JSON.stringify({model:'qwen-plus',usage:{prompt_tokens:100,completion_tokens:100,total_tokens:200},choices:[{finish_reason:'stop',message:{content:JSON.stringify(result)}}]}));
 }});
 const invite=app.auth.invite();app.server.listen(0,'127.0.0.1');await once(app.server,'listening');
-writeFileSync(new URL('../../output/native/cloud-fixture.json',import.meta.url),JSON.stringify({pid:process.pid,base:`http://127.0.0.1:${app.server.address().port}`,invite:invite.invite,account:invite.account_id}));
+writeFileSync(new URL('../../output/native/cloud-fixture.json',import.meta.url),JSON.stringify({pid:process.pid,base:`http://127.0.0.1:${app.server.address().port}`,invite:invite.invite,account:invite.account_id,syntheticDatabase:join(directory,'accounts',invite.account_id+'.sqlite')}));
 console.log('Synthetic cloud fixture ready');
 const stop=async()=>{await app.close();rmSync(directory,{recursive:true,force:true});console.log(JSON.stringify({synthetic:true,modelCalls:calls}));};
 process.once('SIGINT',stop);process.once('SIGTERM',stop);

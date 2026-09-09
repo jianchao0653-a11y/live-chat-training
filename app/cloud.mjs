@@ -8,7 +8,9 @@ import {createApplication} from './server.mjs';
 import {openCloudAuth,fail,digest,uuid} from './cloud-auth.mjs';
 import {createBudget} from './cloud-budget.mjs';
 import {platforms,stages} from './engine.mjs';
-import {lockDirectory} from './cloud-maintenance.mjs';
+import {lockDirectory,pruneBackups} from './cloud-maintenance.mjs';
+import {expireHistory,invalidateDerived} from './retention.mjs';
+import {requestId,diagnose} from './diagnostics.mjs';
 
 const text=(v,max,required=false)=>{
   if(v===undefined&&!required)return '';
@@ -25,7 +27,7 @@ async function bodyOf(req) {
   try{const b=JSON.parse(Buffer.concat(parts).toString('utf8'));if(!b||Array.isArray(b)||typeof b!=='object')fail(400,'请求格式错误。');return b;}catch{fail(400,'请求格式错误。');}
 }
 
-export function createCloud({directory,apiKey='',model='qwen-plus',provider='bailian',baseUrl,fetcher=fetch,clock=Date.now,budget:budgetConfig={},synthetic=false}={}) {
+export function createCloud({directory,backupDirectory,apiKey='',model='qwen-plus',provider='bailian',baseUrl,fetcher=fetch,clock=Date.now,budget:budgetConfig={},synthetic=false}={}) {
   if(!directory)throw new Error('云端必须明确指定独立数据目录。');
   const root=resolve(directory);if(existsSync(join(root,'.restore-incomplete')))throw new Error('恢复未完成，不得启动此数据目录。');
   const unlock=lockDirectory(root);mkdirSync(join(root,'accounts'),{recursive:true,mode:0o700});
@@ -119,35 +121,40 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
       if(m[2]==='save'){
         const status=pick(b.status,['POSITIVE','MIXED','NEGATIVE','UNKNOWN']);
         const o={status,note:text(b.note,2000,status!=='UNKNOWN'),draft:text(b.draft,12000)};
+        if(a.outcome && ['status','note','draft'].every(k=>a.outcome[k]===o[k]))return {saved:true,unchanged:true};
         // Delete derived histories which may quote the previous observation.
-        if(a.outcome){journal(account,p);s.tx(()=>{s.run('DELETE FROM analyses WHERE person_id=? AND id<>?',p.id,a.id);s.run('DELETE FROM context_events WHERE pair_id=?',p.relationship.id);});}
-        s.saveOutcome(a.id,o);
+        if(a.outcome)journal(account,p);
+        s.tx(()=>{if(a.outcome){invalidateDerived(s,[a.id]);s.run("DELETE FROM context_events WHERE subject_id=? AND type='OUTCOME_RECORDED'",a.id);}s.saveOutcome(a.id,o);});
       }else{journal(account,p);s.tx(()=>purgeDerived(s,p));}
       return {saved:true};
     }
     fail(404,'资料接口不存在。');
   }
   const server=http.createServer(async(req,res)=>{
+    const request_id=requestId();let phase='request';
     try {
       if(req.headers.origin)fail(403,'此入口仅供原生应用使用。');
       if(!['GET','POST'].includes(req.method))fail(405,'请求方法不支持。');
       const u=new URL(req.url,'http://localhost'),path=u.pathname;
       if(u.search||!path.startsWith('/api/native/'))fail(403,'此入口仅供原生应用使用。');
-      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.17.0',quality_accepted:false});
+      if(path==='/api/native/health'&&req.method==='GET')return send(res,200,{status:'ok',version:'0.17.1',quality_accepted:false});
       if(path==='/api/native/auth/activate'&&req.method==='POST'){
         const b=await bodyOf(req);if(b.approved!==true)fail(400,'请先同意必要的数据处理说明。');
         return send(res,200,auth.activate(b.code,b.name||'Android'));
       }
       const token=(req.headers.authorization||'').replace(/^Bearer /,''),identity=auth.authorize(token),account=identity.account_id;
+      phase='body';
       const b=await bodyOf(req);
       if(path==='/api/native/auth/logout'&&req.method==='POST'){auth.revoke(identity.id);return send(res,200,{revoked:true});}
       if(path==='/api/native/auth/me'&&req.method==='GET')return send(res,200,{...identity,budget:budget.summary(account)});
       const app=application(account);
+      phase=path.startsWith('/api/native/library/')?'library':'native';
       if(path.startsWith('/api/native/library/'))return send(res,200,library(app,account,path,req.method,b));
       if(path==='/api/native/roster'&&req.method==='GET'){
         const result=await app.native.handle(req,path,b);return send(res,200,{...result,cloud:true,budget:budget.summary(account)});
       }
       if(path==='/api/native/analyze'&&req.method==='POST') {
+        phase='analysis-admission';
         if(b.approved!==true)fail(400,'请先批准片段。');
         const p=person(app,b.person_id);
         if(b.pair_id!==p.relationship.id)fail(404,'人物关系不一致。');
@@ -159,15 +166,22 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
         // Rotation, process restart and a changed editor must not repeat uncertain charges.
         const fingerprint=digest(JSON.stringify({account,person:p,text:b.text,goal:b.goal,mode:b.mode,model,provider}));
         if(active>=2)fail(429,'分析服务繁忙，请稍后重试。');
-        const reservation=budget.reserve(b.request_id,account,fingerprint);
+        if(app.isActive(p.id))fail(409,'该人物已有分析任务，请等待完成；本次未调用模型。');
+        text(b.context,80,true);const host=text(b.host,200,true);
+        if(!/^[a-zA-Z0-9_.]+$/.test(host))fail(400,'宿主标识无效。');
+        const reservation=budget.reserve(b.request_id,account,fingerprint,b.acknowledge_possible_charge===true?b.retry_of:undefined);
         if(reservation.existing) {
           const t=reservation.existing;
-          if(t.state!=='DONE')fail(409,t.state==='RUNNING'?'正在处理原请求，请稍后重试。':'原请求未完成，可能已计费；请核对后重新发起。');
+          if(t.state!=='DONE'){
+            if(t.state==='RUNNING')fail(409,'正在处理原请求，请稍后重试。');
+            return send(res,409,{error:'原请求未完成，可能已计费。确认再次分析将占用新的额度。',request_id,retry_of:t.id});
+          }
           if(!app.store.analysis(t.analysis))fail(410,'原建议已删除，请重新分析。');
           // Native bridge issues a new short-lived ticket from the cached analysis.
           return send(res,200,await work.run({beforeCall:()=>fail(409,'原结果不可复用，请重新分析。'),onUsage:()=>{}},()=>app.native.handle(req,path,b)));
         }
         active++;
+        phase='analysis';
         try{
           const result=await work.run(budget.hooks(b.request_id),()=>app.native.handle(req,path,b));
           budget.finish(b.request_id,result.analysis_id);send(res,200,result);
@@ -177,19 +191,21 @@ export function createCloud({directory,apiKey='',model='qwen-plus',provider='bai
       if((path==='/api/native/cancel'||/^\/api\/native\/tickets\/[a-f0-9-]+\/consume$/.test(path))&&req.method==='POST')return send(res,200,await app.native.handle(req,path,b));
       if(path==='/api/native/outcome'&&req.method==='POST')return send(res,200,library(app,account,`/api/native/library/feedback/${text(b.analysis_id,80,true)}/save`,'POST',b));
       fail(404,'接口不存在。');
-    }catch(e){if(!res.headersSent)send(res,e.status||500,{error:e.status?e.message:'分析或保存未完成，请稍后重试；原付费请求不会自动重跑。'});}
+    }catch(e){diagnose('request_failed',request_id,phase,e);if(!res.headersSent)send(res,e.status||500,{error:e.status?e.message:'分析或保存未完成，请稍后重试；原付费请求不会自动重跑。',request_id});}
   });
   server.requestTimeout=15000;server.headersTimeout=10000;
   const maintain=()=>{
+    let backupError;
+    try{if(backupDirectory)pruneBackups(resolve(backupDirectory),clock);}catch(e){backupError=e;diagnose('maintenance_failed',requestId(),'backup-retention',e);}
     const cutoff=new Date(clock()-30*86400000).toISOString();
     for(const a of auth.all('SELECT id FROM accounts WHERE disabled=0')) {
       const app=application(a.id),s=app.store;
       if([...s.people()].some(p=>app.isActive(p.id)))continue;
-      const old=s.all('SELECT DISTINCT person_id FROM analyses WHERE created_at<?',cutoff);
-      for(const row of old){const p=s.person(row.person_id);journal(a.id,p);s.tx(()=>purgeDerived(s,p));}
+      expireHistory(s,cutoff);
     }
     auth.run('DELETE FROM invites WHERE expires<?',clock()-86400000);
-    auth.run('DELETE FROM sessions WHERE absolute_expires<?',clock()-86400000);
+      auth.run('DELETE FROM sessions WHERE absolute_expires<?',clock()-86400000);
+      if(backupError)throw backupError;
   };
   return {server,auth,budget,application,maintain,directory:root,
     close:async()=>{if(server.listening)await new Promise(r=>server.close(r));for(const app of contexts.values())app.store.close();auth.close();unlock();}};

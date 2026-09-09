@@ -21,8 +21,9 @@ final class AssistSession {
     boolean consuming;
     android.graphics.Bitmap image;
     String captureMessage="";
-    static String feedbackId, feedbackName;
+    static String feedbackId, feedbackName, feedbackDraft;
     static NativeClient feedbackClient;
+    static void clearFeedback(){feedbackId=null;feedbackName=null;feedbackDraft=null;feedbackClient=null;}
     AssistSession(EditorInfo editor){host=editor.packageName;fieldId=editor.fieldId;inputType=editor.inputType;}
     boolean matches(EditorInfo editor){return editor!=null && host.equals(editor.packageName) && fieldId==editor.fieldId && inputType==editor.inputType && EditorPolicy.chinese(editor.inputType,editor.imeOptions);}
     boolean alive(){return current==this && SystemClock.elapsedRealtime()-started<15*60000;}

@@ -30,6 +30,7 @@ public final class AssistantActivity extends Activity {
     private boolean setting;
     private boolean cloud;
     private String pendingRequest;
+    private String acknowledgedRetry;
     private JSONObject feedbackResult;
     private LinearLayout imagePanel;
     private TransientForm restored;
@@ -82,7 +83,7 @@ public final class AssistantActivity extends Activity {
         if(transcript!=null)transcript.setText("");if(draft!=null)draft.setText("");
         if(people!=null)people.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,new String[0]));
         if(session!=null){session.clearImage();session.captureMessage="";}showImage();
-        AssistSession.feedbackId=null;AssistSession.feedbackName=null;AssistSession.feedbackClient=null;
+        AssistSession.clearFeedback();
     }
     @Override protected void onPause(){AssistSession.helperShowing=false;super.onPause();}
     private void changed(){if(setting)return;work++;pendingRequest=null;feedbackResult=null;if(session!=null)session.invalidate();if(results!=null)results.removeAllViews();if(approved!=null){setting=true;approved.setChecked(false);setting=false;}}
@@ -92,7 +93,7 @@ public final class AssistantActivity extends Activity {
     }
     private void disconnect(){
         changed();AssistSession.clear();session=null;client=null;restored=null;roster=new JSONArray();
-        AssistSession.feedbackId=null;AssistSession.feedbackName=null;AssistSession.feedbackClient=null;
+        AssistSession.clearFeedback();
         NativeClient.forget(this);stopService(new Intent(this,CaptureService.class));
         setting=true;
         if(transcript!=null)transcript.setText("");if(draft!=null)draft.setText("");code.setText("");
@@ -132,6 +133,7 @@ public final class AssistantActivity extends Activity {
         try{
             JSONObject person=roster.getJSONObject(people.getSelectedItemPosition());JSONObject payload=new JSONObject().put("person_id",person.getString("id")).put("pair_id",person.getString("pair_id")).put("context",s.context).put("host",s.host).put("approved",true).put("text",transcript.getText().toString()).put("goal",goal.getSelectedItem().toString()).put("mode",cloud||mode.getSelectedItemPosition()!=0?"model":"local");
             if(cloud)payload.put("request_id",requestId);
+            if(acknowledgedRetry!=null){payload.put("retry_of",acknowledgedRetry).put("acknowledge_possible_charge",true);acknowledgedRetry=null;}
             status.setText("正在分析…");hideKeyboard();
             NativeClient.IO.execute(()->{try{JSONObject response=c.call("analyze",payload);runOnUiThread(()->{if(isDestroyed()||token!=work||!s.alive()||s.revision!=revision)return;s.result=response;s.deadline=SystemClock.elapsedRealtime()+120000;showResult(response);});}catch(Exception e){report(token,e);}});
         }catch(Exception e){error(e);}
@@ -139,6 +141,8 @@ public final class AssistantActivity extends Activity {
     private void showResult(JSONObject response){
         status.setText(response.optString("mode").equals("model")?(cloud?"聊天建议已生成 · 请审阅候选":"GPT 分析完成 · 请审阅候选"):"规则试算完成 · 未调用 GPT");results.removeAllViews();feedbackResult=response;
         TextView summary=new TextView(this);summary.setText(response.optString("summary"));LensStyle.text(summary,15,false);results.addView(summary,LensStyle.space(this));
+        Button details=new Button(this);details.setText("查看策略、风险与原话依据");LensStyle.button(details,false);
+        details.setOnClickListener(v->{StringBuilder text=new StringBuilder("策略：").append(response.optString("strategy")).append("\n原因：").append(response.optString("reason")).append("\n风险：").append(response.optString("risk")).append("\n\n原话依据：");JSONArray evidence=response.optJSONArray("evidence");if(evidence!=null)for(int i=0;i<evidence.length();i++)text.append("\n• ").append(evidence.optJSONObject(i).optString("quote"));new android.app.AlertDialog.Builder(this).setTitle("本次建议的依据").setMessage(text.toString()).setPositiveButton("关闭",null).show();});results.addView(details,LensStyle.space(this));
         JSONArray candidates=response.optJSONArray("candidates");
         if(candidates==null||candidates.length()==0){summary.append("\n本次没有可插入候选。");return;}
         draft=new EditText(this);draft.setId(2104);draft.setSaveEnabled(false);draft.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);draft.setHint("选择候选后可修改");LensStyle.field(draft);draft.setMinLines(3);
@@ -199,13 +203,15 @@ public final class AssistantActivity extends Activity {
         label("上次插入 · "+AssistSession.feedbackName+" · 只记录实际后续，不把插入等同于发送或好评",14);
         Spinner outcome=spinner(new String[]{"未知 / 尚未反馈","积极回应","混合回应","消极回应"});
         EditText note=edit("实际观察到的后续（非未知反馈必填）",2105,true);
+        EditText insertedDraft=edit("本次插入稿（不代表已发送，可修正）",2106,true);insertedDraft.setText(AssistSession.feedbackDraft==null?"":AssistSession.feedbackDraft);
         button("记录实际反馈",()->{if(!id.equals(AssistSession.feedbackId)||c!=AssistSession.feedbackClient){status.setText("此反馈入口已关闭");return;}String text=note.getText().toString();int index=outcome.getSelectedItemPosition();if(index!=0&&text.trim().isEmpty()){status.setText("请填写实际观察到的后续");return;}
-            NativeClient.IO.execute(()->{try{c.call("outcome",new JSONObject().put("analysis_id",id).put("status",new String[]{"UNKNOWN","POSITIVE","MIXED","NEGATIVE"}[index]).put("note",text));runOnUiThread(()->{if(isDestroyed())return;status.setText("实际反馈已记录");if(id.equals(AssistSession.feedbackId)){AssistSession.feedbackId=null;AssistSession.feedbackClient=null;}});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed())error(e);});}});
+            final String edited=insertedDraft.getText().toString();
+            NativeClient.IO.execute(()->{try{c.call("outcome",new JSONObject().put("analysis_id",id).put("status",new String[]{"UNKNOWN","POSITIVE","MIXED","NEGATIVE"}[index]).put("note",text).put("draft",edited));runOnUiThread(()->{if(isDestroyed())return;status.setText("实际反馈已记录");if(id.equals(AssistSession.feedbackId)){AssistSession.feedbackId=null;AssistSession.feedbackDraft=null;insertedDraft.setText("");AssistSession.feedbackClient=null;}});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed())error(e);});}});
         });
     }
     private void hideKeyboard(){View focus=getCurrentFocus();if(focus!=null)((InputMethodManager)getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(focus.getWindowToken(),0);}
     private void report(int token,Exception e){runOnUiThread(()->{if(!isDestroyed()&&token==work)error(e);});}
-    private void error(Exception e){status.setText(e.getMessage()==null?"连接失败，请检查服务与 USB 转发":e.getMessage());}
+    private void error(Exception e){status.setText(e.getMessage()==null?"连接失败，请检查网络与服务":e.getMessage());if(e instanceof NativeClient.RequestFailure){String retry=((NativeClient.RequestFailure)e).retryOf;if(!retry.isEmpty())new android.app.AlertDialog.Builder(this).setTitle("确认重新分析").setMessage("原请求可能已经计费。重新分析会占用新的额度，原记录与费用预留将保留。请核对当前人物和片段后决定。").setNegativeButton("取消",null).setPositiveButton("确认再次分析",(d,w)->{acknowledgedRetry=retry;pendingRequest=null;setting=true;approved.setChecked(true);setting=false;analyze();}).show();}}
     private TextView label(String value,int size){TextView t=new TextView(this);t.setText(value);LensStyle.text(t,size,size>=18);body.addView(t,LensStyle.space(this));return t;}
     private EditText edit(String hint,int id,boolean multi){EditText e=new EditText(this);e.setHint(hint);e.setId(id);e.setSaveEnabled(false);e.setInputType(InputType.TYPE_CLASS_TEXT|(multi?InputType.TYPE_TEXT_FLAG_MULTI_LINE:0));if(multi)e.setMinLines(3);LensStyle.field(e);body.addView(e,LensStyle.space(this));return e;}
     private Spinner spinner(String[] names){Spinner s=new Spinner(this);s.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,names));s.setMinimumHeight(LensStyle.dp(this,52));s.setPadding(LensStyle.dp(this,12),0,LensStyle.dp(this,12),0);s.setBackgroundTintList(android.content.res.ColorStateList.valueOf(LensStyle.GREEN));body.addView(s,LensStyle.space(this));return s;}

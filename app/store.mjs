@@ -6,7 +6,8 @@ import { randomUUID, createHash } from 'node:crypto';
 export const now = () => new Date().toISOString();
 export const hash = (value) => createHash('sha256').update(value).digest('hex');
 
-export function openStore(file) {
+export function openStore(file, {legacySchema=false}={}) {
+  if(legacySchema && file!==':memory:')throw new Error('Legacy schema construction is memory-only');
   if (file !== ':memory:') mkdirSync(dirname(file), { recursive: true });
   const db = new DatabaseSync(file);
   db.exec(`PRAGMA foreign_keys=ON; PRAGMA secure_delete=ON;
@@ -39,7 +40,14 @@ export function openStore(file) {
   const all = (sql, ...args) => db.prepare(sql).all(...args);
   const get = (sql, ...args) => db.prepare(sql).get(...args);
   const run = (sql, ...args) => db.prepare(sql).run(...args);
-  const tx = (fn) => { db.exec('BEGIN IMMEDIATE'); try { const r = fn(); db.exec('COMMIT'); return r; } catch (e) { db.exec('ROLLBACK'); throw e; } };
+  let transactionDepth=0;
+  const tx = fn => {
+    const nested=transactionDepth>0,savepoint=`lens_${transactionDepth}`;
+    db.exec(nested?`SAVEPOINT ${savepoint}`:'BEGIN IMMEDIATE');transactionDepth++;
+    try{const result=fn();db.exec(nested?`RELEASE ${savepoint}`:'COMMIT');return result;}
+    catch(e){db.exec(nested?`ROLLBACK TO ${savepoint}; RELEASE ${savepoint}`:'ROLLBACK');throw e;}
+    finally{transactionDepth--;}
+  };
   // Transactional, additive migration: never reinterpret legacy relationships as shared facts.
   if (get('PRAGMA user_version').user_version < 1) tx(() => {
     db.exec(`CREATE TABLE streamers (
@@ -77,7 +85,7 @@ export function openStore(file) {
     db.exec('PRAGMA user_version=1');
   });
   const pair = (personId, streamerId = '0001') => get('SELECT * FROM pairs WHERE person_id=? AND streamer_id=?', personId, streamerId);
-  if (get('PRAGMA user_version').user_version < 2) tx(() => {
+  if (!legacySchema && get('PRAGMA user_version').user_version < 2) tx(() => {
     db.exec(`ALTER TABLE streamers ADD COLUMN goal TEXT NOT NULL DEFAULT '';
       ALTER TABLE streamers ADD COLUMN tags TEXT NOT NULL DEFAULT '';
       ALTER TABLE claims ADD COLUMN review_state TEXT NOT NULL DEFAULT 'CONFIRMED';
@@ -137,8 +145,9 @@ export function openStore(file) {
     }),
     saveOutcome: (id, o) => tx(() => {
       const a = analysis(id);
+      if(a.outcome && ['status','note','draft'].every(k=>a.outcome[k]===o[k]))return;
       run(`INSERT INTO outcomes VALUES(?,?,?,?,?) ON CONFLICT(analysis_id) DO UPDATE SET status=excluded.status,note=excluded.note,draft=excluded.draft,created_at=excluded.created_at`, id, o.status, o.note, o.draft, now());
-      event(a.pair_id, 'OUTCOME_RECORDED', id, o);
+      event(a.pair_id, 'OUTCOME_RECORDED', id, {status:o.status});
     }),
     setBeliefStatus: (id, status) => tx(() => {
       const a = analysis(id);

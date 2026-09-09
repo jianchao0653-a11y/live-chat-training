@@ -23,7 +23,7 @@ test('managed probe exposes no library; missing key blocks paid calls and accoun
   let app;const open=async()=>{app=createCloud(hostingSettings({LENS_CLOUD_DATA:directory}).options);app.server.listen(0,'127.0.0.1');await once(app.server,'listening');return `http://127.0.0.1:${app.server.address().port}`;};
   let base=await open();t.after(async()=>{await app.close();rmSync(directory,{recursive:true,force:true});});
   const req=async(path,body,token)=>fetch(base+path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{})},...(body?{body:JSON.stringify(body)}:{})});
-  assert.deepEqual(await (await req('/api/native/health')).json(),{status:'ok',version:'0.17.0',quality_accepted:false});
+  assert.deepEqual(await (await req('/api/native/health')).json(),{status:'ok',version:'0.17.1',quality_accepted:false});
   for(const p of ['/','/api/settings','/api/export','/api/native/health?details=true'])assert.equal((await req(p)).status,403);
   assert.equal((await req('/api/native/library/people')).status,401);
   const invite=app.auth.invite();const login=await (await req('/api/native/auth/activate',{code:invite.invite,name:'synthetic',approved:true})).json();

@@ -7,7 +7,7 @@ android {
     compileSdk 36
     buildToolsVersion '36.0.0'
     ndkVersion '28.2.13676358'
-    defaultConfig { applicationId 'com.conversationlens.ime'; minSdk 26; targetSdk 36; versionCode 18; versionName '0.17.0'; testInstrumentationRunner 'com.conversationlens.ime.OcrTestRunner' }
+    defaultConfig { applicationId 'com.conversationlens.ime'; minSdk 26; targetSdk 36; versionCode 19; versionName '0.17.1'; testInstrumentationRunner 'com.conversationlens.ime.OcrTestRunner' }
     defaultConfig { ndk { abiFilters.addAll(file("${staging}/jni").listFiles().findAll { it.isDirectory() }.collect { it.name }) } }
     sourceSets { main { manifest.srcFile "${staging}/AndroidManifest.xml"; java.srcDirs = ['java']; res.srcDirs = ['res']; assets.srcDirs = ["${staging}/assets"]; jniLibs.srcDirs = ["${staging}/jni"] } }
     sourceSets { androidTest { java.srcDirs = ['ocrTest'] } }

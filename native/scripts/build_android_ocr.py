@@ -63,7 +63,7 @@ def main():
     variant='release' if args.release else 'debug'
     files=list((ROOT/f'runtime/android-gradle-build/outputs/apk/{variant}').glob('*.apk'))
     if len(files)!=1: raise RuntimeError('Expected exactly one APK')
-    destination=OUT/('conversation-lens-0.17.0-cloud-unsigned.apk' if args.release else 'conversation-lens-0.17.0-'+('cloud-' if args.cloud_url else '')+'debug.apk')
+    destination=OUT/('conversation-lens-0.17.1-cloud-unsigned.apk' if args.release else 'conversation-lens-0.17.1-'+('cloud-' if args.cloud_url else '')+'debug.apk')
     shutil.copy2(files[0],destination)
     receipt={'apk':destination.name,'sha256':hashlib.file_digest(destination.open('rb'),'sha256').hexdigest(),'cloudEndpoint':args.cloud_url,'abis':args.abis,'releaseSigned':False}
     (OUT/('prepared-release.json' if args.release else 'ocr-debug-receipt.json')).write_text(json.dumps(receipt,indent=2),encoding='utf-8')

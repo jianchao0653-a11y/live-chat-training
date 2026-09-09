@@ -7,6 +7,7 @@ import { randomUUID } from 'node:crypto';
 import { openStore, now, hash } from './store.mjs';
 import { localAnalysis, modelAnalysis, makeBelief, platforms, stages, goals, callModel, classify } from './engine.mjs';
 import { CONTEXT_VERSION, packContext, expressionPlan } from './context.mjs';
+import {requestId,diagnose} from './diagnostics.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const field = (v, max, required = false) => {
@@ -49,7 +50,7 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
     try { const value=JSON.parse(Buffer.concat(chunks).toString('utf8')); if(!value || typeof value!=='object' || Array.isArray(value))fault(400,'请使用 JSON 对象。'); return value; } catch { fault(400, 'JSON 格式错误。'); }
   };
   const analyze = async (b, assertCurrent = () => {}) => {
- const sid = streamerId(b.streamer_id); const p = store.context(b.person_id,sid); if (!p) fault(404, '请先建立当前主播与此人物的关系档案。');
+ const sid = streamerId(b.streamer_id); const pid=field(b.person_id,80,true);if(!/^[a-zA-Z0-9-]+$/.test(pid))fault(400,'人物编号无效。'); const p = store.context(pid,sid); if (!p) fault(404, '请先建立当前主播与此人物的关系档案。');
         const text = field(b.text, 20000, true); if (text.length < 4) fault(400, '请提供至少 4 个字符的上下文。');
         const goal = choice(b.goal, goals); const mode = choice(b.mode, ['local','model']);
         if (mode === 'model' && !configuration.key) fault(400, '请先在设置中接入模型。');
@@ -88,8 +89,10 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
         return extracted;
         } finally { release(); }
   };
-  const native = createNativeBridge({store,analyze,extract,revision:contextKey,config:configPublic,clock,authorize});
+  const preflight=b=>{if(active.has(b.person_id))fault(409,'该人物已有分析任务，本次未调用模型，请等待完成。');if(active.size>=2)fault(429,'正在处理其他分析，请稍后重试。');field(b.text,20000,true);choice(b.goal,goals);choice(b.mode,['local','model']);};
+  const native = createNativeBridge({store,analyze,extract,revision:contextKey,config:configPublic,clock,authorize,preflight});
   const handle = nativeOnly => async (req, res) => {
+    const request_id=requestId();
     try {
       const host = req.headers.host || '';
       // Reject unexpected Host headers on loopback (DNS rebinding); LAN mode requires token.
@@ -190,7 +193,8 @@ export function createApplication({ database = resolve(root, '../runtime/lens.sq
       });
       fault(404, '接口不存在。');
     } catch (e) {
-      if (!res.headersSent) send(res, e.status || 500, { error: e.status || /模型|证据|审核|JSON/.test(e.message) ? e.message : '操作失败，请检查服务状态后重试。' });
+      diagnose('request_failed',request_id,'local-request',e);
+      if (!res.headersSent) send(res, e.status || 500, { error: e.status ? e.message : '操作失败，请检查服务状态后重试。',request_id });
     }
   };
   const server = http.createServer(handle(false));

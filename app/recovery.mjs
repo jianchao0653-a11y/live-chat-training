@@ -13,15 +13,21 @@ function currentSchema() {
   }
   return expected;
 }
+let legacy;
+function legacySchema(){
+  if(!legacy){const s=openStore(':memory:',{legacySchema:true});try{legacy=JSON.stringify(schemaOf(s.db));}finally{s.close();}}
+  return legacy;
+}
 
-export function verifySnapshot(path) {
+export function verifySnapshot(path,{allowLegacy=false}={}) {
   if(!lstatSync(path).isFile()||lstatSync(path).isSymbolicLink())throw new Error('Snapshot must be a regular file');
   const db=new DatabaseSync(path,{readOnly:true});
   try {
     db.exec('PRAGMA trusted_schema=OFF');
     const expected=currentSchema(),schemaVersion=db.prepare('PRAGMA user_version').get().user_version;
     // Strict current-version restore: no migrations, added triggers or altered constraints.
-    if(schemaVersion!==expected.version || JSON.stringify(schemaOf(db))!==expected.schema)throw new Error('Not a current Conversation Lens snapshot schema');
+    const schema=JSON.stringify(schemaOf(db));
+    if(!((schemaVersion===expected.version&&schema===expected.schema)||(allowLegacy&&schemaVersion===1&&schema===legacySchema())))throw new Error('Not a current or supported Conversation Lens snapshot schema');
     const integrity=db.prepare('PRAGMA integrity_check').all();
     if(integrity.length!==1||integrity[0].integrity_check!=='ok')throw new Error('SQLite integrity check failed');
     if(db.prepare('PRAGMA foreign_key_check').all().length)throw new Error('SQLite foreign key check failed');
@@ -33,8 +39,8 @@ export function verifySnapshot(path) {
 export function restoreToNewFile(source,destination) {
   source=resolve(source);destination=resolve(destination);
   if(source===destination)throw new Error('Restore requires a new destination');
-  verifySnapshot(source);
+  verifySnapshot(source,{allowLegacy:true});
   copyFileSync(source,destination,constants.COPYFILE_EXCL);
-  try {return {...verifySnapshot(destination),destination,activated:false};}
+  try {const s=openStore(destination);s.close();return {...verifySnapshot(destination),destination,activated:false};}
   catch(error){unlinkSync(destination);throw error;}
 }

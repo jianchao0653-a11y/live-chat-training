@@ -6,7 +6,7 @@ const equal = (a,b) => { const x=Buffer.from(a || ''), y=Buffer.from(b || ''); r
 
 // Device authority is deliberately memory-only and scoped to one streamer.
 // Server restart, expiry or local revocation invalidates every related ticket.
-export function createNativeBridge({store, analyze, extract, revision, config, clock=Date.now, authorize}) {
+export function createNativeBridge({store, analyze, extract, revision, config, clock=Date.now, authorize,preflight=()=>{}}) {
   const devices=new Map(), tickets=new Map(), leases=new Map();
   let pairing=null;
   const sweep=()=>{
@@ -109,6 +109,7 @@ export function createNativeBridge({store, analyze, extract, revision, config, c
         if(b.approved!==true)fail(400,'请先核对聊天片段与人物。');
         const p=store.person(text(b.person_id,80),d.streamer_id);
         if(!p?.relationship || b.pair_id!==p.relationship.id)fail(404,'人物不属于设备授权的这段关系。');
+        preflight(b);
         const session=start(d,b);
         const result=await analyze({...b,streamer_id:d.streamer_id},session.assert);session.assert();
         const current=store.person(p.id,d.streamer_id);
@@ -117,6 +118,7 @@ export function createNativeBridge({store, analyze, extract, revision, config, c
         tickets.set(ticket.id,ticket);
         return {ticket_id:ticket.id,expires_at:ticket.expires_at,analysis_id:result.id,person:{id:p.id,name:p.name,pair_id:p.relationship.id},
           mode:result.mode,summary:result.result.summary,route:result.result.route,judge:result.result.judge,
+          strategy:result.result.strategy,reason:result.result.reason,risk:result.result.risk,evidence:result.result.evidence,
           candidates:result.result.candidates,context:session.context,host:session.host};
       }
       const match=path.match(/^\/api\/native\/tickets\/([a-f0-9-]+)\/consume$/);
