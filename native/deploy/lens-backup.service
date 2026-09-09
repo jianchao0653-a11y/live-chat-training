@@ -1,0 +1,13 @@
+[Unit]
+Description=Encrypted Conversation Lens backup (brief maintenance window)
+
+[Service]
+Type=oneshot
+User=lens
+Group=lens
+WorkingDirectory=/opt/conversation-lens
+Environment=LENS_BACKUP_KEY_FILE=/etc/conversation-lens/backup-key
+ExecStartPre=+/usr/bin/systemctl stop lens-cloud.service
+ExecStart=/usr/bin/node --disable-warning=ExperimentalWarning app/cloud-admin.mjs backup /var/lib/conversation-lens/data /var/lib/conversation-lens/backups
+ExecStopPost=+/usr/bin/systemctl start lens-cloud.service
+UMask=0077

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.conversationlens.ime"
+    android:versionCode="16" android:versionName="0.15.1-native-preview">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="36" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <application android:label="观微输入法·测试" android:theme="@android:style/Theme.Material.Light.NoActionBar"
+        android:allowBackup="false" android:debuggable="true" android:usesCleartextTraffic="false" android:supportsRtl="true"
+        android:extractNativeLibs="true" android:networkSecurityConfig="@xml/network_security_config">
+        <activity android:name=".AssistantActivity" android:exported="false" android:taskAffinity="com.conversationlens.assistant" android:excludeFromRecents="true" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".LibraryActivity" android:exported="false" android:excludeFromRecents="true" android:windowSoftInputMode="adjustResize" />
+        <service android:name=".CaptureService" android:exported="false" android:foregroundServiceType="mediaProjection" />
+        <activity android:name=".SetupActivity" android:exported="true" android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <service android:name=".LensImeService" android:label="观微简体拼音·测试"
+            android:permission="android.permission.BIND_INPUT_METHOD" android:exported="true">
+            <intent-filter><action android:name="android.view.InputMethod" /></intent-filter>
+            <meta-data android:name="android.view.im" android:resource="@xml/input_method" />
+        </service>
+    </application>
+</manifest>

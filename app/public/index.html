@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#245b48"><meta name="description" content="Conversation Lens 关系沟通工作台">
+  <title>观微 · Conversation Lens</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml"><link rel="manifest" href="/manifest.webmanifest"><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#workspace"><span class="brand-icon">◉</span><span>观微<small>CONVERSATION LENS</small></span></a>
+    <div class="workspace-label">关系沟通工作台 <span>TEST</span></div>
+    <nav aria-label="主导航">
+      <button data-page="workspace" class="nav-item active"><span>▦</span>对话工作台</button>
+      <button data-page="people" class="nav-item"><span>♧</span>人物与关系</button>
+      <button data-page="history" class="nav-item"><span>◷</span>分析与复盘</button>
+      <button data-page="settings" class="nav-item"><span>⚙</span>设置与数据</button>
+    </nav>
+    <div class="sidebar-note"><span class="little-star">✧</span><h3>把关系看清一点</h3><p>理解情境，尊重边界。<br>让每一次表达更有分寸。</p><span class="version">LOCAL TEST · v0.14</span></div>
+    <div class="user"><span class="avatar">玉</span><div>玉麒麟<small>单人测试工作区</small></div><span class="online-dot"></span></div>
+  </aside>
+  <div class="shell">
+    <header class="topbar"><span id="breadcrumb">工作区 / 对话工作台</span><div><label class="streamer-switch">当前主播<select id="streamerSelect" aria-label="当前主播"></select></label><button id="modeBadge" class="mode-badge">规则体验模式</button></div></header>
+    <main id="main" tabindex="-1"></main>
+    <footer>观微 · Conversation Lens <span>理解 → 策略 → 表达 → 复盘</span></footer>
+  </div>
+  <dialog id="personDialog"><form id="personForm">
+    <div class="dialog-heading"><div><span class="eyebrow">PERSON & RELATIONSHIP</span><h2 id="personTitle">建立一段关系档案</h2></div><button type="button" class="icon-button" id="closePerson" aria-label="关闭">×</button></div>
+    <input name="id" type="hidden">
+    <label>称呼<input name="name" required maxlength="60" placeholder="使用熟悉的称呼或花名"></label>
+    <div class="form-row"><label>聊天平台<select name="platform"><option>抖音</option><option>快手</option><option>视频号</option></select></label><label>关系阶段<select name="stage"><option>初识</option><option>熟悉中</option><option>稳定联系</option><option>需要修复</option></select></label></div>
+    <label>关系背景<textarea name="notes" maxlength="3000" rows="3" placeholder="如何认识、最近聊到什么，记录你已经知道的事"></textarea></label>
+    <label>表达边界<textarea name="boundary" maxlength="1000" rows="2" placeholder="例如：不承诺随时回复、不讨论私人住址"></textarea></label>
+    <div class="dialog-actions"><button class="primary" type="submit">保存档案</button></div>
+  </form></dialog>
+  <dialog id="confirmDialog"><form method="dialog"><h2>删除这个人物的全部数据？</h2><p>将永久删除该人物在所有主播下的关系、记忆、分析、信念、反馈及修订事件，不只是当前主播。已导出文件需要自行处理。</p><div class="dialog-actions"><button value="cancel" class="secondary">保留档案</button><button value="delete" class="danger">删除并生成回执</button></div></form></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

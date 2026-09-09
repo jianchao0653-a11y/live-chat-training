@@ -1,0 +1,10 @@
+# Credentials are supplied separately, never written in this source config.
+version: "3"
+agent:
+  web_addr: false
+  console_ui: false
+  log: false
+  remote_management: false
+  update_check: false
+# Launch HTTP with --inspect=false and the fixed assigned URL, upstream loopback:4318.
+# Cloud Traffic Inspector full-capture settings require a separate dashboard check.
