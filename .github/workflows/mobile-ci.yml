@@ -1,8 +1,13 @@
 name: Mobile synthetic acceptance
 on:
-  push:
-    branches: [main, 'codex/**']
   workflow_dispatch:
+    inputs:
+      scope:
+        description: 'Explicit cloud validation scope (consumes hosted quota)'
+        required: true
+        default: service
+        type: choice
+        options: [service, android, ios, all]
 permissions:
   contents: read
 concurrency:
@@ -10,6 +15,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   service:
+    if: inputs.scope == 'service' || inputs.scope == 'all'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -26,6 +32,7 @@ jobs:
           path: output/evals/
           retention-days: 7
   android:
+    if: inputs.scope == 'android' || inputs.scope == 'all'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     strategy:
@@ -92,6 +99,7 @@ jobs:
             output/native/*debug.apk
           retention-days: 7
   ios:
+    if: inputs.scope == 'ios' || inputs.scope == 'all'
     runs-on: macos-15
     env:
       DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
