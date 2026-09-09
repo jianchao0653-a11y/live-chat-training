@@ -51,3 +51,11 @@ OCR 差异包括“谢谢”简繁混写、“明天”误为“明无/明夭”
 - 小样本真实回复质量、六平台组合与3人7天试点未完成；不以此更新标记整个项目生产完成。
 - schema v2 保持严格恢复；升级前 v1 备份需配套旧版恢复流程，升级后另有 v2 加密备份。预算、身份与删除日志不能回滚。DPAPI 备份密钥只在本机账号可用，异机灾备尚未验收。
 - 本地没有 Git 元数据；私有仓库同步与新 CI 结果单独记录，不用旧 CI 冒充本版通过。
+
+## 私有仓库回执
+
+41个明确选定的源码、依赖锁和验收文件已推至 `jianchao0653-a11y/live-chat-training` 的 `codex/mobile-acceptance-v014`，源码提交 `b3103c91b5d91bd04ff4783c106231969eb6c88b`。未上传 runtime/output、截图、账号、邀请码或任何密钥；PR #3 保持 Draft、未合并。
+
+新 CI [run34315683151](https://github.com/jianchao0653-a11y/live-chat-training/actions/runs/34315683151) 为 failure。四作业（service、Android34/36、iOS）均 `runner_name=""`、`steps=[]`，没有执行测试。连接器不允许读取 check-run annotations，因此具体平台失败原因尚未知，不归因为代码失败，也不宣称 CI 通过。未盲目重跑同一条件。
+
+另已生成 v0.17.0 无密钥后端部署 ZIP，30个源码文件及ZIP完整性校验通过，SHA256 `fb10db09ae648d269c7f8e7e29236ceb588e5a313549b58f493d56043a953747`。项目测试模拟器已关闭，电脑后端继续运行。
