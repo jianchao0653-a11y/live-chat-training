@@ -11,6 +11,17 @@ import {providerEndpoint} from '../provider.mjs';
 import {backupCloud,restoreCloud} from '../cloud-maintenance.mjs';
 import {openCloudAuth} from '../cloud-auth.mjs';
 import {openStore} from '../store.mjs';
+import {createBudget} from '../cloud-budget.mjs';
+test('project daily count cannot be multiplied by creating another account',()=>{
+  const auth=openCloudAuth(':memory:');
+  try {
+    const a=auth.invite().account_id,b=auth.invite().account_id;
+    const limits=createBudget(auth,{verified:true,dailyCount:1,dailyMicros:10000000,monthlyMicros:100000000,inputPerMillion:800000,outputPerMillion:2000000});
+    const id=randomUUID();limits.reserve(id,a,'first');limits.finish(id,null);
+    assert.throws(()=>limits.reserve(randomUUID(),b,'second'),e=>e.status===429);
+    assert.equal(limits.reserve(id,a,'first').existing.id,id);
+  }finally{auth.close();}
+});
 const chat='对方：今天加班很累，想安静休息。';
 const budget={verified:true,inputPerMillion:1000000,outputPerMillion:1000000,dailyMicros:10000000,monthlyMicros:100000000,dailyCount:20,currency:'SYNTHETIC'};
 async function fixture(t,options={}) {

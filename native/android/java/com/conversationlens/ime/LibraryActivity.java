@@ -23,7 +23,7 @@ public final class LibraryActivity extends Activity {
     private String value(EditText v){return v.getText().toString().trim();}
     private void call(String path,JSONObject input,Done done){final int ticket=++generation;final NativeClient c=client;status.setText("正在处理…");NativeClient.IO.execute(()->{try{JSONObject result=c.call(path,input);runOnUiThread(()->{if(isDestroyed()||ticket!=generation)return;try{done.run(result);}catch(Exception e){status.setText("资料格式不正确，请重试。");}});}catch(Exception e){runOnUiThread(()->{if(!isDestroyed()&&ticket==generation)status.setText(e.getMessage());});}});}
     private void confirm(String message,Runnable action){new AlertDialog.Builder(this).setTitle("请确认").setMessage(message).setNegativeButton("取消",null).setPositiveButton("确认",(d,w)->action.run()).show();}
-    private void login(){page("登录观微");label("输入收到的一次性邀请码。人物资料保存在项目云端；只有你批准的聊天片段与必要人物背景会提交给阿里云百炼分析。建议由你编辑、确认并发送。",15);
+    private void login(){page("登录观微");label("输入收到的一次性邀请码。试用期资料保存在项目提供者的电脑后端，网络请求经过 ngrok HTTPS 网关，网关可处理请求内容。只有你批准的聊天片段与必要人物背景会提交给阿里云百炼分析。建议由你编辑、确认并发送。",15);
         label("分析与反馈通常保留最多30天；人物与确认记忆保留至删除。备份最多保留7天。可在人物资料中修改和删除；卸载应用不会删除云端资料。",14);
         EditText code=field("一次性邀请码","",3101,false);code.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_VARIATION_PASSWORD);
         CheckBox consent=new CheckBox(this);consent.setText("我已了解并同意上述数据处理方式");body.addView(consent,LensStyle.space(this));

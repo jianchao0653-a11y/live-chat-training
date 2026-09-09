@@ -73,7 +73,9 @@ def notices():
     text += '\nDependency commits and source archive checksums:\n' + (ROOT / 'native/dependencies.lock.json').read_text()
     return text
 
-def build(abis, native_only=False, cloud_url='', release=False):
+def build(abis, native_only=False, cloud_url='', release=False, prepare_release=False):
+    if prepare_release and not release:
+        raise RuntimeError('Prepare release requires --release')
     if release and not cloud_url:
         raise RuntimeError('Release requires a deployed cloud HTTPS endpoint')
     if cloud_url:
@@ -156,6 +158,12 @@ def build(abis, native_only=False, cloud_url='', release=False):
             apk.write(ndk / f'toolchains/llvm/prebuilt/{NDK_HOST}/sysroot/usr/lib/{triples[abi]}/libc++_shared.so', f'lib/{abi}/libc++_shared.so')
     aligned = BUILD / 'aligned.apk'
     run([bt / 'zipalign.exe', '-f', '-P', '16', '4', unsigned, aligned])
+    if prepare_release:
+        prepared=OUT/'conversation-lens-0.16.0-cloud-unsigned.apk'
+        shutil.copyfile(aligned,prepared)
+        (OUT/'prepared-release.json').write_text(json.dumps({'apk':prepared.name,'sha256':hashlib.file_digest(prepared.open('rb'),'sha256').hexdigest(),'cloudEndpoint':cloud_url,'abis':abis,'releaseSigned':False}),encoding='utf-8')
+        print('Prepared unsigned release; not installable: '+str(prepared),flush=True)
+        return
     keystore = TOOLS / 'lens-local-debug.keystore'
     if not release and not keystore.exists():
         run([java / 'keytool.exe', '-genkeypair', '-keystore', keystore, '-storepass', 'android', '-keypass', 'android',
@@ -187,5 +195,6 @@ if __name__ == '__main__':
     parser.add_argument('--native-only', action='store_true')
     parser.add_argument('--cloud-url', default='')
     parser.add_argument('--release', action='store_true')
+    parser.add_argument('--prepare-release', action='store_true')
     args = parser.parse_args()
-    build(args.abis, args.native_only, args.cloud_url, args.release)
+    build(args.abis, args.native_only, args.cloud_url, args.release, args.prepare_release)

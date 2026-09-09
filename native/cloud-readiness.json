@@ -1,18 +1,62 @@
 {
   "version": "0.16.0",
   "status": "NOT_READY",
-  "decision": "MADR-041",
+  "decision": "MADR-043",
   "gates": [
-    {"id":"cloud-auth-isolation", "status":"SYNTHETIC_PASSED", "evidence":"9 added cloud/provider/recovery tests; persistent identity and scoped account databases"},
-    {"id":"android-cloud-workflow", "status":"EMULATOR_PASSED", "evidence":"API36 login/person/memory/analyze/edit/confirm/restart/delete"},
-    {"id":"bailian-real-smoke", "status":"MECHANICAL_PASSED", "evidence":"Synthetic rest-boundary and ordinary cases; two calls each; humanReviewed=false"},
-    {"id":"https-deployment", "status":"BLOCKED_CLIENT_SECURITY", "evidence":"ngrok account registered and assigned outreach-alibi-reformer.ngrok-free.dev confirmed. Official-download Windows binary quarantined by Defender as Trojan:Win32/Kepavll!rfn; no tunnel running or security exclusions. Full credential-page export rejected by automatic review; single-secret local provisioning and client validation pending. Phone needs only this APK"},
-    {"id":"production-budget", "status":"PENDING", "evidence":"Limits implemented; actual rate card and project amounts not set"},
-    {"id":"production-signing-upgrade", "status":"PARTIAL", "evidence":"Separate RSA3072 key prepared locally, password sealed with current-user DPAPI; off-machine backup, production APK and upgrade not verified"},
-    {"id":"latest-github-ci", "status":"NOT_PASSED", "evidence":"597b753 run34188076307: all four jobs failure before steps; annotation endpoint unsupported by connector, cause unconfirmed. Prior f76c911: service/API36/iOS passed, API34 cloud memory-button test failed; latest API34 fix awaits verification"},
-    {"id":"xiaomi-device", "status":"NOT_RUN", "evidence":"Model/system version not yet supplied; no personal phone operations"},
-    {"id":"deployment-recovery", "status":"PARTIAL", "evidence":"Encrypted restore replay synthetic passed; Linux units/TLS/operational drill pending"},
-    {"id":"human-gold-quality", "status":"NOT_RUN", "evidence":"20-50 authorized deidentified samples and two independent reviewers pending"},
-    {"id":"three-users-seven-days", "status":"NOT_RUN", "evidence":"Cannot be substituted with simulations or same-day execution"}
+    {
+      "id": "cloud-auth-isolation",
+      "status": "SYNTHETIC_PASSED",
+      "evidence": "9 added cloud/provider/recovery tests; persistent identity and scoped account databases"
+    },
+    {
+      "id": "android-cloud-workflow",
+      "status": "EMULATOR_PASSED",
+      "evidence": "API36 login/person/memory/analyze/edit/confirm/restart/delete"
+    },
+    {
+      "id": "bailian-real-smoke",
+      "status": "MECHANICAL_PASSED",
+      "evidence": "Synthetic rest-boundary and ordinary cases; two calls each; humanReviewed=false"
+    },
+    {
+      "id": "https-deployment",
+      "status": "PHONE_HEALTH_REPORTED_PASSED",
+      "evidence": "Fixed HTTPS 200/401/403/403 and tunnel restart passed. User reported Xiaomi mobile-data health JSON 2026-09-09. Cloud body-capture setting and full PC reboot pending."
+    },
+    {
+      "id": "production-budget",
+      "status": "CONFIGURED_SMOKE_PASSED",
+      "evidence": "User approved global20 analyses/day, CNY1/day and CNY10/month (UTC). Official Beijing qwen-plus-2025-12-01 nonthinking0.8/2 CNY per million input/output tokens verified. Live budgeted synthetic workflow2 calls charged3710 micros; no human quality acceptance."
+    },
+    {
+      "id": "production-signing-upgrade",
+      "status": "SIGNED_APK_VERIFIED_UPGRADE_PENDING",
+      "evidence": "Original RSA3072 certificate retained; release v2/v3 signature and16KB alignment verified. APK a388d7cba3d4087af28c07ba1b5e4bf91f15409910d0ecffa4026decab110ef3. Off-machine key backup and device upgrade pending."
+    },
+    {
+      "id": "latest-github-ci",
+      "status": "NOT_PASSED",
+      "evidence": "597b753 run34188076307: all four jobs failure before steps; annotation endpoint unsupported by connector, cause unconfirmed. Prior f76c911: service/API36/iOS passed, API34 cloud memory-button test failed; latest API34 fix awaits verification"
+    },
+    {
+      "id": "xiaomi-device",
+      "status": "NETWORK_PASSED_INSTALL_PENDING",
+      "evidence": "User-reported mobile-data health passed. Signed release APK produced; install, login and keyboard insertion pending."
+    },
+    {
+      "id": "deployment-recovery",
+      "status": "PARTIAL",
+      "evidence": "Encrypted restore replay synthetic passed; Linux units/TLS/operational drill pending"
+    },
+    {
+      "id": "human-gold-quality",
+      "status": "NOT_RUN",
+      "evidence": "20-50 authorized deidentified samples and two independent reviewers pending"
+    },
+    {
+      "id": "three-users-seven-days",
+      "status": "NOT_RUN",
+      "evidence": "Cannot be substituted with simulations or same-day execution"
+    }
   ]
 }

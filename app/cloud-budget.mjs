@@ -16,6 +16,7 @@ export function createBudget(auth,config) {
     if(c.verified!==true||!reservation||!c.dailyMicros||!c.monthlyMicros||auth.get("SELECT value FROM control WHERE key='budget_blocked'")?.value==='1')fail(503,'模型预算尚未配置或已暂停。');
     const n=auth.get('SELECT COUNT(*) n FROM tasks WHERE account=? AND created>=?',account,day()).n;
     if(n>=c.dailyCount)fail(429,'今天的分析次数已用完，明天再试。');
+    if(auth.get('SELECT COUNT(*) n FROM tasks WHERE created>=?',day()).n>=c.dailyCount)fail(429,'项目今天的分析次数已用完，明天再试。');
     if(spent(day())+reservation>c.dailyMicros||spent(month())+reservation>c.monthlyMicros)fail(429,'项目分析预算已用完，请稍后再试。');
     auth.run('INSERT INTO tasks(id,account,fingerprint,created,state,reserved) VALUES(?,?,?,?,?,?)',id,account,fingerprint,auth.clock(),'RUNNING',reservation);
     return {existing:null};
