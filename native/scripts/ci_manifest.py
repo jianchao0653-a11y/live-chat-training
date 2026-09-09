@@ -25,6 +25,7 @@ paths += [root/'03_decisions/MADR-043.md']
 paths += [root/'03_decisions/MADR-044.md']
 paths += [root/'07_reviews/V0_17_ACCEPTANCE.md']
 paths += [root/'03_decisions/MADR-045.md',root/'07_reviews/V0_17_1_AUDIT_REPAIRS.md']
+paths += [root/'03_decisions/MADR-046.md',root/'07_reviews/V0_17_2_CONTINUATION.md']
 paths += [root/'01_inputs/REFERENCE_REUSE_V014.md',root/'07_reviews/V0_14_ACCEPTANCE.md']
 entries=[]
 for p in sorted(set(paths)):

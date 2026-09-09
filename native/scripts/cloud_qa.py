@@ -21,7 +21,7 @@ def click(label):
 def run():
     fixture=json.loads((OUT/'cloud-fixture.json').read_text(encoding='utf-8'))
     adb('reverse','tcp:4317','tcp:'+fixture['base'].rsplit(':',1)[1])
-    adb('install','--no-incremental','-r',OUT/'conversation-lens-0.17.1-cloud-debug.apk')
+    adb('install','--no-incremental','-r',OUT/'conversation-lens-0.17.2-cloud-debug.apk')
     # This helper is constrained to the synthetic emulator; start a fresh test account.
     adb('shell','pm','clear','com.conversationlens.ime')
     adb('shell','am','force-stop','com.conversationlens.ime')

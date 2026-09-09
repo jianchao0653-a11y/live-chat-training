@@ -8,9 +8,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /** Generated Chinese text only. Never reads the user's screenshots or records. */
-public final class OcrTestRunner extends Instrumentation {
-    @Override public void onCreate(Bundle args){super.onCreate(args);start();}
+public final class OcrTestRunner extends OcrReviewTestRunner {
+    private boolean reviewOnly;
+    @Override public void onCreate(Bundle args){reviewOnly="true".equals(args.getString("review"));super.onCreate(args);}
     @Override public void onStart(){
+        if(reviewOnly){super.onStart();return;}
         Bundle result=new Bundle();int passed=0,exact=0;StringBuilder mismatches=new StringBuilder();
         try{
             String[] phrases={"你好","今天工作辛苦了","早点休息","谢谢你的关心","明天再聊"};

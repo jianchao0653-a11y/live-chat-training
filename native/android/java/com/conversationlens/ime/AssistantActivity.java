@@ -193,9 +193,30 @@ public final class AssistantActivity extends Activity {
         try{LocalChatOcr.recognize(s.image,new LocalChatOcr.Done(){
             public void success(String text){if(isDestroyed()||token!=work||!s.alive()||s.revision!=revision)return;
                 if(text.trim().isEmpty()){status.setText("未识别到文字，可能是受保护画面。请改为粘贴聊天片段。");return;}
-                transcript.setText(text);status.setText("请结合预览校对：改为“我：”或“对方：”，删除非聊天内容，再批准分析。");}
+                transcript.setText(text);status.setText("识别完成，请逐条核对文字和发言人；尚未批准分析。");reviewOcr(text);}
             public void failure(){if(!isDestroyed()&&token==work)status.setText("本机识别失败，请重试或粘贴聊天片段。");}
         });}catch(RuntimeException e){status.setText("本机识别无法启动，请粘贴聊天片段。");}
+    }
+    android.app.AlertDialog reviewOcr(String raw){
+        final java.util.List<OcrReview.Line> lines;
+        try{lines=OcrReview.parse(raw);}catch(IllegalArgumentException e){status.setText(e.getMessage());return null;}
+        final AssistSession owner=session;final int revision=owner.revision;
+        ScrollView scroll=new ScrollView(this);LinearLayout panel=new LinearLayout(this);panel.setOrientation(LinearLayout.VERTICAL);panel.setPadding(24,12,24,12);scroll.addView(panel);
+        TextView help=new TextView(this);help.setText("识别可能有错字。请核对每条文字并选择发言人；标题、时间和系统提示选择“不纳入”。位置推测不会自动确认。取消会保留待核对原文。");LensStyle.text(help,14,false);panel.addView(help);
+        for(int i=0;i<lines.size();i++){
+            final OcrReview.Line line=lines.get(i);
+            TextView label=new TextView(this);label.setText("第"+(i+1)+"条 · 原始识别："+line.raw);LensStyle.text(label,13,false);panel.addView(label,LensStyle.space(this));
+            EditText text=new EditText(this);text.setSaveEnabled(false);text.setHint("第"+(i+1)+"条校对文字");text.setText(line.text);text.setInputType(InputType.TYPE_CLASS_TEXT|InputType.TYPE_TEXT_FLAG_MULTI_LINE);LensStyle.field(text);panel.addView(text,LensStyle.space(this));
+            text.addTextChangedListener(new TextWatcher(){public void beforeTextChanged(CharSequence s,int a,int c,int f){}public void onTextChanged(CharSequence s,int a,int b,int c){line.text=s.toString();}public void afterTextChanged(Editable e){}});
+            Spinner who=new Spinner(this);who.setContentDescription("第"+(i+1)+"条发言人");who.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,new String[]{"请选择发言人","我","对方","不纳入"}));panel.addView(who,LensStyle.space(this));
+            who.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener(){public void onItemSelected(AdapterView<?> p,View v,int position,long id){line.speaker=position;}public void onNothingSelected(AdapterView<?> p){line.speaker=0;}});
+        }
+        TextView error=new TextView(this);LensStyle.text(error,14,false);error.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);panel.addView(error);
+        final android.app.AlertDialog dialog=new android.app.AlertDialog.Builder(this).setTitle("逐条校对截图").setView(scroll).setNegativeButton("取消",null).setPositiveButton("已逐条核对，回填",null).create();
+        dialog.setOnShowListener(d->dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener(v->{
+            if(owner!=session||!owner.alive()||owner.revision!=revision){error.setText("输入现场已变化，请重新识别并核对");return;}
+            try{String reviewed=OcrReview.assemble(lines);transcript.setText(reviewed);status.setText("已回填校对片段，请再次核对人物并批准分析。");dialog.dismiss();}catch(IllegalArgumentException e){error.setText(e.getMessage());}
+        }));dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);dialog.show();return dialog;
     }
     private void feedbackControls(){
         if(AssistSession.feedbackId==null)return;
