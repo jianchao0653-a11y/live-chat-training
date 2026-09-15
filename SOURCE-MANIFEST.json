@@ -1,0 +1,1497 @@
+{
+  "format": 1,
+  "version": "0.18.0",
+  "productionReady": false,
+  "secretScan": "bounded-pattern-check-only",
+  "historyScanned": false,
+  "files": [
+    {
+      "source": ".github/workflows/source-ci.yml",
+      "path": ".github/workflows/source-ci.yml",
+      "sha256": "f7b5aa3dd4ac9923c1477225e9fd95a32b3f417f7b68329f1e7b2056ab4c4cad",
+      "bytes": 839
+    },
+    {
+      "source": ".gitignore",
+      "path": ".gitignore",
+      "sha256": "fa51b6af72a73142e6cb5df4e3ad17cad5f1dcd7eaac7f75029fee1b879329f6",
+      "bytes": 428
+    },
+    {
+      "source": "CONTRIBUTING.md",
+      "path": "CONTRIBUTING.md",
+      "sha256": "4b4c827ce1d4fbbd9f6ed65f027708dc728789777184374fe748a34585a9719d",
+      "bytes": 1333
+    },
+    {
+      "source": "LICENSE",
+      "path": "LICENSE",
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308",
+      "bytes": 9165
+    },
+    {
+      "source": "SECURITY.md",
+      "path": "SECURITY.md",
+      "sha256": "819a26593ae3fb364abbc21791afb748924092b21f182b3b3fff885081c1c5a0",
+      "bytes": 1273
+    },
+    {
+      "source": "THIRD_PARTY_NOTICES.md",
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "9a112186cd6567fcb474252f8471dcbf5b94a827cfa35c7d148e45909dae32a7",
+      "bytes": 1769
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "app/DEPLOYMENT.md",
+      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
+      "bytes": 2182
+    },
+    {
+      "source": "release/APP.public.md",
+      "path": "app/README.md",
+      "sha256": "5da83791c8814507782de89f9ef80cee27c3bc0c83784b6b60168fb5a9897ede",
+      "bytes": 1096
+    },
+    {
+      "source": "app/backup.mjs",
+      "path": "app/backup.mjs",
+      "sha256": "d67486179a8b4a17d153487bd028e124b3f2ae4182e8ac5cbbd3d82b5cd5e81f",
+      "bytes": 941
+    },
+    {
+      "source": "app/cloud-admin.mjs",
+      "path": "app/cloud-admin.mjs",
+      "sha256": "bd87c2c7d8b21b7a0b3b12e77b3ff9c1493b1225972fdec0afaf3cb1e62cb8c8",
+      "bytes": 1475
+    },
+    {
+      "source": "app/cloud-auth.mjs",
+      "path": "app/cloud-auth.mjs",
+      "sha256": "18964472f599b4e67c5305ade4cc4839666a2bababf20a7100219a096acf8983",
+      "bytes": 5648
+    },
+    {
+      "source": "app/cloud-budget.mjs",
+      "path": "app/cloud-budget.mjs",
+      "sha256": "5a8caffb4903ad66f30ddf06a9c4995687a43e1aa650d12a931d2845fd5bffd8",
+      "bytes": 8661
+    },
+    {
+      "source": "app/cloud-maintenance.mjs",
+      "path": "app/cloud-maintenance.mjs",
+      "sha256": "3fccc9d6110d2df4944087bb9a254bde8372b44e57eff3dabef8c1265cbe0f6b",
+      "bytes": 8691
+    },
+    {
+      "source": "app/cloud.mjs",
+      "path": "app/cloud.mjs",
+      "sha256": "a6155f4eb4cfdbc90d979774b993008f07118dab0373df04134611c30c5858bf",
+      "bytes": 20662
+    },
+    {
+      "source": "app/context.mjs",
+      "path": "app/context.mjs",
+      "sha256": "ba7635086efda68310dd89ea8044e41af9e218cacb020ec96f0ff917aeb5c35a",
+      "bytes": 6074
+    },
+    {
+      "source": "app/customer-classification.mjs",
+      "path": "app/customer-classification.mjs",
+      "sha256": "1445614f08346bcd812a887a506f83f9858809194ac4dc9f20b450597de5e130",
+      "bytes": 2263
+    },
+    {
+      "source": "app/customer-create.mjs",
+      "path": "app/customer-create.mjs",
+      "sha256": "bd78079b22ecabf9e8c75b3a50282b8071ac1a8bd5911fceed3de3f23155471f",
+      "bytes": 1486
+    },
+    {
+      "source": "app/customer-tasks.mjs",
+      "path": "app/customer-tasks.mjs",
+      "sha256": "d305a477867dca878abb97e94997b5742057f7f487b7e3b76887c8090fb83210",
+      "bytes": 13673
+    },
+    {
+      "source": "app/diagnostics.mjs",
+      "path": "app/diagnostics.mjs",
+      "sha256": "a70d1fcefee36f1f746868c42bb0e3f2e03af508c54cfca2668c8593272305b5",
+      "bytes": 483
+    },
+    {
+      "source": "app/engine.mjs",
+      "path": "app/engine.mjs",
+      "sha256": "7b9983401a81e81f1400b6a0152ddd5e1f57f102a0ac244e70ac73c2f3dee867",
+      "bytes": 14903
+    },
+    {
+      "source": "app/evals/README.md",
+      "path": "app/evals/README.md",
+      "sha256": "86ed010c1e0795f5bc5027cb5973457b1a64ffb38323431d64910582a723e1e7",
+      "bytes": 4885
+    },
+    {
+      "source": "app/evals/bailian-smoke.mjs",
+      "path": "app/evals/bailian-smoke.mjs",
+      "sha256": "78d45647b7092a595430be4ba06af3c4efed86ad009d85b1a01036645314ad6d",
+      "bytes": 2460
+    },
+    {
+      "source": "app/evals/cases.json",
+      "path": "app/evals/cases.json",
+      "sha256": "d3e89102a6078a55e4dae284ab78e38f6f40904bdd2b91b58828bd1857f24bf0",
+      "bytes": 2285
+    },
+    {
+      "source": "app/evals/dataset.mjs",
+      "path": "app/evals/dataset.mjs",
+      "sha256": "d22dbf49c23928f44e823d19baede609e7f4afa69726106fd13018de83ccc0c4",
+      "bytes": 5034
+    },
+    {
+      "source": "app/evals/examples/demo-01.txt",
+      "path": "app/evals/examples/demo-01.txt",
+      "sha256": "195b2d584d9f7736a78092c3efb5c21f004f198dd7453abee5d4621cac1b4d63",
+      "bytes": 80
+    },
+    {
+      "source": "app/evals/examples/text-manifest.json",
+      "path": "app/evals/examples/text-manifest.json",
+      "sha256": "d8b0337170a923208b06e9c8fa1d48a4054abd6f0915b5a44846ca30f8f98386",
+      "bytes": 321
+    },
+    {
+      "source": "app/evals/ocr-metrics.mjs",
+      "path": "app/evals/ocr-metrics.mjs",
+      "sha256": "63865ccf3f0dce57b4bdfcced466bd920efa2df85a9b3f02f413a02f98e30fb4",
+      "bytes": 997
+    },
+    {
+      "source": "app/evals/ocr.mjs",
+      "path": "app/evals/ocr.mjs",
+      "sha256": "be0849121515ca5f446629a4c828b9a651656130fa66b21cc1456d9e2aaf9998",
+      "bytes": 4384
+    },
+    {
+      "source": "app/evals/pc-live-smoke.mjs",
+      "path": "app/evals/pc-live-smoke.mjs",
+      "sha256": "f02624d697c29f38c2dd8f68a3013645126ef1619fcd1a925fa685e1fc4dead1",
+      "bytes": 2409
+    },
+    {
+      "source": "app/evals/prepare-pilot-invite.mjs",
+      "path": "app/evals/prepare-pilot-invite.mjs",
+      "sha256": "7e7fc3a685989b6141e7e565069d9dc30aa56545ce2c644d0e822c58c7fee018",
+      "bytes": 1910
+    },
+    {
+      "source": "app/evals/run.mjs",
+      "path": "app/evals/run.mjs",
+      "sha256": "5e46401be30985d496e4e6745a7b17aa79a4f6ff1daf798e4ad35b85bdfec3c5",
+      "bytes": 2013
+    },
+    {
+      "source": "app/evals/text-evaluation.mjs",
+      "path": "app/evals/text-evaluation.mjs",
+      "sha256": "5c448cd87da14533b7c1981fd3875c99a5fbe3fdd2ae3ae2b184b358454171b7",
+      "bytes": 5006
+    },
+    {
+      "source": "app/hosted.mjs",
+      "path": "app/hosted.mjs",
+      "sha256": "7b1e3aaede9caacdb238cea8bb9bfceb9cdb9726b201636ea96051bace4ae87c",
+      "bytes": 2392
+    },
+    {
+      "source": "app/native.mjs",
+      "path": "app/native.mjs",
+      "sha256": "01bfef431e9afc077b6b2e3e2c57f56796500ebe6f8f4f36593e77654e7e097e",
+      "bytes": 10098
+    },
+    {
+      "source": "app/pc-server.mjs",
+      "path": "app/pc-server.mjs",
+      "sha256": "71b2246e6ddd54fe372c3a21dc0e53b026f351298ddd61682c6b4babca73ad79",
+      "bytes": 3188
+    },
+    {
+      "source": "app/provider.mjs",
+      "path": "app/provider.mjs",
+      "sha256": "dcd4d497643f5f115a815e194e03d235329cd153bede497f984cf26e17ff813b",
+      "bytes": 3279
+    },
+    {
+      "source": "app/public/app.js",
+      "path": "app/public/app.js",
+      "sha256": "95b2f0cecf020c615c178fa04fb3c7cad6a1b071c8d4d84abb8da78ecd5b5910",
+      "bytes": 35084
+    },
+    {
+      "source": "app/public/design-tokens.css",
+      "path": "app/public/design-tokens.css",
+      "sha256": "db614e1f9b274d375d45ff4e0eee01766a12a7498afebb4222536b2a9197bec5",
+      "bytes": 12802
+    },
+    {
+      "source": "app/public/icon.svg",
+      "path": "app/public/icon.svg",
+      "sha256": "a6a6a5309364f979ff3e112d79329d9a5f118d46126cdc82af2977da99fb9355",
+      "bytes": 330
+    },
+    {
+      "source": "app/public/index.html",
+      "path": "app/public/index.html",
+      "sha256": "51887ec352d106d0703a898cd8ff25573a6fa5c6741e9176f7ef90c34f8409b0",
+      "bytes": 3829
+    },
+    {
+      "source": "app/public/manifest.webmanifest",
+      "path": "app/public/manifest.webmanifest",
+      "sha256": "7231d41eb43a1fda19e25d4763800b39d0a20a98ed8e31cc19de4433edbcec13",
+      "bytes": 236
+    },
+    {
+      "source": "app/public/style.css",
+      "path": "app/public/style.css",
+      "sha256": "eeac3771f4caca40198fdd7561441c7be3add40434390b6a86fecbfa1d1b3533",
+      "bytes": 24146
+    },
+    {
+      "source": "app/recovery-checkpoint.mjs",
+      "path": "app/recovery-checkpoint.mjs",
+      "sha256": "4fb852197268677b3485c47141ef13daa6958efab359e191ffdac18034ec516c",
+      "bytes": 6014
+    },
+    {
+      "source": "app/recovery.mjs",
+      "path": "app/recovery.mjs",
+      "sha256": "67a73e182edf3078e98d0e8060ec1585f6a3e9aac29423d012fdc4badd77ae16",
+      "bytes": 2532
+    },
+    {
+      "source": "app/result-contract.mjs",
+      "path": "app/result-contract.mjs",
+      "sha256": "32a5b73b59b41565ac2153e7a479cef5686463dc21b233e580848fe02cc8323a",
+      "bytes": 1529
+    },
+    {
+      "source": "app/retention.mjs",
+      "path": "app/retention.mjs",
+      "sha256": "b6e213985bffd26fbf9cacee8f686013bcbec1f1bb4330820cf4afd7a54a9492",
+      "bytes": 3160
+    },
+    {
+      "source": "app/server.mjs",
+      "path": "app/server.mjs",
+      "sha256": "49bb3f8f581d08f8a136fe576b977b1724a449a678a5f0dca155f39984bc5aff",
+      "bytes": 20732
+    },
+    {
+      "source": "app/store.mjs",
+      "path": "app/store.mjs",
+      "sha256": "6a063da9ed27acbe86f6b459b5ab035b8cb217f0846d9f91a154ee6bff7aa891",
+      "bytes": 15937
+    },
+    {
+      "source": "app/tests/audit-20260915.test.mjs",
+      "path": "app/tests/audit-20260915.test.mjs",
+      "sha256": "5a2cde8d899f3d0102eb493a2c22c74c1316d7bc437dd89cffd7e701da912992",
+      "bytes": 5586
+    },
+    {
+      "source": "app/tests/audit-repairs.test.mjs",
+      "path": "app/tests/audit-repairs.test.mjs",
+      "sha256": "5717eeb7eea5b725003a8bdc22427bd6511065f14a4a4a8edc93ca4c217c5095",
+      "bytes": 6148
+    },
+    {
+      "source": "app/tests/budget-block.test.mjs",
+      "path": "app/tests/budget-block.test.mjs",
+      "sha256": "91b2b8692db44b780cb9283b5a7008f8b9a9bfd578848e58a5216ecf1e500c0c",
+      "bytes": 13388
+    },
+    {
+      "source": "app/tests/cloud.test.mjs",
+      "path": "app/tests/cloud.test.mjs",
+      "sha256": "a4231f58e5a3169669362f19b47e4bb58d2052f92e28bf5b618fd1e41942224b",
+      "bytes": 21158
+    },
+    {
+      "source": "app/tests/context.test.mjs",
+      "path": "app/tests/context.test.mjs",
+      "sha256": "c8eb3311f2bb17979192837c02109279ee918a4cd0b62d255e4cb41f09e92438",
+      "bytes": 12405
+    },
+    {
+      "source": "app/tests/core.test.mjs",
+      "path": "app/tests/core.test.mjs",
+      "sha256": "659569db5b377f87a2536a01b77b851b40e32b06089c0323cce84800a65beda4",
+      "bytes": 7627
+    },
+    {
+      "source": "app/tests/customer-lifecycle.test.mjs",
+      "path": "app/tests/customer-lifecycle.test.mjs",
+      "sha256": "48220bb59d75b87b76f14b653910b694c40649a571b281913eab6db499aa4539",
+      "bytes": 18149
+    },
+    {
+      "source": "app/tests/customer-task-cloud.test.mjs",
+      "path": "app/tests/customer-task-cloud.test.mjs",
+      "sha256": "5b0cecd1e08744dac217a5491a8866e8196479ea8d9e36254ac0d9197e93e6f0",
+      "bytes": 21355
+    },
+    {
+      "source": "app/tests/customer-tasks.test.mjs",
+      "path": "app/tests/customer-tasks.test.mjs",
+      "sha256": "41efdfc82113d7f4a026ae42b98f4c9add79f2112c3e917deb9286330f0371f4",
+      "bytes": 14592
+    },
+    {
+      "source": "app/tests/hosting.test.mjs",
+      "path": "app/tests/hosting.test.mjs",
+      "sha256": "c02efbb6a8b4203c84fe21dfd92b03903116bf274ff5b36fcf5ff5bed29e3c03",
+      "bytes": 3762
+    },
+    {
+      "source": "app/tests/native-listener.test.mjs",
+      "path": "app/tests/native-listener.test.mjs",
+      "sha256": "f0cb099fad971dbdb03b2688bf9ce3a74a9f9e99838e23baab9c5877b4d8d733",
+      "bytes": 2971
+    },
+    {
+      "source": "app/tests/native.test.mjs",
+      "path": "app/tests/native.test.mjs",
+      "sha256": "1d7f59f1c7b3e5c730def0e43a5604da3e97133c55ea0f2b72efce49413f630f",
+      "bytes": 11428
+    },
+    {
+      "source": "app/tests/ocr-metrics.test.mjs",
+      "path": "app/tests/ocr-metrics.test.mjs",
+      "sha256": "7e95e7a6bd4928126f94bcd45f7bbc536d47af0d19deb9f6e5d5ba5cbec73fe1",
+      "bytes": 692
+    },
+    {
+      "source": "app/tests/pc-server.test.mjs",
+      "path": "app/tests/pc-server.test.mjs",
+      "sha256": "2b2c6499bbdf1a5cac4497b78de375e68b985f72ef14a1af05d860d9b0de9f57",
+      "bytes": 1604
+    },
+    {
+      "source": "app/tests/portrait-budget.test.mjs",
+      "path": "app/tests/portrait-budget.test.mjs",
+      "sha256": "08acbdfb9b1e57dd8bb989872a215515d8eefb8648bf96cb32d7520ff504d9a1",
+      "bytes": 7735
+    },
+    {
+      "source": "app/tests/recovery-checkpoint.test.mjs",
+      "path": "app/tests/recovery-checkpoint.test.mjs",
+      "sha256": "565fb1fbcf50a856325ceb892f514a4c912699a83ed54f304a1aaeb8d39cf001",
+      "bytes": 3431
+    },
+    {
+      "source": "app/tests/recovery.test.mjs",
+      "path": "app/tests/recovery.test.mjs",
+      "sha256": "a2b68dd8b588829133d9f69ae2f37a1e65f2c65471bae5cdac908df03ed1483b",
+      "bytes": 3333
+    },
+    {
+      "source": "app/tests/security.test.mjs",
+      "path": "app/tests/security.test.mjs",
+      "sha256": "45c8076f3a992abf456a60ad2b3d74ee206f4c6cbd6f8120623e795dd5aa0ef0",
+      "bytes": 5277
+    },
+    {
+      "source": "app/tests/text-evaluation.test.mjs",
+      "path": "app/tests/text-evaluation.test.mjs",
+      "sha256": "1ff8027d48dc9be6e9329fc1d09d2e6c03197370c7d2c3176d6a7b6ac1e13fb5",
+      "bytes": 11608
+    },
+    {
+      "source": "release/NATIVE.public.md",
+      "path": "native/README.md",
+      "sha256": "530cb178412275c27cb71b3fcd48f41f38676336018a79c2bace1827d50823e0",
+      "bytes": 1665
+    },
+    {
+      "source": "native/android/AndroidManifest.xml",
+      "path": "native/android/AndroidManifest.xml",
+      "sha256": "744b80963bba2fb84692f4087cff6f24400111460cd02e2ba868e09868fa9bd6",
+      "bytes": 2868
+    },
+    {
+      "source": "native/android/CMakeLists.txt",
+      "path": "native/android/CMakeLists.txt",
+      "sha256": "0d5ed4f5afc8c3e81060aed0bc16a0e3a1d9132f6ec81db2c32f568d1239960f",
+      "bytes": 3499
+    },
+    {
+      "source": "native/android/assets/rime/default.yaml",
+      "path": "native/android/assets/rime/default.yaml",
+      "sha256": "5cfdb7b6e897fbf002a56ce0795091d9f24af3d3aaad4d4fc94eb2a3a5ab6389",
+      "bytes": 126
+    },
+    {
+      "source": "native/android/assets/rime/lens_nine.schema.yaml",
+      "path": "native/android/assets/rime/lens_nine.schema.yaml",
+      "sha256": "596c682479f33cc61bd7ca2fe2185b13922cb2373ae797fdf841f94342bab637",
+      "bytes": 644
+    },
+    {
+      "source": "native/android/assets/rime/lens_pinyin.schema.yaml",
+      "path": "native/android/assets/rime/lens_pinyin.schema.yaml",
+      "sha256": "63f5b127917b256df558cc107922fcb2d5a5a3f49890dae9d03fd667d5d2cd88",
+      "bytes": 678
+    },
+    {
+      "source": "native/android/build.gradle",
+      "path": "native/android/build.gradle",
+      "sha256": "504a314f258399a55e1159c45aee2349d4fd15273d8f306cca9b008b6e842428",
+      "bytes": 1491
+    },
+    {
+      "source": "native/android/cpp/rime_bridge.cpp",
+      "path": "native/android/cpp/rime_bridge.cpp",
+      "sha256": "82c9f51efe5b5b03b080c80d460cce365196c6610d6ec2ec40e55391170896b7",
+      "bytes": 4706
+    },
+    {
+      "source": "native/android/cpp/rime_smoke.cpp",
+      "path": "native/android/cpp/rime_smoke.cpp",
+      "sha256": "dc82a4ec7583fbe62b62b3330388f5553da5093274e9e2894fe8b79fdec8ad01",
+      "bytes": 3475
+    },
+    {
+      "source": "native/android/gradle.lockfile",
+      "path": "native/android/gradle.lockfile",
+      "sha256": "22d96a0e926453a6c7ebb62caea5b0dc4602e89d603fc6fae4613d6e396f0c16",
+      "bytes": 53171
+    },
+    {
+      "source": "native/android/gradle.properties",
+      "path": "native/android/gradle.properties",
+      "sha256": "62b4067108902b51e91867f879c1567f6371f5b09f97d72e45c6c5a776f0c71f",
+      "bytes": 319
+    },
+    {
+      "source": "native/android/gradle/verification-metadata.xml",
+      "path": "native/android/gradle/verification-metadata.xml",
+      "sha256": "451b431cee6b58a6286ec22b9996e79e1a7e9c89799d51d5972592e696ab5ba4",
+      "bytes": 166260
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ActivityLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ActivityLayout.java",
+      "sha256": "39d2e444abe66d9e8b3e3b29a521efa330c6bcd5b29a02903288e3a3c7cb82ea",
+      "bytes": 582
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/AssistSession.java",
+      "path": "native/android/java/com/conversationlens/ime/AssistSession.java",
+      "sha256": "d89bc1e1c17ef5bfd860b9e46e51b259f5b027ab160b622222e54ad92b584466",
+      "bytes": 2014
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/AssistantActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/AssistantActivity.java",
+      "sha256": "c1f1c7fad858e65d91e8c5ca94adbda399ec56d7266e625dd1cc30a1745720da",
+      "bytes": 30255
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/CaptureService.java",
+      "path": "native/android/java/com/conversationlens/ime/CaptureService.java",
+      "sha256": "89e8aecc0af22afe9579395d005b0e4525f02058ad067153ea3edd8aaf173b67",
+      "bytes": 7080
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ChatBubbleLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ChatBubbleLayout.java",
+      "sha256": "016b522f1c9610d782daa3b31b38e42a44e864759b32952bfb7efd0726e2b03d",
+      "bytes": 4302
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/CloudSettings.java",
+      "path": "native/android/java/com/conversationlens/ime/CloudSettings.java",
+      "sha256": "fd38ce01f6cb042e6144d8101ad74231e58a20ca23051a6ed1f014f2c03f0606",
+      "bytes": 770
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ConversationContinuationPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/ConversationContinuationPolicy.java",
+      "sha256": "b4099117ed812b578519d320e11f1d613a5e20f5f07c6112b21e7b1a0f3f20d7",
+      "bytes": 9310
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/EditorPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/EditorPolicy.java",
+      "sha256": "e01cd0df111067fcb8b366df15137271ecb2938acf79cb454dd6a3fd44805662",
+      "bytes": 874
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/FramePixels.java",
+      "path": "native/android/java/com/conversationlens/ime/FramePixels.java",
+      "sha256": "55153ff3f6f7fbe05a29c77cd193ebc9c9e800eb00bc04caec3592750e102407",
+      "bytes": 903
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImageDecodePolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/ImageDecodePolicy.java",
+      "sha256": "702f642d306c825c70171cf1733d93ddd64699139b4487aaa896623e0041de20",
+      "bytes": 862
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeAssistantPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeAssistantPanel.java",
+      "sha256": "3a9a42fa7a9e5019dff8bb4a7161a05fb1d8d73026918f6702ab07d79eeb397c",
+      "bytes": 40398
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeCapturePermissionActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeCapturePermissionActivity.java",
+      "sha256": "92769e156a94622a74b6aa2262e19be43d70f87601fbbe4164df9c5b2f6281c0",
+      "bytes": 4615
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeCustomerDetailsPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeCustomerDetailsPanel.java",
+      "sha256": "006b846f196e0fa68e837ee0aee59555f158ce4036862fcfc65d4b96a03e0a7e",
+      "bytes": 40009
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeDropdownSpinner.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeDropdownSpinner.java",
+      "sha256": "20a460b32927c947bde0b95868c473035b00dfa1ed94a14f69aa2b0eae633e65",
+      "bytes": 2601
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeImagePickerActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeImagePickerActivity.java",
+      "sha256": "7b07edcde326a8cbc11b1924bb468c8d4ed94fc71bf05df75726e9c7dd7eafe8",
+      "bytes": 4833
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImePanelLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ImePanelLayout.java",
+      "sha256": "bf34bbfe30725358ac0c7233654ed372581f4ebbe984d3afb4142a2e7143e022",
+      "bytes": 941
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardAssistantPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardAssistantPanel.java",
+      "sha256": "960ba6e3f0d346534a30d0bd2988c55ca2170eaf492d30bb2e41bd2ef1ac14b1",
+      "bytes": 18045
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardAssistantPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardAssistantPolicy.java",
+      "sha256": "9ae3eeac5898f3385ca99803e979511013ea54c5e474a72073c4b8ca2cdb8240",
+      "bytes": 2033
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardCaptureService.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardCaptureService.java",
+      "sha256": "2cce106cda7009189da10fd4482ee77d017365bc63363d1c9431c5364d732050",
+      "bytes": 13970
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardImageRequest.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardImageRequest.java",
+      "sha256": "ef6e30422152d366f0c8cde42b54171bcaa993106823c0ab5d8a55cae8da4a88",
+      "bytes": 6761
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardLayout.java",
+      "sha256": "c337a4c3a7f8c2470be720e274f98876d127415339b7f073963f35341a342af6",
+      "bytes": 1028
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensImeService.java",
+      "path": "native/android/java/com/conversationlens/ime/LensImeService.java",
+      "sha256": "4d2713e32f61a3168a25fe82b2ca984002a9443087927ca6f767d4e3f5ca7d49",
+      "bytes": 57376
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensStyle.java",
+      "path": "native/android/java/com/conversationlens/ime/LensStyle.java",
+      "sha256": "76f60194e6ca75ec9f7c786f7b3a8d6c2500bcb39663af8b583c8373f06032c5",
+      "bytes": 5247
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensTokens.java",
+      "path": "native/android/java/com/conversationlens/ime/LensTokens.java",
+      "sha256": "26d6226c9469295ee678712e25487ca0d849ce57a35d410f2953b4db86651e31",
+      "bytes": 6414
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LibraryActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/LibraryActivity.java",
+      "sha256": "d4301a76f6c0453359946b1fa95cdcf5b399ea46db8942684ffc3edcb546fd1e",
+      "bytes": 15452
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LocalChatOcr.java",
+      "path": "native/android/java/com/conversationlens/ime/LocalChatOcr.java",
+      "sha256": "aa76b37570c34605dc9055b798e482c7617e6474a94bf1105d43a21c98dfbe62",
+      "bytes": 4480
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/NativeClient.java",
+      "path": "native/android/java/com/conversationlens/ime/NativeClient.java",
+      "sha256": "b8a57c7e3fcd1196eba3afcb252c14355dd378e65c19b7989dc1d3b610e5a712",
+      "bytes": 6279
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/OcrReview.java",
+      "path": "native/android/java/com/conversationlens/ime/OcrReview.java",
+      "sha256": "5ca63df7182dcde78a4ff3f8cd839c507bc1cf7ee547d4509cf06f238d6bdc3d",
+      "bytes": 2741
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ProfileEvidenceText.java",
+      "path": "native/android/java/com/conversationlens/ime/ProfileEvidenceText.java",
+      "sha256": "a8b01db56a12b7d5560e00210631c42fee51de5b3c1383387aadf7d2c58df936",
+      "bytes": 2574
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/RimeEngine.java",
+      "path": "native/android/java/com/conversationlens/ime/RimeEngine.java",
+      "sha256": "bc2e52f5b545104ca71b644a402241e642b2d89f27e2f07b368d96dfb294731b",
+      "bytes": 1556
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/SetupActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/SetupActivity.java",
+      "sha256": "f82bee93d0b0ab88a5fad846b45de9b4e1a1ff6c911c2011fbd5b216f3e2ae13",
+      "bytes": 5208
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/WholeEditLimitPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/WholeEditLimitPolicy.java",
+      "sha256": "aa3204e44253ba33b55085639b107a02b1bff8a4d2a0800877ef16d156c21da4",
+      "bytes": 1502
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/DesignUiFixture.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/DesignUiFixture.java",
+      "sha256": "79c6582c18b635429c3165bcbcba8e7685c39f5c16346ad2535a37818a0f506d",
+      "bytes": 3382
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/DraftRecoveryTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/DraftRecoveryTest.java",
+      "sha256": "67a2299f73518928ed9b606d7a368c63bb3563619e0042f0309cde7c1cb0b366",
+      "bytes": 6478
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/ImePasteTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/ImePasteTest.java",
+      "sha256": "1ba7add26eccdc32fcf96cf890d75919893a9f11f7ec64d4a9cbea739ba7e51c",
+      "bytes": 15029
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrBenchmark.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrBenchmark.java",
+      "sha256": "ae05547f871e0ac725a45f878b1b16ba47b05506e41d156abfa2ac97722a6d72",
+      "bytes": 4444
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrBubbleTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrBubbleTest.java",
+      "sha256": "a0902870653588d48bd115852b92c86437f884f4ba7a294d3aaebbfbf97d65b5",
+      "bytes": 7036
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrProfileTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrProfileTest.java",
+      "sha256": "cbd6b2424c91711ae16868c2f6eebacaf59b549a8da73aefca4c642cb242dd09",
+      "bytes": 10566
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrReviewTestRunner.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrReviewTestRunner.java",
+      "sha256": "23ffe48a9705bb44af92c3d71fd01f7f095a8d7ad66b603cbb9da166906efa76",
+      "bytes": 8356
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrTestRunner.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrTestRunner.java",
+      "sha256": "bd6cc97cb849b0a7218d67f23150d507d1f25c26ef23bd2a3f49f3f99f790744",
+      "bytes": 4101
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/ProfileEvidenceTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/ProfileEvidenceTest.java",
+      "sha256": "cf28437a4d2d50db7fef0a85de58e2e912c315cae09401739b03143e19d9715b",
+      "bytes": 4315
+    },
+    {
+      "source": "native/android/res/drawable/ic_lens_launcher_foreground.xml",
+      "path": "native/android/res/drawable/ic_lens_launcher_foreground.xml",
+      "sha256": "689e99bcdbc5388ac2b0c3cc890da26c14fe2de0e5d5cd28a677dc520863f792",
+      "bytes": 967
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "path": "native/android/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "sha256": "3740b599cc1fd0c6d132cb8dd413dd907c84da2c0aa946e8a44271716e319ff7",
+      "bytes": 270
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "path": "native/android/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "sha256": "3740b599cc1fd0c6d132cb8dd413dd907c84da2c0aa946e8a44271716e319ff7",
+      "bytes": 270
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi/ic_launcher.xml",
+      "path": "native/android/res/mipmap-anydpi/ic_launcher.xml",
+      "sha256": "4696c0e0a5f2ba2f7b41c53392e5981d4d0fcdf437f682575647fe0614646620",
+      "bytes": 1115
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi/ic_launcher_round.xml",
+      "path": "native/android/res/mipmap-anydpi/ic_launcher_round.xml",
+      "sha256": "cd4cfc9fa6a1ff75e5b0cb45dbc3972a3d61e76b4df998e519d288e4af22a5e0",
+      "bytes": 1149
+    },
+    {
+      "source": "native/android/res/values/design_token_colors.xml",
+      "path": "native/android/res/values/design_token_colors.xml",
+      "sha256": "c396a60806a2c8d2397e8482091834e91e18d225ea902edd9ae10817f79d8b69",
+      "bytes": 391
+    },
+    {
+      "source": "native/android/res/values/icon_colors.xml",
+      "path": "native/android/res/values/icon_colors.xml",
+      "sha256": "2b20ef6da71121082b0512e6ac72a5e0203b195d76275608427e3a3605199aa4",
+      "bytes": 140
+    },
+    {
+      "source": "native/android/res/values/strings.xml",
+      "path": "native/android/res/values/strings.xml",
+      "sha256": "bc0a4adb5f00e39f7dc57d56655be045e91260438b17cae70669ed3c0ead53d8",
+      "bytes": 76
+    },
+    {
+      "source": "native/android/res/values/styles.xml",
+      "path": "native/android/res/values/styles.xml",
+      "sha256": "970b0d0e0a85e70d1b4c618dad6e663192c1c61ebe6b504306a0efb6688713aa",
+      "bytes": 386
+    },
+    {
+      "source": "native/android/res/xml/input_method.xml",
+      "path": "native/android/res/xml/input_method.xml",
+      "sha256": "2418649e804bec31b4567ddc778f64bf455df8746ec42549a8d9406ad1b6a70a",
+      "bytes": 409
+    },
+    {
+      "source": "native/android/res/xml/network_security_config.xml",
+      "path": "native/android/res/xml/network_security_config.xml",
+      "sha256": "9187f485f22fde712aea8de5243664710440a9ee08e9f1b172978eef96a15001",
+      "bytes": 342
+    },
+    {
+      "source": "native/android/settings.gradle",
+      "path": "native/android/settings.gradle",
+      "sha256": "4f2765ab3bb45bd2afe72f586b4f46d8b420ba278059839583e03e7469e25a5d",
+      "bytes": 257
+    },
+    {
+      "source": "native/android/tests/ChatBubbleLayoutTest.java",
+      "path": "native/android/tests/ChatBubbleLayoutTest.java",
+      "sha256": "94d9f2c00a39239e4086180d9c8d52fa9ff29f3329471067d71a00d21650ef35",
+      "bytes": 3711
+    },
+    {
+      "source": "native/android/tests/ConversationContinuationPolicyTest.java",
+      "path": "native/android/tests/ConversationContinuationPolicyTest.java",
+      "sha256": "9e326d08aff58c1d8029f2b438fe855d92c177066ed3d1ecdbd9f12866135090",
+      "bytes": 17566
+    },
+    {
+      "source": "native/android/tests/DumpRunner.java",
+      "path": "native/android/tests/DumpRunner.java",
+      "sha256": "2f9ec370bbbfb173941e3c7c5092aacae3447da78704611e9da1ecc182606e88",
+      "bytes": 4430
+    },
+    {
+      "source": "native/android/tests/EditorPolicyTest.java",
+      "path": "native/android/tests/EditorPolicyTest.java",
+      "sha256": "d2059d3bbe194aee217a2aeb17a95d8fad436c547d43370a6d1d06138240f77c",
+      "bytes": 1370
+    },
+    {
+      "source": "native/android/tests/FramePixelsTest.java",
+      "path": "native/android/tests/FramePixelsTest.java",
+      "sha256": "e27fa51ff9d71ef033dae0e8b0d81683b94849a5e93a433e56ce98a8b70bd256",
+      "bytes": 990
+    },
+    {
+      "source": "native/android/tests/ImageDecodePolicyTest.java",
+      "path": "native/android/tests/ImageDecodePolicyTest.java",
+      "sha256": "bc98c2b2a507546dbe48f0dd06c6a064c5f172eace9d79025032a048fca056ac",
+      "bytes": 1148
+    },
+    {
+      "source": "native/android/tests/KeyboardAssistantPolicyTest.java",
+      "path": "native/android/tests/KeyboardAssistantPolicyTest.java",
+      "sha256": "e029f190afd7fbf4a51538c6af5806ddebae5571dd60df4e19175cf9e994dae4",
+      "bytes": 3104
+    },
+    {
+      "source": "native/android/tests/OcrReviewTest.java",
+      "path": "native/android/tests/OcrReviewTest.java",
+      "sha256": "c66445b734b4b99f88634a1f2ce58203c53f2f80e14537762fffe16a421871f7",
+      "bytes": 3101
+    },
+    {
+      "source": "native/android/tests/WholeEditLimitPolicyTest.java",
+      "path": "native/android/tests/WholeEditLimitPolicyTest.java",
+      "sha256": "92e3fb8ec18f09b582c58b5b35e6e5cd617125940d5077dcf0c97ddab571b057",
+      "bytes": 7327
+    },
+    {
+      "source": "native/dependencies.lock.json",
+      "path": "native/dependencies.lock.json",
+      "sha256": "c26c2a05eae2c2dcb7d50f03ed535953429b11acbba8b28c37cbe03011261e50",
+      "bytes": 2114
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "native/deploy/README.md",
+      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
+      "bytes": 2182
+    },
+    {
+      "source": "native/deploy/cloud-config.example.json",
+      "path": "native/deploy/cloud-config.example.json",
+      "sha256": "75c75dad3b4adb85871dc0f0c6d869a9c1e3b82a7798312a43ffcc8a03bf29e5",
+      "bytes": 303
+    },
+    {
+      "source": "native/deploy/lens-cloud.service",
+      "path": "native/deploy/lens-cloud.service",
+      "sha256": "59b4adac1613781a0e369854c0a0ead73615ca7ef28d69d1f4681abca2199ffa",
+      "bytes": 683
+    },
+    {
+      "source": "native/deploy/nginx.conf.example",
+      "path": "native/deploy/nginx.conf.example",
+      "sha256": "e365d8b0069436bbd65a72fac54be63fa7b555cc2730f90506ecc83fb8c47ac8",
+      "bytes": 640
+    },
+    {
+      "source": "native/deploy/ngrok-agent.yml",
+      "path": "native/deploy/ngrok-agent.yml",
+      "sha256": "70e577662c1639e5e4056d073e4d4b78f0052c7f6a97927d3b8dda43dd714541",
+      "bytes": 367
+    },
+    {
+      "source": "native/licenses/RapidJSON-1.1.0.txt",
+      "path": "native/licenses/RapidJSON-1.1.0.txt",
+      "sha256": "a140e5d46fe734a1c78f1a3c3ef207871dd75648be71fdda8e309b23ab8b1f32",
+      "bytes": 5152
+    },
+    {
+      "source": "native/scripts/android_qa.py",
+      "path": "native/scripts/android_qa.py",
+      "sha256": "355facdf5fe6fe84560b0d6170288bd73a47357833bf0a42e6afce17646e12cb",
+      "bytes": 18164
+    },
+    {
+      "source": "native/scripts/assistant_qa.py",
+      "path": "native/scripts/assistant_qa.py",
+      "sha256": "f14f4d5d63a2184d7b49168c6b5e1916ac5dd2ce762f1e908fa6d12c6e0a6c5f",
+      "bytes": 4263
+    },
+    {
+      "source": "native/scripts/build_android.py",
+      "path": "native/scripts/build_android.py",
+      "sha256": "4579b9c8780b05dd2e9bfd9a8ca4e5ccf5bb3f7ffbc856cdba8773098b1dc1ea",
+      "bytes": 13608
+    },
+    {
+      "source": "native/scripts/build_android_ocr.py",
+      "path": "native/scripts/build_android_ocr.py",
+      "sha256": "eb24e1db1d21c1731caa2e9e50c72bdf73d2d74c0eea58e1784a0050e555ff81",
+      "bytes": 5664
+    },
+    {
+      "source": "native/scripts/build_qa.py",
+      "path": "native/scripts/build_qa.py",
+      "sha256": "49804f6d47cf7ea28ad1acff6eb4f2b057691725fa4c8f472f4cf598188b84c0",
+      "bytes": 2210
+    },
+    {
+      "source": "native/scripts/build_release.py",
+      "path": "native/scripts/build_release.py",
+      "sha256": "fb5f030b192ad29852cc6e631a290d0dd6ba5f3ec59af142c62e85dfe0d8b92c",
+      "bytes": 342
+    },
+    {
+      "source": "native/scripts/ci_android.py",
+      "path": "native/scripts/ci_android.py",
+      "sha256": "399d6e3fb7868071e2eb3373458d05701904714f7d07681500881a35901913a0",
+      "bytes": 2869
+    },
+    {
+      "source": "native/scripts/ci_cloud.py",
+      "path": "native/scripts/ci_cloud.py",
+      "sha256": "b04072bf663054f437472751b73ed2cf7a35364cd3baf74d77e061996d9a0b04",
+      "bytes": 1030
+    },
+    {
+      "source": "native/scripts/ci_ios.py",
+      "path": "native/scripts/ci_ios.py",
+      "sha256": "ed6a91863cde53ca3a1d715dbce92a77c34f1cad731ff96b71c19dc5e1084791",
+      "bytes": 2504
+    },
+    {
+      "source": "native/scripts/ci_manifest.py",
+      "path": "native/scripts/ci_manifest.py",
+      "sha256": "882dd17a7a53fbe2d66b7ce71b483bc4e0a3557c66ebaab37d4b4691c848ab3a",
+      "bytes": 3650
+    },
+    {
+      "source": "native/scripts/cloud_fixture.mjs",
+      "path": "native/scripts/cloud_fixture.mjs",
+      "sha256": "f0b5d9cfcb4600636e93e1f7469ac92abf05cc41403a2d3399606c5f50d38767",
+      "bytes": 1747
+    },
+    {
+      "source": "native/scripts/cloud_qa.py",
+      "path": "native/scripts/cloud_qa.py",
+      "sha256": "7ef646a91b16787944df9936221053cd73f1f2c26ec10e9de840850f30e2d093",
+      "bytes": 6690
+    },
+    {
+      "source": "native/scripts/compare_design_activity.py",
+      "path": "native/scripts/compare_design_activity.py",
+      "sha256": "edeca2d07993560e9d2935d4836a95ee2cafbdfc9e64aef07f3627835a599935",
+      "bytes": 3239
+    },
+    {
+      "source": "native/scripts/compare_design_keyboard.py",
+      "path": "native/scripts/compare_design_keyboard.py",
+      "sha256": "48450f99e2243c6db592e4cd95f679b253a0cf80936a4c0b04b268cb26ee7ff7",
+      "bytes": 3194
+    },
+    {
+      "source": "native/scripts/compare_design_layout.py",
+      "path": "native/scripts/compare_design_layout.py",
+      "sha256": "0bb10025f445377b4c221163b818ede5074718cc458a433ab69a8dc5fb9a688a",
+      "bytes": 3265
+    },
+    {
+      "source": "native/scripts/compatibility_qa.py",
+      "path": "native/scripts/compatibility_qa.py",
+      "sha256": "abd9338b9fbaedb47d78dbed8408a4c2172551a355357ed299af3547717f5c30",
+      "bytes": 7118
+    },
+    {
+      "source": "native/scripts/design_activity_contract_qa.py",
+      "path": "native/scripts/design_activity_contract_qa.py",
+      "sha256": "32484059909d4a045462c8d6f2deaa647dc63a6a2afbaf5ad7cae80e225a0824",
+      "bytes": 2995
+    },
+    {
+      "source": "native/scripts/design_activity_layout_qa.py",
+      "path": "native/scripts/design_activity_layout_qa.py",
+      "sha256": "c330871c8310106cdd2f6e9fb136d7d29bcb172d6faaeeeb09405715608522d5",
+      "bytes": 8752
+    },
+    {
+      "source": "native/scripts/design_keyboard_qa.py",
+      "path": "native/scripts/design_keyboard_qa.py",
+      "sha256": "d8d082165d7e9d97fa632f025c3fe627e19aabb181037b4fdff14dd4873db17f",
+      "bytes": 2623
+    },
+    {
+      "source": "native/scripts/design_layout_qa.py",
+      "path": "native/scripts/design_layout_qa.py",
+      "sha256": "a7b92cb942b40f89f184a522e0e7918bee8ab013f23ce986c0369645fac85f46",
+      "bytes": 8301
+    },
+    {
+      "source": "native/scripts/design_resource_rules.py",
+      "path": "native/scripts/design_resource_rules.py",
+      "sha256": "1ec968db475f9961c2d749d95feed58cd9aface3e67ae07df50c3f31ad45d858",
+      "bytes": 3224
+    },
+    {
+      "source": "native/scripts/design_token_equivalence.py",
+      "path": "native/scripts/design_token_equivalence.py",
+      "sha256": "9517d8d7ed6779379569fa7dd166554b2691ef43303a6bb4055eb4c7f53471d5",
+      "bytes": 5067
+    },
+    {
+      "source": "native/scripts/design_tokens_check.py",
+      "path": "native/scripts/design_tokens_check.py",
+      "sha256": "90009d8a23118667736cc13fa3f8413d228bca663ce936ac32cfa3062664670b",
+      "bytes": 15545
+    },
+    {
+      "source": "native/scripts/device_matrix.py",
+      "path": "native/scripts/device_matrix.py",
+      "sha256": "3ad6a84fedb28b2b276ea9410fd0ae864fa4bb47cff97f0712c80ef0123e902d",
+      "bytes": 1940
+    },
+    {
+      "source": "native/scripts/https_acceptance.py",
+      "path": "native/scripts/https_acceptance.py",
+      "sha256": "cf405556f6370aff71fa214956f1afec813480e66d90e5c92034ce6e6ded698f",
+      "bytes": 3947
+    },
+    {
+      "source": "native/scripts/keyboard_acceptance.py",
+      "path": "native/scripts/keyboard_acceptance.py",
+      "sha256": "46d6712fc72fbed512ccb020f7530c58c64f5eb3dba2fe4f8f73b4659d966ec1",
+      "bytes": 13574
+    },
+    {
+      "source": "native/scripts/keyboard_budget_fixture.mjs",
+      "path": "native/scripts/keyboard_budget_fixture.mjs",
+      "sha256": "fde1d074fa9c1bce0595b851a16c13a0e461e5f9c052c14985a07461d08db200",
+      "bytes": 5892
+    },
+    {
+      "source": "native/scripts/keyboard_budget_qa.py",
+      "path": "native/scripts/keyboard_budget_qa.py",
+      "sha256": "9203738c242290024968fd1de78a24a8acfe6944af8d6748da0f6d14ebd4c954",
+      "bytes": 8847
+    },
+    {
+      "source": "native/scripts/keyboard_capture_qa.py",
+      "path": "native/scripts/keyboard_capture_qa.py",
+      "sha256": "c876b2f171b47a817c823d22e00a176bc3195ee76554a3e85f4e56b816d0c42d",
+      "bytes": 33805
+    },
+    {
+      "source": "native/scripts/keyboard_continuation_qa.py",
+      "path": "native/scripts/keyboard_continuation_qa.py",
+      "sha256": "9a4d8da44fbc1834ad9738818b49d57a3255bd76ec39be52df26cae84bc1ccb2",
+      "bytes": 14405
+    },
+    {
+      "source": "native/scripts/keyboard_details_fixture.mjs",
+      "path": "native/scripts/keyboard_details_fixture.mjs",
+      "sha256": "4609de07e399278b01a796d9e5d5af381b465927aaadbffe6995996b101e9f69",
+      "bytes": 10584
+    },
+    {
+      "source": "native/scripts/keyboard_details_qa.py",
+      "path": "native/scripts/keyboard_details_qa.py",
+      "sha256": "735be5f7b68835124237b2740a60330c71e8f9c78a07c83b61bbf6846235fb91",
+      "bytes": 28056
+    },
+    {
+      "source": "native/scripts/keyboard_expiry_qa.py",
+      "path": "native/scripts/keyboard_expiry_qa.py",
+      "sha256": "99aed922489abb49658a746c5dd130cd67440cd446e95957d237481ce79627d0",
+      "bytes": 3238
+    },
+    {
+      "source": "native/scripts/keyboard_first_fixture.mjs",
+      "path": "native/scripts/keyboard_first_fixture.mjs",
+      "sha256": "e1bae3aa62881e2b6424641e7cca4be4724c0720345de922fd00cf5de5e9ccdb",
+      "bytes": 6812
+    },
+    {
+      "source": "native/scripts/keyboard_first_qa.py",
+      "path": "native/scripts/keyboard_first_qa.py",
+      "sha256": "06229b5c8c2e721ed7a2dad107e3c2877bc31733cec00239a68df5221a74711c",
+      "bytes": 35772
+    },
+    {
+      "source": "native/scripts/keyboard_image_qa.py",
+      "path": "native/scripts/keyboard_image_qa.py",
+      "sha256": "46c5e2269ab77a7113e19cb5337d9329d4782c70005f4ba88c75aae866139dd6",
+      "bytes": 21437
+    },
+    {
+      "source": "native/scripts/keyboard_lifecycle_qa.py",
+      "path": "native/scripts/keyboard_lifecycle_qa.py",
+      "sha256": "63dff95d5e95c946723573e32db3a9ff7e227ddd2da9ff3b7c576abda522e72e",
+      "bytes": 8658
+    },
+    {
+      "source": "native/scripts/keyboard_network_fixture.mjs",
+      "path": "native/scripts/keyboard_network_fixture.mjs",
+      "sha256": "597053e37d30f78e8dc500e57c490b82c1753d1d03aac791aba83bd6520d5100",
+      "bytes": 3737
+    },
+    {
+      "source": "native/scripts/keyboard_network_qa.py",
+      "path": "native/scripts/keyboard_network_qa.py",
+      "sha256": "e352310e0f277a927cdbda66b0749ba8c28f612792723b6944e57627313689d1",
+      "bytes": 5637
+    },
+    {
+      "source": "native/scripts/keyboard_retry_qa.py",
+      "path": "native/scripts/keyboard_retry_qa.py",
+      "sha256": "269835a82c2e1dfc6262f4660112e8b4addbc9efc1fefd2bd77657f1c6f90329",
+      "bytes": 8511
+    },
+    {
+      "source": "native/scripts/keyboard_selector_qa.py",
+      "path": "native/scripts/keyboard_selector_qa.py",
+      "sha256": "bde7d9a8f26a18025e63c266174cac6560e50b8147eaac3e295b2995c7f6a043",
+      "bytes": 31251
+    },
+    {
+      "source": "native/scripts/keyboard_stop_qa.py",
+      "path": "native/scripts/keyboard_stop_qa.py",
+      "sha256": "1c6e3598a420718a2d6d94a66aa5ad0a970314aab04af56937c4a795fe208faf",
+      "bytes": 6359
+    },
+    {
+      "source": "native/scripts/keyboard_timeout_qa.py",
+      "path": "native/scripts/keyboard_timeout_qa.py",
+      "sha256": "3c07aea0bc39bdf2ef561825cbc26e9ea48b7ce9413caa334d2afe653c6f542b",
+      "bytes": 5066
+    },
+    {
+      "source": "native/scripts/keyboard_ui_qa.py",
+      "path": "native/scripts/keyboard_ui_qa.py",
+      "sha256": "5c46e8017f115fd55965205dc56b520e3790b1ca3f36b23ba24117f6f0954dda",
+      "bytes": 12969
+    },
+    {
+      "source": "native/scripts/local_delivery.py",
+      "path": "native/scripts/local_delivery.py",
+      "sha256": "9b73b2771688f89923278de8aecd29cce10f0633394a5884c7ecd777996ce033",
+      "bytes": 11020
+    },
+    {
+      "source": "native/scripts/make_ocr_samples.py",
+      "path": "native/scripts/make_ocr_samples.py",
+      "sha256": "f0f8372411402a02d36a154fb0ea5fabf5974332bdb9b42eacc265a077229c90",
+      "bytes": 1614
+    },
+    {
+      "source": "native/scripts/native_fixture.mjs",
+      "path": "native/scripts/native_fixture.mjs",
+      "sha256": "b536de73270d1d7cff6e8b1a452ecc86c102a0ce8f267206cb13d60590baca5e",
+      "bytes": 2225
+    },
+    {
+      "source": "native/scripts/nine_key_qa.py",
+      "path": "native/scripts/nine_key_qa.py",
+      "sha256": "5a9e1fa2b14110f0380f6af6905826c9be770f65a7ca44106bc331b9b07658d9",
+      "bytes": 3827
+    },
+    {
+      "source": "native/scripts/offline_ocr_qa.py",
+      "path": "native/scripts/offline_ocr_qa.py",
+      "sha256": "3109e169cd8981a518ec839fbcc49e654b6c13c9e6a4a02628e810c54b1f9016",
+      "bytes": 893
+    },
+    {
+      "source": "native/scripts/package_cloud.py",
+      "path": "native/scripts/package_cloud.py",
+      "sha256": "b25b90361248f6898aa9cb32ed190d35f4fc93e0e2369fc1db174013c91f5631",
+      "bytes": 1872
+    },
+    {
+      "source": "native/scripts/package_source.py",
+      "path": "native/scripts/package_source.py",
+      "sha256": "d249e9e789b09bac2854bcd686776c68a7d9bcf5c3d7a3bfdf9408a19f126d47",
+      "bytes": 5027
+    },
+    {
+      "source": "native/scripts/pc_backup.py",
+      "path": "native/scripts/pc_backup.py",
+      "sha256": "52e557de788b4116f52b6803130dca679d5bc7ee1522aa75fb956f457317424f",
+      "bytes": 1957
+    },
+    {
+      "source": "native/scripts/pc_server.py",
+      "path": "native/scripts/pc_server.py",
+      "sha256": "a2ffc89a4e41cff42d5b2af78ada4eba6cb57314aef17be42376a289baaa6a51",
+      "bytes": 3578
+    },
+    {
+      "source": "native/scripts/picker_qa.py",
+      "path": "native/scripts/picker_qa.py",
+      "sha256": "930f82eab770e5bd5b3defbf572b0074d92e7a4883305d3dd070a61988e47aed",
+      "bytes": 3102
+    },
+    {
+      "source": "native/scripts/prepare_emulator.py",
+      "path": "native/scripts/prepare_emulator.py",
+      "sha256": "573240241e1d0517efe9e962ac1ed4fc0ac080f870354403f33fc313a00e0386",
+      "bytes": 1335
+    },
+    {
+      "source": "native/scripts/prepare_gradle.py",
+      "path": "native/scripts/prepare_gradle.py",
+      "sha256": "70ddc8d5ac87ec5de8a8eb82f803fadc2751619922abde0d601c6e25da61e80f",
+      "bytes": 1206
+    },
+    {
+      "source": "native/scripts/prepare_release_key.py",
+      "path": "native/scripts/prepare_release_key.py",
+      "sha256": "ca13ec3b700280818f49ddbad91275a6113c5a21da4434a712714d9ea6729fc2",
+      "bytes": 2279
+    },
+    {
+      "source": "native/scripts/prepare_sources.py",
+      "path": "native/scripts/prepare_sources.py",
+      "sha256": "922c059f1ef209d6867bf1baf6370c24a5a677f5ad2e74360a0aa47f9da9681f",
+      "bytes": 2538
+    },
+    {
+      "source": "native/scripts/prepare_tools.py",
+      "path": "native/scripts/prepare_tools.py",
+      "sha256": "0e88662bd000e216524d85fb197d6730ebd2068d0b21312d78d2987a689bb95c",
+      "bytes": 2978
+    },
+    {
+      "source": "native/scripts/recovery_checkpoint.mjs",
+      "path": "native/scripts/recovery_checkpoint.mjs",
+      "sha256": "fd9f5760dd4edd34afcb88ec8d084cc44e03a0dbbebdc592465fd78bf9435ff3",
+      "bytes": 1223
+    },
+    {
+      "source": "native/scripts/release_check.py",
+      "path": "native/scripts/release_check.py",
+      "sha256": "0fcef3a479a783b5cc582030603530f904f5aacf961bc7854a73e69e3721b69b",
+      "bytes": 1181
+    },
+    {
+      "source": "native/scripts/sign_prepared_release.py",
+      "path": "native/scripts/sign_prepared_release.py",
+      "sha256": "c514c73508e47bd126b2a8e44afe968c2f0539bd4f99d1d3ec44260361c94b80",
+      "bytes": 3388
+    },
+    {
+      "source": "native/scripts/stability_qa.py",
+      "path": "native/scripts/stability_qa.py",
+      "sha256": "27c1e4b5c164e225f67faa6a8083090cc7413f2559634350af0369c94e436eac",
+      "bytes": 4756
+    },
+    {
+      "source": "native/scripts/start_emulator.py",
+      "path": "native/scripts/start_emulator.py",
+      "sha256": "9f5cd9b3fcb130a1fc6026252696f0f60e70d0492bcd5cab833391485b8e0af0",
+      "bytes": 2587
+    },
+    {
+      "source": "native/scripts/stop_emulator.ps1",
+      "path": "native/scripts/stop_emulator.ps1",
+      "sha256": "aca30eb6536829d0b39bb6573af520ed46cf4c9cd52c6a962ae4c3224521294e",
+      "bytes": 1175
+    },
+    {
+      "source": "native/scripts/stop_emulator.py",
+      "path": "native/scripts/stop_emulator.py",
+      "sha256": "771f8241c1b66dac3a5cdd02eae544e9080cc17d33837ed58b0b79b0b4476ece",
+      "bytes": 4770
+    },
+    {
+      "source": "native/scripts/test_compatibility_qa.py",
+      "path": "native/scripts/test_compatibility_qa.py",
+      "sha256": "714f0d8a166d79b729b5e84e6b29cc46a39ebcf56771bd58b1fda56de03915ac",
+      "bytes": 4110
+    },
+    {
+      "source": "native/scripts/test_design_activity_comparison.py",
+      "path": "native/scripts/test_design_activity_comparison.py",
+      "sha256": "93b978a79360c636281e6c4a71a2da8d65a4608b435eba4728679e43d557cfe2",
+      "bytes": 1791
+    },
+    {
+      "source": "native/scripts/test_design_keyboard_comparison.py",
+      "path": "native/scripts/test_design_keyboard_comparison.py",
+      "sha256": "1200c723efed57b81f9642525d424635d4b256817b92a4d4bae5774cdafa8b6f",
+      "bytes": 1734
+    },
+    {
+      "source": "native/scripts/test_design_layout_comparison.py",
+      "path": "native/scripts/test_design_layout_comparison.py",
+      "sha256": "3c2747410e90382be115e68c606c71c3228ea043c49c5c1466386739c9d3e7f1",
+      "bytes": 1808
+    },
+    {
+      "source": "native/scripts/test_design_tokens.py",
+      "path": "native/scripts/test_design_tokens.py",
+      "sha256": "652497170ba56518fad764b72f5666443d291deb1eb6643213ed3641b4caf681",
+      "bytes": 10319
+    },
+    {
+      "source": "native/scripts/test_https_acceptance.py",
+      "path": "native/scripts/test_https_acceptance.py",
+      "sha256": "0dc8b02967c569c5bcf76b57295638ddbd3153025fa69307a09962ebcb40d7c6",
+      "bytes": 2814
+    },
+    {
+      "source": "native/scripts/test_keyboard_acceptance.py",
+      "path": "native/scripts/test_keyboard_acceptance.py",
+      "sha256": "ccfa950fcef7191d397877cbb762912386e5b4f82930cb0a90183e566f2aed68",
+      "bytes": 15579
+    },
+    {
+      "source": "native/scripts/test_keyboard_budget_qa.py",
+      "path": "native/scripts/test_keyboard_budget_qa.py",
+      "sha256": "489dc38c241f32ba38b933784d150ddb93015f326b8c1bfde6d7e1e9f4ad152f",
+      "bytes": 7282
+    },
+    {
+      "source": "native/scripts/test_keyboard_details_fixture.py",
+      "path": "native/scripts/test_keyboard_details_fixture.py",
+      "sha256": "ac329622fb0018f0b818f38db6a278ac7bd34d718b7393148535f5844e306a43",
+      "bytes": 10208
+    },
+    {
+      "source": "native/scripts/test_local_delivery.py",
+      "path": "native/scripts/test_local_delivery.py",
+      "sha256": "c6aaa34ecbd250d609c105103584113b413301b4bf4c6670625c4a706716efab",
+      "bytes": 5468
+    },
+    {
+      "source": "native/scripts/test_pc_server_controller.py",
+      "path": "native/scripts/test_pc_server_controller.py",
+      "sha256": "0ebc75f5d619b4434223b427a82a1dc1d1a5fadad93f1cbea20393267d29eb7f",
+      "bytes": 1541
+    },
+    {
+      "source": "native/scripts/test_policy.py",
+      "path": "native/scripts/test_policy.py",
+      "sha256": "97448948621beb7407a80b9a35e542248e7cf1a289ec463e70cc4776b68183db",
+      "bytes": 3164
+    },
+    {
+      "source": "native/scripts/test_web_design_tokens.py",
+      "path": "native/scripts/test_web_design_tokens.py",
+      "sha256": "f49e1e98dd907a3f5329e46afeac991747b75597d208f0ec97038db8d49c5946",
+      "bytes": 1872
+    },
+    {
+      "source": "native/scripts/web_design_tokens_check.py",
+      "path": "native/scripts/web_design_tokens_check.py",
+      "sha256": "1298d989e892ca0966a5140675ba9b9471ea37b0f2359c32dbab239d76e25c10",
+      "bytes": 3277
+    },
+    {
+      "source": "package.json",
+      "path": "package.json",
+      "sha256": "de8e6da09645f9a978fe7b08947c5709e18402c6981b2ba6590bef8a207095b4",
+      "bytes": 512
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "release/DEPLOYMENT.public.md",
+      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
+      "bytes": 2182
+    },
+    {
+      "source": "release/README.public.md",
+      "path": "release/README.public.md",
+      "sha256": "39974a199926c7ac80b7599b7a58704675d9f0dfd86fe733209f2a45b636f6e3",
+      "bytes": 6653
+    },
+    {
+      "source": "release/RECOVERY.md",
+      "path": "release/RECOVERY.md",
+      "sha256": "ce78d9633547a4b804e31784bb8056da1ae455fdbed7931add017a698084f4ee",
+      "bytes": 3332
+    },
+    {
+      "source": "release/source-files.json",
+      "path": "release/source-files.json",
+      "sha256": "39f36ce27eaf1959f6ae318852773aefef77616a7bd45fc018a18799340b681c",
+      "bytes": 32257
+    },
+    {
+      "source": "third_party/licenses/Boost-BSL-1.0.txt",
+      "path": "third_party/licenses/Boost-BSL-1.0.txt",
+      "sha256": "c9bff75738922193e67fa726fa225535870d2aa1059f91452c411736284ad566",
+      "bytes": 1338
+    },
+    {
+      "source": "third_party/licenses/Darts-clone-BSD-3-Clause.txt",
+      "path": "third_party/licenses/Darts-clone-BSD-3-Clause.txt",
+      "sha256": "11bf6ca180d01e60656cd3cbe65cff95b738afe4ca5a8a66b9dd1ec594a41d2f",
+      "bytes": 1481
+    },
+    {
+      "source": "third_party/licenses/LevelDB-BSD-3-Clause.txt",
+      "path": "third_party/licenses/LevelDB-BSD-3-Clause.txt",
+      "sha256": "ccc19f1da0798ed666609b65a5b44dd8b3abe6fc08b9c0592eb76e82e174db19",
+      "bytes": 1484
+    },
+    {
+      "source": "third_party/licenses/OpenCC-Apache-2.0.txt",
+      "path": "third_party/licenses/OpenCC-Apache-2.0.txt",
+      "sha256": "b534e465949558eec2597b04f5092b5e161236a68dfbfd04d547592ac3964308",
+      "bytes": 9165
+    },
+    {
+      "source": "third_party/licenses/X11-keysym-header.txt",
+      "path": "third_party/licenses/X11-keysym-header.txt",
+      "sha256": "8b20fbcdfa52a6ce5bf8c0c1746e2e47fca02e2534561dde0e085893db2a57ca",
+      "bytes": 2755
+    },
+    {
+      "source": "third_party/licenses/X11-keysymdef-header.txt",
+      "path": "third_party/licenses/X11-keysymdef-header.txt",
+      "sha256": "ff31183de7751c1079b1179fbbcb096f155a3b82c0429dcc8e329be43fb93b72",
+      "bytes": 168221
+    },
+    {
+      "source": "third_party/licenses/librime-BSD-3-Clause.txt",
+      "path": "third_party/licenses/librime-BSD-3-Clause.txt",
+      "sha256": "f67d27a6d2d586fcfed4b4c886a83747095396a39b6641e18e855086be2ec400",
+      "bytes": 1513
+    },
+    {
+      "source": "third_party/licenses/marisa-trie-COPYING.md",
+      "path": "third_party/licenses/marisa-trie-COPYING.md",
+      "sha256": "edf58dab34c3dc239ba4ba2d5d3d844d8c5b442aa4dd1149fac81b2d8c6cb8d1",
+      "bytes": 2275
+    },
+    {
+      "source": "third_party/licenses/rime-pinyin-simp-Apache-2.0.txt",
+      "path": "third_party/licenses/rime-pinyin-simp-Apache-2.0.txt",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "bytes": 11358
+    },
+    {
+      "source": "third_party/licenses/utf8cpp-header.txt",
+      "path": "third_party/licenses/utf8cpp-header.txt",
+      "sha256": "90643c1044a58020af389dc8eb73099fc8327a12d0731a1101acb277e03e6a3b",
+      "bytes": 1521
+    },
+    {
+      "source": "third_party/licenses/yaml-cpp-MIT.txt",
+      "path": "third_party/licenses/yaml-cpp-MIT.txt",
+      "sha256": "aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b",
+      "bytes": 1061
+    },
+    {
+      "source": "release/README.public.md",
+      "path": "README.md",
+      "sha256": "39974a199926c7ac80b7599b7a58704675d9f0dfd86fe733209f2a45b636f6e3",
+      "bytes": 6653
+    },
+    {
+      "source": "release/APP.public.md",
+      "path": "release/APP.public.md",
+      "sha256": "5da83791c8814507782de89f9ef80cee27c3bc0c83784b6b60168fb5a9897ede",
+      "bytes": 1096
+    },
+    {
+      "source": "release/NATIVE.public.md",
+      "path": "release/NATIVE.public.md",
+      "sha256": "530cb178412275c27cb71b3fcd48f41f38676336018a79c2bace1827d50823e0",
+      "bytes": 1665
+    },
+    {
+      "source": "release/ACCEPTANCE.md",
+      "path": "release/ACCEPTANCE.md",
+      "sha256": "f4af4400145bf3bb7312b2e418068479b5b883393f437873b4497ebd153817d9",
+      "bytes": 1823
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp" android:height="48dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="@color/lens_launcher_red" android:pathData="M0,0 H108 V108 H0 Z" />
+    <group android:scaleX="1.5" android:scaleY="1.5" android:pivotX="54" android:pivotY="54">
+        <path android:fillColor="@android:color/transparent"
+            android:strokeColor="@color/lens_launcher_foreground" android:strokeWidth="5.5"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M37,53 C33,43 36,32 45,28 C56,23 69,30 72,41 C75,52 69,59 61,65 C56,69 58,80 49,82 C42,83 37,78 37,71" />
+        <path android:fillColor="@android:color/transparent"
+            android:strokeColor="@color/lens_launcher_foreground" android:strokeWidth="5.5"
+            android:strokeLineCap="round" android:strokeLineJoin="round"
+            android:pathData="M46,44 C46,37 54,34 60,39 C68,44 62,53 55,53 C49,53 46,58 48,63" />
+    </group>
+</vector>

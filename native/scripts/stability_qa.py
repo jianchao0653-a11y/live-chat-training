@@ -1,0 +1,61 @@
+"""Additional isolated emulator checks; restores display settings and owns its test server."""
+import subprocess
+from assistant_qa import *
+
+def main():
+    install()
+    cross_app()
+    previous=(OUT/'fixture.json').stat().st_mtime if (OUT/'fixture.json').exists() else 0
+    log=(OUT/'stability-service.log').open('w')
+    process=subprocess.Popen(['node','--disable-warning=ExperimentalWarning','native/scripts/native_fixture.mjs'],cwd=ROOT,stdout=log,stderr=subprocess.STDOUT)
+    original={key:adb('shell','settings','get',space,key) for space,key in [('system','accelerometer_rotation'),('system','user_rotation'),('system','font_scale')]}
+    checks=[]
+    try:
+        for _ in range(50):
+            if process.poll() is not None:raise RuntimeError('Synthetic server exited')
+            if (OUT/'fixture.json').exists() and (OUT/'fixture.json').stat().st_mtime>previous:break
+            time.sleep(.1)
+        tap_text('建议');time.sleep(.4);pair()
+        fill('聊天片段（可粘贴、输入或从截图提取）','对方：合成旋转测试，今天加班很累。')
+        adb('shell','settings','put','system','accelerometer_rotation','0');adb('shell','settings','put','system','user_rotation','1');time.sleep(1)
+        assert any('合成旋转测试' in x for x in labels()),labels();checks.append('rotation_preserves_transcript')
+        adb('shell','settings','put','system','user_rotation','0');time.sleep(.5)
+        adb('shell','settings','put','system','font_scale','1.3');time.sleep(.5)
+        assert any('合成旋转测试' in x for x in labels()),labels();scroll_find('分析已批准片段');checks.append('large_font_preserves_input_and_reachable_action')
+        adb('shell','settings','put','system','font_scale','1.0');time.sleep(.5)
+        tree=snapshot('stability-rotation-font')
+        assert all(n.get('checked')!='true' for n in tree.iter('node') if n.get('class')=='android.widget.CheckBox');checks.append('recreated_ui_requires_new_approval')
+        adb('reverse','--remove','tcp:4317')
+        tap_text('已核对人物和片段，同意提交给连接的服务',scroll_find('已核对人物和片段，同意提交给连接的服务'))
+        tap_text('分析已批准片段',scroll_find('分析已批准片段'));time.sleep(2)
+        offline=labels()
+        assert any('失败' in x or '无法' in x or 'failed' in x.lower() or 'refused' in x.lower() for x in offline),offline
+        assert '保留草稿并返回原聊天' not in offline; snapshot('stability-offline');checks.append('offline_has_no_insertable_result')
+        config=json.loads((OUT/'fixture.json').read_text(encoding='utf-8'));adb('reverse','tcp:4317','tcp:'+config['base'].rsplit(':',1)[1])
+        analyze();insert();checks.append('network_recovery_reanalysis_insert')
+        tap_text('建议');wait_labels(lambda values:paired_status(config) in values)
+        marker='合成断开清理标记'
+        fill('聊天片段（可粘贴、输入或从截图提取）',marker)
+        assert any(marker in x for x in labels()),labels()
+        tap_text('断开并清除本机连接',scroll_find('断开并清除本机连接'))
+        def disconnected():
+            tree=snapshot('stability-disconnected')
+            nodes=[n for n in tree.iter('node') if n.get('package')=='com.conversationlens.ime']
+            assert not any(marker in n.get('text','') or '已连接 · 主播' in n.get('text','') or '上次插入 ·' in n.get('text','') for n in nodes)
+            assert not any(n.get('hint') in ['聊天片段（可粘贴、输入或从截图提取）','实际观察到的后续（非未知反馈必填）'] for n in nodes)
+        wait_labels(lambda values:'请连接服务，再准备聊天片段' in values);disconnected()
+        adb('shell','settings','put','system','user_rotation','1');time.sleep(1);disconnected()
+        adb('shell','settings','put','system','user_rotation','0');time.sleep(.5);disconnected()
+        checks.append('disconnect_clears_transcript_feedback_and_rotation_state')
+        assert 'FATAL EXCEPTION' not in adb('shell','logcat','-d','-b','crash')
+        (OUT/'stability-receipt.json').write_text(json.dumps({'checks':checks,'apkSha256':hashlib.file_digest(APK.open('rb'),'sha256').hexdigest(),'synthetic':True,'realPhone':False},indent=2))
+        print('STABILITY_PASS '+str(len(checks)),flush=True)
+    finally:
+        for key,value in original.items():
+            if value=='null':adb('shell','settings','delete','system',key)
+            else:adb('shell','settings','put','system',key,value)
+        try:adb('reverse','--remove','tcp:4317')
+        except RuntimeError:pass
+        finally:process.terminate();process.wait(timeout=10);log.close()
+
+if __name__=='__main__':main()

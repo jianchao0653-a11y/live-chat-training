@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from LensTokens by design_tokens_check.py resource writer. -->
+<resources>
+    <color name="lens_navigation_background">#FF58665F</color>
+    <color name="lens_action_primary">#FF27634D</color>
+    <color name="lens_launcher_background">#FFD52235</color>
+    <color name="lens_launcher_foreground">#FFFFFFFF</color>
+</resources>

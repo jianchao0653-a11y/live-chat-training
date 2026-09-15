@@ -1,0 +1,50 @@
+[
+  {
+    "repo": "rime/librime",
+    "ref": "1.17.0",
+    "commit": "33e78140250125871856cdc5b42ddc6a5fcd3cd4",
+    "url": "https://codeload.github.com/rime/librime/tar.gz/33e78140250125871856cdc5b42ddc6a5fcd3cd4",
+    "sha256": "d3f48c2c58f718402229031d8d95fde9cac07ababa8fecf7d18b91946f27fee6"
+  },
+  {
+    "repo": "google/leveldb",
+    "ref": "1.23",
+    "commit": "99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+    "url": "https://codeload.github.com/google/leveldb/tar.gz/99b3c03b3284f5886f9ef9a4ef703d57373e61be",
+    "sha256": "bc87b9bbc5674c91246a89813355e78401759761342cc049e1c3d56350a8a9d1"
+  },
+  {
+    "repo": "jbeder/yaml-cpp",
+    "ref": "0.8.0",
+    "commit": "f7320141120f720aecc4c32be25586e7da9eb978",
+    "url": "https://codeload.github.com/jbeder/yaml-cpp/tar.gz/f7320141120f720aecc4c32be25586e7da9eb978",
+    "sha256": "2fd3bf695ccc056835a70dd6d3046312cc1004e8338b8b5c91646918a27b7ef6"
+  },
+  {
+    "repo": "s-yata/marisa-trie",
+    "ref": "v0.3.1",
+    "commit": "3e87d53b78e15f2f43783d5e376561a8c9722051",
+    "url": "https://codeload.github.com/s-yata/marisa-trie/tar.gz/3e87d53b78e15f2f43783d5e376561a8c9722051",
+    "sha256": "c24516edc43be8049ef4e23e50a574d4670036fe3595c49c0f01d4d87ce58f57"
+  },
+  {
+    "repo": "BYVoid/OpenCC",
+    "ref": "ver.1.1.9",
+    "commit": "556ed22496d650bd0b13b6c163be9814637970ae",
+    "url": "https://codeload.github.com/BYVoid/OpenCC/tar.gz/556ed22496d650bd0b13b6c163be9814637970ae",
+    "sha256": "2792fc0944359c5d099bd79e08bfffce250bf3760aa0ec306e975cc58314482a"
+  },
+  {
+    "repo": "rime/rime-pinyin-simp",
+    "ref": "master",
+    "commit": "0c6861ef7420ee780270ca6d993d18d4101049d0",
+    "url": "https://codeload.github.com/rime/rime-pinyin-simp/tar.gz/0c6861ef7420ee780270ca6d993d18d4101049d0",
+    "sha256": "46f37114a7929ecc01003a236803c8b1e5198382e6a21f83fae036604a6b08bf"
+  },
+  {
+    "name": "boost",
+    "version": "1.85.0",
+    "url": "https://archives.boost.io/release/1.85.0/source/boost_1_85_0.tar.bz2",
+    "sha256": "7009fe1faa1697476bdc7027703a2badb84e849b7b0baad5086b087b971f8617"
+  }
+]

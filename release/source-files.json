@@ -1,0 +1,997 @@
+{
+  "format": 1,
+  "files": [
+    {
+      "source": ".github/workflows/source-ci.yml",
+      "path": ".github/workflows/source-ci.yml"
+    },
+    {
+      "source": ".gitignore",
+      "path": ".gitignore"
+    },
+    {
+      "source": "CONTRIBUTING.md",
+      "path": "CONTRIBUTING.md"
+    },
+    {
+      "source": "LICENSE",
+      "path": "LICENSE"
+    },
+    {
+      "source": "SECURITY.md",
+      "path": "SECURITY.md"
+    },
+    {
+      "source": "THIRD_PARTY_NOTICES.md",
+      "path": "THIRD_PARTY_NOTICES.md"
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "app/DEPLOYMENT.md"
+    },
+    {
+      "source": "release/APP.public.md",
+      "path": "app/README.md"
+    },
+    {
+      "source": "app/backup.mjs",
+      "path": "app/backup.mjs"
+    },
+    {
+      "source": "app/cloud-admin.mjs",
+      "path": "app/cloud-admin.mjs"
+    },
+    {
+      "source": "app/cloud-auth.mjs",
+      "path": "app/cloud-auth.mjs"
+    },
+    {
+      "source": "app/cloud-budget.mjs",
+      "path": "app/cloud-budget.mjs"
+    },
+    {
+      "source": "app/cloud-maintenance.mjs",
+      "path": "app/cloud-maintenance.mjs"
+    },
+    {
+      "source": "app/cloud.mjs",
+      "path": "app/cloud.mjs"
+    },
+    {
+      "source": "app/context.mjs",
+      "path": "app/context.mjs"
+    },
+    {
+      "source": "app/customer-classification.mjs",
+      "path": "app/customer-classification.mjs"
+    },
+    {
+      "source": "app/customer-create.mjs",
+      "path": "app/customer-create.mjs"
+    },
+    {
+      "source": "app/customer-tasks.mjs",
+      "path": "app/customer-tasks.mjs"
+    },
+    {
+      "source": "app/diagnostics.mjs",
+      "path": "app/diagnostics.mjs"
+    },
+    {
+      "source": "app/engine.mjs",
+      "path": "app/engine.mjs"
+    },
+    {
+      "source": "app/evals/README.md",
+      "path": "app/evals/README.md"
+    },
+    {
+      "source": "app/evals/bailian-smoke.mjs",
+      "path": "app/evals/bailian-smoke.mjs"
+    },
+    {
+      "source": "app/evals/cases.json",
+      "path": "app/evals/cases.json"
+    },
+    {
+      "source": "app/evals/dataset.mjs",
+      "path": "app/evals/dataset.mjs"
+    },
+    {
+      "source": "app/evals/examples/demo-01.txt",
+      "path": "app/evals/examples/demo-01.txt"
+    },
+    {
+      "source": "app/evals/examples/text-manifest.json",
+      "path": "app/evals/examples/text-manifest.json"
+    },
+    {
+      "source": "app/evals/ocr-metrics.mjs",
+      "path": "app/evals/ocr-metrics.mjs"
+    },
+    {
+      "source": "app/evals/ocr.mjs",
+      "path": "app/evals/ocr.mjs"
+    },
+    {
+      "source": "app/evals/pc-live-smoke.mjs",
+      "path": "app/evals/pc-live-smoke.mjs"
+    },
+    {
+      "source": "app/evals/prepare-pilot-invite.mjs",
+      "path": "app/evals/prepare-pilot-invite.mjs"
+    },
+    {
+      "source": "app/evals/run.mjs",
+      "path": "app/evals/run.mjs"
+    },
+    {
+      "source": "app/evals/text-evaluation.mjs",
+      "path": "app/evals/text-evaluation.mjs"
+    },
+    {
+      "source": "app/hosted.mjs",
+      "path": "app/hosted.mjs"
+    },
+    {
+      "source": "app/native.mjs",
+      "path": "app/native.mjs"
+    },
+    {
+      "source": "app/pc-server.mjs",
+      "path": "app/pc-server.mjs"
+    },
+    {
+      "source": "app/provider.mjs",
+      "path": "app/provider.mjs"
+    },
+    {
+      "source": "app/public/app.js",
+      "path": "app/public/app.js"
+    },
+    {
+      "source": "app/public/design-tokens.css",
+      "path": "app/public/design-tokens.css"
+    },
+    {
+      "source": "app/public/icon.svg",
+      "path": "app/public/icon.svg"
+    },
+    {
+      "source": "app/public/index.html",
+      "path": "app/public/index.html"
+    },
+    {
+      "source": "app/public/manifest.webmanifest",
+      "path": "app/public/manifest.webmanifest"
+    },
+    {
+      "source": "app/public/style.css",
+      "path": "app/public/style.css"
+    },
+    {
+      "source": "app/recovery-checkpoint.mjs",
+      "path": "app/recovery-checkpoint.mjs"
+    },
+    {
+      "source": "app/recovery.mjs",
+      "path": "app/recovery.mjs"
+    },
+    {
+      "source": "app/result-contract.mjs",
+      "path": "app/result-contract.mjs"
+    },
+    {
+      "source": "app/retention.mjs",
+      "path": "app/retention.mjs"
+    },
+    {
+      "source": "app/server.mjs",
+      "path": "app/server.mjs"
+    },
+    {
+      "source": "app/store.mjs",
+      "path": "app/store.mjs"
+    },
+    {
+      "source": "app/tests/audit-20260915.test.mjs",
+      "path": "app/tests/audit-20260915.test.mjs"
+    },
+    {
+      "source": "app/tests/audit-repairs.test.mjs",
+      "path": "app/tests/audit-repairs.test.mjs"
+    },
+    {
+      "source": "app/tests/budget-block.test.mjs",
+      "path": "app/tests/budget-block.test.mjs"
+    },
+    {
+      "source": "app/tests/cloud.test.mjs",
+      "path": "app/tests/cloud.test.mjs"
+    },
+    {
+      "source": "app/tests/context.test.mjs",
+      "path": "app/tests/context.test.mjs"
+    },
+    {
+      "source": "app/tests/core.test.mjs",
+      "path": "app/tests/core.test.mjs"
+    },
+    {
+      "source": "app/tests/customer-lifecycle.test.mjs",
+      "path": "app/tests/customer-lifecycle.test.mjs"
+    },
+    {
+      "source": "app/tests/customer-task-cloud.test.mjs",
+      "path": "app/tests/customer-task-cloud.test.mjs"
+    },
+    {
+      "source": "app/tests/customer-tasks.test.mjs",
+      "path": "app/tests/customer-tasks.test.mjs"
+    },
+    {
+      "source": "app/tests/hosting.test.mjs",
+      "path": "app/tests/hosting.test.mjs"
+    },
+    {
+      "source": "app/tests/native-listener.test.mjs",
+      "path": "app/tests/native-listener.test.mjs"
+    },
+    {
+      "source": "app/tests/native.test.mjs",
+      "path": "app/tests/native.test.mjs"
+    },
+    {
+      "source": "app/tests/ocr-metrics.test.mjs",
+      "path": "app/tests/ocr-metrics.test.mjs"
+    },
+    {
+      "source": "app/tests/pc-server.test.mjs",
+      "path": "app/tests/pc-server.test.mjs"
+    },
+    {
+      "source": "app/tests/portrait-budget.test.mjs",
+      "path": "app/tests/portrait-budget.test.mjs"
+    },
+    {
+      "source": "app/tests/recovery-checkpoint.test.mjs",
+      "path": "app/tests/recovery-checkpoint.test.mjs"
+    },
+    {
+      "source": "app/tests/recovery.test.mjs",
+      "path": "app/tests/recovery.test.mjs"
+    },
+    {
+      "source": "app/tests/security.test.mjs",
+      "path": "app/tests/security.test.mjs"
+    },
+    {
+      "source": "app/tests/text-evaluation.test.mjs",
+      "path": "app/tests/text-evaluation.test.mjs"
+    },
+    {
+      "source": "release/NATIVE.public.md",
+      "path": "native/README.md"
+    },
+    {
+      "source": "native/android/AndroidManifest.xml",
+      "path": "native/android/AndroidManifest.xml"
+    },
+    {
+      "source": "native/android/CMakeLists.txt",
+      "path": "native/android/CMakeLists.txt"
+    },
+    {
+      "source": "native/android/assets/rime/default.yaml",
+      "path": "native/android/assets/rime/default.yaml"
+    },
+    {
+      "source": "native/android/assets/rime/lens_nine.schema.yaml",
+      "path": "native/android/assets/rime/lens_nine.schema.yaml"
+    },
+    {
+      "source": "native/android/assets/rime/lens_pinyin.schema.yaml",
+      "path": "native/android/assets/rime/lens_pinyin.schema.yaml"
+    },
+    {
+      "source": "native/android/build.gradle",
+      "path": "native/android/build.gradle"
+    },
+    {
+      "source": "native/android/cpp/rime_bridge.cpp",
+      "path": "native/android/cpp/rime_bridge.cpp"
+    },
+    {
+      "source": "native/android/cpp/rime_smoke.cpp",
+      "path": "native/android/cpp/rime_smoke.cpp"
+    },
+    {
+      "source": "native/android/gradle.lockfile",
+      "path": "native/android/gradle.lockfile"
+    },
+    {
+      "source": "native/android/gradle.properties",
+      "path": "native/android/gradle.properties"
+    },
+    {
+      "source": "native/android/gradle/verification-metadata.xml",
+      "path": "native/android/gradle/verification-metadata.xml"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ActivityLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ActivityLayout.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/AssistSession.java",
+      "path": "native/android/java/com/conversationlens/ime/AssistSession.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/AssistantActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/AssistantActivity.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/CaptureService.java",
+      "path": "native/android/java/com/conversationlens/ime/CaptureService.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ChatBubbleLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ChatBubbleLayout.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/CloudSettings.java",
+      "path": "native/android/java/com/conversationlens/ime/CloudSettings.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ConversationContinuationPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/ConversationContinuationPolicy.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/EditorPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/EditorPolicy.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/FramePixels.java",
+      "path": "native/android/java/com/conversationlens/ime/FramePixels.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImageDecodePolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/ImageDecodePolicy.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeAssistantPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeAssistantPanel.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeCapturePermissionActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeCapturePermissionActivity.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeCustomerDetailsPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeCustomerDetailsPanel.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeDropdownSpinner.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeDropdownSpinner.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImeImagePickerActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/ImeImagePickerActivity.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ImePanelLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/ImePanelLayout.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardAssistantPanel.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardAssistantPanel.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardAssistantPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardAssistantPolicy.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardCaptureService.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardCaptureService.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardImageRequest.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardImageRequest.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/KeyboardLayout.java",
+      "path": "native/android/java/com/conversationlens/ime/KeyboardLayout.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensImeService.java",
+      "path": "native/android/java/com/conversationlens/ime/LensImeService.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensStyle.java",
+      "path": "native/android/java/com/conversationlens/ime/LensStyle.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LensTokens.java",
+      "path": "native/android/java/com/conversationlens/ime/LensTokens.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LibraryActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/LibraryActivity.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/LocalChatOcr.java",
+      "path": "native/android/java/com/conversationlens/ime/LocalChatOcr.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/NativeClient.java",
+      "path": "native/android/java/com/conversationlens/ime/NativeClient.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/OcrReview.java",
+      "path": "native/android/java/com/conversationlens/ime/OcrReview.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/ProfileEvidenceText.java",
+      "path": "native/android/java/com/conversationlens/ime/ProfileEvidenceText.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/RimeEngine.java",
+      "path": "native/android/java/com/conversationlens/ime/RimeEngine.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/SetupActivity.java",
+      "path": "native/android/java/com/conversationlens/ime/SetupActivity.java"
+    },
+    {
+      "source": "native/android/java/com/conversationlens/ime/WholeEditLimitPolicy.java",
+      "path": "native/android/java/com/conversationlens/ime/WholeEditLimitPolicy.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/DesignUiFixture.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/DesignUiFixture.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/DraftRecoveryTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/DraftRecoveryTest.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/ImePasteTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/ImePasteTest.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrBenchmark.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrBenchmark.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrBubbleTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrBubbleTest.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrProfileTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrProfileTest.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrReviewTestRunner.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrReviewTestRunner.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/OcrTestRunner.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/OcrTestRunner.java"
+    },
+    {
+      "source": "native/android/ocrTest/com/conversationlens/ime/ProfileEvidenceTest.java",
+      "path": "native/android/ocrTest/com/conversationlens/ime/ProfileEvidenceTest.java"
+    },
+    {
+      "source": "native/android/res/drawable/ic_lens_launcher_foreground.xml",
+      "path": "native/android/res/drawable/ic_lens_launcher_foreground.xml"
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "path": "native/android/res/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "path": "native/android/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi/ic_launcher.xml",
+      "path": "native/android/res/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
+      "source": "native/android/res/mipmap-anydpi/ic_launcher_round.xml",
+      "path": "native/android/res/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
+      "source": "native/android/res/values/design_token_colors.xml",
+      "path": "native/android/res/values/design_token_colors.xml"
+    },
+    {
+      "source": "native/android/res/values/icon_colors.xml",
+      "path": "native/android/res/values/icon_colors.xml"
+    },
+    {
+      "source": "native/android/res/values/strings.xml",
+      "path": "native/android/res/values/strings.xml"
+    },
+    {
+      "source": "native/android/res/values/styles.xml",
+      "path": "native/android/res/values/styles.xml"
+    },
+    {
+      "source": "native/android/res/xml/input_method.xml",
+      "path": "native/android/res/xml/input_method.xml"
+    },
+    {
+      "source": "native/android/res/xml/network_security_config.xml",
+      "path": "native/android/res/xml/network_security_config.xml"
+    },
+    {
+      "source": "native/android/settings.gradle",
+      "path": "native/android/settings.gradle"
+    },
+    {
+      "source": "native/android/tests/ChatBubbleLayoutTest.java",
+      "path": "native/android/tests/ChatBubbleLayoutTest.java"
+    },
+    {
+      "source": "native/android/tests/ConversationContinuationPolicyTest.java",
+      "path": "native/android/tests/ConversationContinuationPolicyTest.java"
+    },
+    {
+      "source": "native/android/tests/DumpRunner.java",
+      "path": "native/android/tests/DumpRunner.java"
+    },
+    {
+      "source": "native/android/tests/EditorPolicyTest.java",
+      "path": "native/android/tests/EditorPolicyTest.java"
+    },
+    {
+      "source": "native/android/tests/FramePixelsTest.java",
+      "path": "native/android/tests/FramePixelsTest.java"
+    },
+    {
+      "source": "native/android/tests/ImageDecodePolicyTest.java",
+      "path": "native/android/tests/ImageDecodePolicyTest.java"
+    },
+    {
+      "source": "native/android/tests/KeyboardAssistantPolicyTest.java",
+      "path": "native/android/tests/KeyboardAssistantPolicyTest.java"
+    },
+    {
+      "source": "native/android/tests/OcrReviewTest.java",
+      "path": "native/android/tests/OcrReviewTest.java"
+    },
+    {
+      "source": "native/android/tests/WholeEditLimitPolicyTest.java",
+      "path": "native/android/tests/WholeEditLimitPolicyTest.java"
+    },
+    {
+      "source": "native/dependencies.lock.json",
+      "path": "native/dependencies.lock.json"
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "native/deploy/README.md"
+    },
+    {
+      "source": "native/deploy/cloud-config.example.json",
+      "path": "native/deploy/cloud-config.example.json"
+    },
+    {
+      "source": "native/deploy/lens-cloud.service",
+      "path": "native/deploy/lens-cloud.service"
+    },
+    {
+      "source": "native/deploy/nginx.conf.example",
+      "path": "native/deploy/nginx.conf.example"
+    },
+    {
+      "source": "native/deploy/ngrok-agent.yml",
+      "path": "native/deploy/ngrok-agent.yml"
+    },
+    {
+      "source": "native/licenses/RapidJSON-1.1.0.txt",
+      "path": "native/licenses/RapidJSON-1.1.0.txt"
+    },
+    {
+      "source": "native/scripts/android_qa.py",
+      "path": "native/scripts/android_qa.py"
+    },
+    {
+      "source": "native/scripts/assistant_qa.py",
+      "path": "native/scripts/assistant_qa.py"
+    },
+    {
+      "source": "native/scripts/build_android.py",
+      "path": "native/scripts/build_android.py"
+    },
+    {
+      "source": "native/scripts/build_android_ocr.py",
+      "path": "native/scripts/build_android_ocr.py"
+    },
+    {
+      "source": "native/scripts/build_qa.py",
+      "path": "native/scripts/build_qa.py"
+    },
+    {
+      "source": "native/scripts/build_release.py",
+      "path": "native/scripts/build_release.py"
+    },
+    {
+      "source": "native/scripts/ci_android.py",
+      "path": "native/scripts/ci_android.py"
+    },
+    {
+      "source": "native/scripts/ci_cloud.py",
+      "path": "native/scripts/ci_cloud.py"
+    },
+    {
+      "source": "native/scripts/ci_ios.py",
+      "path": "native/scripts/ci_ios.py"
+    },
+    {
+      "source": "native/scripts/ci_manifest.py",
+      "path": "native/scripts/ci_manifest.py"
+    },
+    {
+      "source": "native/scripts/cloud_fixture.mjs",
+      "path": "native/scripts/cloud_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/cloud_qa.py",
+      "path": "native/scripts/cloud_qa.py"
+    },
+    {
+      "source": "native/scripts/compare_design_activity.py",
+      "path": "native/scripts/compare_design_activity.py"
+    },
+    {
+      "source": "native/scripts/compare_design_keyboard.py",
+      "path": "native/scripts/compare_design_keyboard.py"
+    },
+    {
+      "source": "native/scripts/compare_design_layout.py",
+      "path": "native/scripts/compare_design_layout.py"
+    },
+    {
+      "source": "native/scripts/compatibility_qa.py",
+      "path": "native/scripts/compatibility_qa.py"
+    },
+    {
+      "source": "native/scripts/design_activity_contract_qa.py",
+      "path": "native/scripts/design_activity_contract_qa.py"
+    },
+    {
+      "source": "native/scripts/design_activity_layout_qa.py",
+      "path": "native/scripts/design_activity_layout_qa.py"
+    },
+    {
+      "source": "native/scripts/design_keyboard_qa.py",
+      "path": "native/scripts/design_keyboard_qa.py"
+    },
+    {
+      "source": "native/scripts/design_layout_qa.py",
+      "path": "native/scripts/design_layout_qa.py"
+    },
+    {
+      "source": "native/scripts/design_resource_rules.py",
+      "path": "native/scripts/design_resource_rules.py"
+    },
+    {
+      "source": "native/scripts/design_token_equivalence.py",
+      "path": "native/scripts/design_token_equivalence.py"
+    },
+    {
+      "source": "native/scripts/design_tokens_check.py",
+      "path": "native/scripts/design_tokens_check.py"
+    },
+    {
+      "source": "native/scripts/device_matrix.py",
+      "path": "native/scripts/device_matrix.py"
+    },
+    {
+      "source": "native/scripts/https_acceptance.py",
+      "path": "native/scripts/https_acceptance.py"
+    },
+    {
+      "source": "native/scripts/keyboard_acceptance.py",
+      "path": "native/scripts/keyboard_acceptance.py"
+    },
+    {
+      "source": "native/scripts/keyboard_budget_fixture.mjs",
+      "path": "native/scripts/keyboard_budget_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/keyboard_budget_qa.py",
+      "path": "native/scripts/keyboard_budget_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_capture_qa.py",
+      "path": "native/scripts/keyboard_capture_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_continuation_qa.py",
+      "path": "native/scripts/keyboard_continuation_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_details_fixture.mjs",
+      "path": "native/scripts/keyboard_details_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/keyboard_details_qa.py",
+      "path": "native/scripts/keyboard_details_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_expiry_qa.py",
+      "path": "native/scripts/keyboard_expiry_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_first_fixture.mjs",
+      "path": "native/scripts/keyboard_first_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/keyboard_first_qa.py",
+      "path": "native/scripts/keyboard_first_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_image_qa.py",
+      "path": "native/scripts/keyboard_image_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_lifecycle_qa.py",
+      "path": "native/scripts/keyboard_lifecycle_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_network_fixture.mjs",
+      "path": "native/scripts/keyboard_network_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/keyboard_network_qa.py",
+      "path": "native/scripts/keyboard_network_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_retry_qa.py",
+      "path": "native/scripts/keyboard_retry_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_selector_qa.py",
+      "path": "native/scripts/keyboard_selector_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_stop_qa.py",
+      "path": "native/scripts/keyboard_stop_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_timeout_qa.py",
+      "path": "native/scripts/keyboard_timeout_qa.py"
+    },
+    {
+      "source": "native/scripts/keyboard_ui_qa.py",
+      "path": "native/scripts/keyboard_ui_qa.py"
+    },
+    {
+      "source": "native/scripts/local_delivery.py",
+      "path": "native/scripts/local_delivery.py"
+    },
+    {
+      "source": "native/scripts/make_ocr_samples.py",
+      "path": "native/scripts/make_ocr_samples.py"
+    },
+    {
+      "source": "native/scripts/native_fixture.mjs",
+      "path": "native/scripts/native_fixture.mjs"
+    },
+    {
+      "source": "native/scripts/nine_key_qa.py",
+      "path": "native/scripts/nine_key_qa.py"
+    },
+    {
+      "source": "native/scripts/offline_ocr_qa.py",
+      "path": "native/scripts/offline_ocr_qa.py"
+    },
+    {
+      "source": "native/scripts/package_cloud.py",
+      "path": "native/scripts/package_cloud.py"
+    },
+    {
+      "source": "native/scripts/package_source.py",
+      "path": "native/scripts/package_source.py"
+    },
+    {
+      "source": "native/scripts/pc_backup.py",
+      "path": "native/scripts/pc_backup.py"
+    },
+    {
+      "source": "native/scripts/pc_server.py",
+      "path": "native/scripts/pc_server.py"
+    },
+    {
+      "source": "native/scripts/picker_qa.py",
+      "path": "native/scripts/picker_qa.py"
+    },
+    {
+      "source": "native/scripts/prepare_emulator.py",
+      "path": "native/scripts/prepare_emulator.py"
+    },
+    {
+      "source": "native/scripts/prepare_gradle.py",
+      "path": "native/scripts/prepare_gradle.py"
+    },
+    {
+      "source": "native/scripts/prepare_release_key.py",
+      "path": "native/scripts/prepare_release_key.py"
+    },
+    {
+      "source": "native/scripts/prepare_sources.py",
+      "path": "native/scripts/prepare_sources.py"
+    },
+    {
+      "source": "native/scripts/prepare_tools.py",
+      "path": "native/scripts/prepare_tools.py"
+    },
+    {
+      "source": "native/scripts/recovery_checkpoint.mjs",
+      "path": "native/scripts/recovery_checkpoint.mjs"
+    },
+    {
+      "source": "native/scripts/release_check.py",
+      "path": "native/scripts/release_check.py"
+    },
+    {
+      "source": "native/scripts/sign_prepared_release.py",
+      "path": "native/scripts/sign_prepared_release.py"
+    },
+    {
+      "source": "native/scripts/stability_qa.py",
+      "path": "native/scripts/stability_qa.py"
+    },
+    {
+      "source": "native/scripts/start_emulator.py",
+      "path": "native/scripts/start_emulator.py"
+    },
+    {
+      "source": "native/scripts/stop_emulator.ps1",
+      "path": "native/scripts/stop_emulator.ps1"
+    },
+    {
+      "source": "native/scripts/stop_emulator.py",
+      "path": "native/scripts/stop_emulator.py"
+    },
+    {
+      "source": "native/scripts/test_compatibility_qa.py",
+      "path": "native/scripts/test_compatibility_qa.py"
+    },
+    {
+      "source": "native/scripts/test_design_activity_comparison.py",
+      "path": "native/scripts/test_design_activity_comparison.py"
+    },
+    {
+      "source": "native/scripts/test_design_keyboard_comparison.py",
+      "path": "native/scripts/test_design_keyboard_comparison.py"
+    },
+    {
+      "source": "native/scripts/test_design_layout_comparison.py",
+      "path": "native/scripts/test_design_layout_comparison.py"
+    },
+    {
+      "source": "native/scripts/test_design_tokens.py",
+      "path": "native/scripts/test_design_tokens.py"
+    },
+    {
+      "source": "native/scripts/test_https_acceptance.py",
+      "path": "native/scripts/test_https_acceptance.py"
+    },
+    {
+      "source": "native/scripts/test_keyboard_acceptance.py",
+      "path": "native/scripts/test_keyboard_acceptance.py"
+    },
+    {
+      "source": "native/scripts/test_keyboard_budget_qa.py",
+      "path": "native/scripts/test_keyboard_budget_qa.py"
+    },
+    {
+      "source": "native/scripts/test_keyboard_details_fixture.py",
+      "path": "native/scripts/test_keyboard_details_fixture.py"
+    },
+    {
+      "source": "native/scripts/test_local_delivery.py",
+      "path": "native/scripts/test_local_delivery.py"
+    },
+    {
+      "source": "native/scripts/test_pc_server_controller.py",
+      "path": "native/scripts/test_pc_server_controller.py"
+    },
+    {
+      "source": "native/scripts/test_policy.py",
+      "path": "native/scripts/test_policy.py"
+    },
+    {
+      "source": "native/scripts/test_web_design_tokens.py",
+      "path": "native/scripts/test_web_design_tokens.py"
+    },
+    {
+      "source": "native/scripts/web_design_tokens_check.py",
+      "path": "native/scripts/web_design_tokens_check.py"
+    },
+    {
+      "source": "package.json",
+      "path": "package.json"
+    },
+    {
+      "source": "release/DEPLOYMENT.public.md",
+      "path": "release/DEPLOYMENT.public.md"
+    },
+    {
+      "source": "release/README.public.md",
+      "path": "release/README.public.md"
+    },
+    {
+      "source": "release/RECOVERY.md",
+      "path": "release/RECOVERY.md"
+    },
+    {
+      "source": "release/source-files.json",
+      "path": "release/source-files.json"
+    },
+    {
+      "source": "third_party/licenses/Boost-BSL-1.0.txt",
+      "path": "third_party/licenses/Boost-BSL-1.0.txt"
+    },
+    {
+      "source": "third_party/licenses/Darts-clone-BSD-3-Clause.txt",
+      "path": "third_party/licenses/Darts-clone-BSD-3-Clause.txt"
+    },
+    {
+      "source": "third_party/licenses/LevelDB-BSD-3-Clause.txt",
+      "path": "third_party/licenses/LevelDB-BSD-3-Clause.txt"
+    },
+    {
+      "source": "third_party/licenses/OpenCC-Apache-2.0.txt",
+      "path": "third_party/licenses/OpenCC-Apache-2.0.txt"
+    },
+    {
+      "source": "third_party/licenses/X11-keysym-header.txt",
+      "path": "third_party/licenses/X11-keysym-header.txt"
+    },
+    {
+      "source": "third_party/licenses/X11-keysymdef-header.txt",
+      "path": "third_party/licenses/X11-keysymdef-header.txt"
+    },
+    {
+      "source": "third_party/licenses/librime-BSD-3-Clause.txt",
+      "path": "third_party/licenses/librime-BSD-3-Clause.txt"
+    },
+    {
+      "source": "third_party/licenses/marisa-trie-COPYING.md",
+      "path": "third_party/licenses/marisa-trie-COPYING.md"
+    },
+    {
+      "source": "third_party/licenses/rime-pinyin-simp-Apache-2.0.txt",
+      "path": "third_party/licenses/rime-pinyin-simp-Apache-2.0.txt"
+    },
+    {
+      "source": "third_party/licenses/utf8cpp-header.txt",
+      "path": "third_party/licenses/utf8cpp-header.txt"
+    },
+    {
+      "source": "third_party/licenses/yaml-cpp-MIT.txt",
+      "path": "third_party/licenses/yaml-cpp-MIT.txt"
+    },
+    {
+      "source": "release/README.public.md",
+      "path": "README.md"
+    },
+    {
+      "source": "release/APP.public.md",
+      "path": "release/APP.public.md"
+    },
+    {
+      "source": "release/NATIVE.public.md",
+      "path": "release/NATIVE.public.md"
+    },
+    {
+      "source": "release/ACCEPTANCE.md",
+      "path": "release/ACCEPTANCE.md"
+    }
+  ]
+}

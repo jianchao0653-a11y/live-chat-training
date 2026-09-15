@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "datasetId": "synthetic-demo",
+  "dataClass": "synthetic",
+  "approvedForCloud": false,
+  "authorizationRef": "project-synthetic",
+  "reviewPlanId": "draft-review-v1",
+  "cases": [{"id":"demo-01","textFile":"demo-01.txt","goal":"关心近况","boundary":"尊重休息时间","expectedRoute":"ANY"}]
+}
