@@ -4,7 +4,18 @@ import {mkdtempSync,rmSync,writeFileSync,readFileSync,existsSync} from 'node:fs'
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {setTimeout as delay} from 'node:timers/promises';
-import {startPc} from '../pc-server.mjs';
+import {loadModelKey,startPc} from '../pc-server.mjs';
+
+test('PC service loads a provider key only from an explicit environment value or file',()=>{
+  const key='sk-'+('a'.repeat(32));
+  assert.equal(loadModelKey({DASHSCOPE_API_KEY:`  ${key}  `}),key);
+  assert.equal(loadModelKey({LENS_MODEL_KEY_FILE:'operator-key'},path=>{
+    assert.equal(path.endsWith('operator-key'),true);
+    return key;
+  }),key);
+  assert.equal(loadModelKey({}),'');
+  assert.throws(()=>loadModelKey({LENS_MODEL_KEY_FILE:'bad'},()=>`note ${key}`),/Invalid model provider key/);
+});
 
 test('PC service is loopback-only, ignores stale stop requests, drains and preserves accounts',async t=>{
   const directory=mkdtempSync(join(tmpdir(),'lens-pc-synthetic-'));let service;

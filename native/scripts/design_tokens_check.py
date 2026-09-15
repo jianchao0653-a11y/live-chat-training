@@ -1,4 +1,4 @@
-"""MADR-050 Android design gate (stdlib only, no build/device access).
+"""Android design-token gate (stdlib only, no build/device access).
 
 Run python native/scripts/design_tokens_check.py. --write-resources deliberately
 regenerates only the two theme colors; normal checks never modify source files.

@@ -54,6 +54,7 @@ class CleanupTest(unittest.TestCase):
                           ('shell', 'settings', 'get', 'system', 'font_scale'): 'null'}
                 return values.get(args, '')
             with patch.object(compatibility, 'ROOT', root), patch.object(compatibility.sys, 'argv', ['qa', '--api', '36']), \
+                    patch.object(compatibility, 'wait_boot'), \
                     patch.object(compatibility.subprocess, 'check_output', side_effect=adb), \
                     patch.object(compatibility.subprocess, 'run', side_effect=subprocess.TimeoutExpired('synthetic-qa', 900)):
                 with self.assertRaises(subprocess.TimeoutExpired):

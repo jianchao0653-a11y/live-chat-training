@@ -20,6 +20,11 @@ Provider calls must remain disabled until prices and budgets have been configure
 The example uses zero monetary allowances. A model generation and independent
 review may each incur cost; uncertain failures retain their reservations.
 
+Supply the model credential at runtime through `DASHSCOPE_API_KEY`, or set
+`LENS_MODEL_KEY_FILE` to an operator-owned file containing only the credential.
+Keep that file outside the repository and restrict it to the service account.
+The service does not search the project directory for credentials.
+
 ## Data and recovery
 
 Accounts, sessions, spend, deletion and customer-change journals live in

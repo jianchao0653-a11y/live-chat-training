@@ -12,10 +12,16 @@
       "bytes": 839
     },
     {
-      "source": ".gitignore",
+      "source": "release/gitignore.public",
       "path": ".gitignore",
-      "sha256": "fa51b6af72a73142e6cb5df4e3ad17cad5f1dcd7eaac7f75029fee1b879329f6",
-      "bytes": 428
+      "sha256": "453a5673e08b577f5d6e4aeb483679d182c2db1182dc8dbb711616e44c6c5738",
+      "bytes": 306
+    },
+    {
+      "source": "release/gitignore.public",
+      "path": "release/gitignore.public",
+      "sha256": "453a5673e08b577f5d6e4aeb483679d182c2db1182dc8dbb711616e44c6c5738",
+      "bytes": 306
     },
     {
       "source": "CONTRIBUTING.md",
@@ -44,8 +50,8 @@
     {
       "source": "release/DEPLOYMENT.public.md",
       "path": "app/DEPLOYMENT.md",
-      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
-      "bytes": 2182
+      "sha256": "4913437e711b56b661ed813d8933a6bd49ca2ac624e5172ca0c06423e271363b",
+      "bytes": 2480
     },
     {
       "source": "release/APP.public.md",
@@ -180,12 +186,6 @@
       "bytes": 2409
     },
     {
-      "source": "app/evals/prepare-pilot-invite.mjs",
-      "path": "app/evals/prepare-pilot-invite.mjs",
-      "sha256": "7e7fc3a685989b6141e7e565069d9dc30aa56545ce2c644d0e822c58c7fee018",
-      "bytes": 1910
-    },
-    {
       "source": "app/evals/run.mjs",
       "path": "app/evals/run.mjs",
       "sha256": "5e46401be30985d496e4e6745a7b17aa79a4f6ff1daf798e4ad35b85bdfec3c5",
@@ -212,8 +212,8 @@
     {
       "source": "app/pc-server.mjs",
       "path": "app/pc-server.mjs",
-      "sha256": "71b2246e6ddd54fe372c3a21dc0e53b026f351298ddd61682c6b4babca73ad79",
-      "bytes": 3188
+      "sha256": "9fe698c75d8653d79d94e9eeef4afaf6bf685433dc8d416e9f565298e2bb7154",
+      "bytes": 3403
     },
     {
       "source": "app/provider.mjs",
@@ -374,8 +374,8 @@
     {
       "source": "app/tests/pc-server.test.mjs",
       "path": "app/tests/pc-server.test.mjs",
-      "sha256": "2b2c6499bbdf1a5cac4497b78de375e68b985f72ef14a1af05d860d9b0de9f57",
-      "bytes": 1604
+      "sha256": "cbb0a053447641b72afb8c623c7f67b2ae9541333e16e34019c6ad96525b1fed",
+      "bytes": 2121
     },
     {
       "source": "app/tests/portrait-budget.test.mjs",
@@ -860,8 +860,8 @@
     {
       "source": "release/DEPLOYMENT.public.md",
       "path": "native/deploy/README.md",
-      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
-      "bytes": 2182
+      "sha256": "4913437e711b56b661ed813d8933a6bd49ca2ac624e5172ca0c06423e271363b",
+      "bytes": 2480
     },
     {
       "source": "native/deploy/cloud-config.example.json",
@@ -924,12 +924,6 @@
       "bytes": 2210
     },
     {
-      "source": "native/scripts/build_release.py",
-      "path": "native/scripts/build_release.py",
-      "sha256": "fb5f030b192ad29852cc6e631a290d0dd6ba5f3ec59af142c62e85dfe0d8b92c",
-      "bytes": 342
-    },
-    {
       "source": "native/scripts/ci_android.py",
       "path": "native/scripts/ci_android.py",
       "sha256": "399d6e3fb7868071e2eb3373458d05701904714f7d07681500881a35901913a0",
@@ -946,12 +940,6 @@
       "path": "native/scripts/ci_ios.py",
       "sha256": "ed6a91863cde53ca3a1d715dbce92a77c34f1cad731ff96b71c19dc5e1084791",
       "bytes": 2504
-    },
-    {
-      "source": "native/scripts/ci_manifest.py",
-      "path": "native/scripts/ci_manifest.py",
-      "sha256": "882dd17a7a53fbe2d66b7ce71b483bc4e0a3557c66ebaab37d4b4691c848ab3a",
-      "bytes": 3650
     },
     {
       "source": "native/scripts/cloud_fixture.mjs",
@@ -1028,8 +1016,8 @@
     {
       "source": "native/scripts/design_tokens_check.py",
       "path": "native/scripts/design_tokens_check.py",
-      "sha256": "90009d8a23118667736cc13fa3f8413d228bca663ce936ac32cfa3062664670b",
-      "bytes": 15545
+      "sha256": "11d06e5c9b57f1fc989617fded5b18365c4f3f243380d2cdbe24ece4d8b2f5e8",
+      "bytes": 15542
     },
     {
       "source": "native/scripts/device_matrix.py",
@@ -1100,8 +1088,8 @@
     {
       "source": "native/scripts/keyboard_first_qa.py",
       "path": "native/scripts/keyboard_first_qa.py",
-      "sha256": "06229b5c8c2e721ed7a2dad107e3c2877bc31733cec00239a68df5221a74711c",
-      "bytes": 35772
+      "sha256": "84ce7bcfbcaaceb5651a1ac1fd53ea7ea0ab533b5d2caac4d63293d3391153b5",
+      "bytes": 36060
     },
     {
       "source": "native/scripts/keyboard_image_qa.py",
@@ -1158,12 +1146,6 @@
       "bytes": 12969
     },
     {
-      "source": "native/scripts/local_delivery.py",
-      "path": "native/scripts/local_delivery.py",
-      "sha256": "9b73b2771688f89923278de8aecd29cce10f0633394a5884c7ecd777996ce033",
-      "bytes": 11020
-    },
-    {
       "source": "native/scripts/make_ocr_samples.py",
       "path": "native/scripts/make_ocr_samples.py",
       "sha256": "f0f8372411402a02d36a154fb0ea5fabf5974332bdb9b42eacc265a077229c90",
@@ -1186,12 +1168,6 @@
       "path": "native/scripts/offline_ocr_qa.py",
       "sha256": "3109e169cd8981a518ec839fbcc49e654b6c13c9e6a4a02628e810c54b1f9016",
       "bytes": 893
-    },
-    {
-      "source": "native/scripts/package_cloud.py",
-      "path": "native/scripts/package_cloud.py",
-      "sha256": "b25b90361248f6898aa9cb32ed190d35f4fc93e0e2369fc1db174013c91f5631",
-      "bytes": 1872
     },
     {
       "source": "native/scripts/package_source.py",
@@ -1292,8 +1268,8 @@
     {
       "source": "native/scripts/test_compatibility_qa.py",
       "path": "native/scripts/test_compatibility_qa.py",
-      "sha256": "714f0d8a166d79b729b5e84e6b29cc46a39ebcf56771bd58b1fda56de03915ac",
-      "bytes": 4110
+      "sha256": "3599ac50afe1b46f3f8ba2f23c6725be23b5700b12f147a3e516b94d0154da2b",
+      "bytes": 4174
     },
     {
       "source": "native/scripts/test_design_activity_comparison.py",
@@ -1328,8 +1304,8 @@
     {
       "source": "native/scripts/test_keyboard_acceptance.py",
       "path": "native/scripts/test_keyboard_acceptance.py",
-      "sha256": "ccfa950fcef7191d397877cbb762912386e5b4f82930cb0a90183e566f2aed68",
-      "bytes": 15579
+      "sha256": "de2817d6bb26508269dd6cc01f0e92891cd05a31f001f3c705be71ad80bbc3d3",
+      "bytes": 15750
     },
     {
       "source": "native/scripts/test_keyboard_budget_qa.py",
@@ -1342,12 +1318,6 @@
       "path": "native/scripts/test_keyboard_details_fixture.py",
       "sha256": "ac329622fb0018f0b818f38db6a278ac7bd34d718b7393148535f5844e306a43",
       "bytes": 10208
-    },
-    {
-      "source": "native/scripts/test_local_delivery.py",
-      "path": "native/scripts/test_local_delivery.py",
-      "sha256": "c6aaa34ecbd250d609c105103584113b413301b4bf4c6670625c4a706716efab",
-      "bytes": 5468
     },
     {
       "source": "native/scripts/test_pc_server_controller.py",
@@ -1382,8 +1352,8 @@
     {
       "source": "release/DEPLOYMENT.public.md",
       "path": "release/DEPLOYMENT.public.md",
-      "sha256": "32481eb71dbc57bff9a05e0a0cbbb75692ee2364e8512cb63576c7e114a295a7",
-      "bytes": 2182
+      "sha256": "4913437e711b56b661ed813d8933a6bd49ca2ac624e5172ca0c06423e271363b",
+      "bytes": 2480
     },
     {
       "source": "release/README.public.md",
@@ -1400,8 +1370,8 @@
     {
       "source": "release/source-files.json",
       "path": "release/source-files.json",
-      "sha256": "39f36ce27eaf1959f6ae318852773aefef77616a7bd45fc018a18799340b681c",
-      "bytes": 32257
+      "sha256": "f1571b0d4c597f42337b9a219334b422261e8a1b2bc962e91e66d2e104e23393",
+      "bytes": 31661
     },
     {
       "source": "third_party/licenses/Boost-BSL-1.0.txt",

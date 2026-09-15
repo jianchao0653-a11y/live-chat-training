@@ -258,11 +258,17 @@ class EvidenceTest(unittest.TestCase):
 
 def load_tests(loader, tests, _pattern):
     # These pure mock cases also run in the existing local/CI evidence gate.
-    # Do not include phase-resume CLI tests here: local_delivery already owns
-    # its live delivery lock while invoking this no-device suite.
-    from test_local_delivery import SourceReceiptTest, LocalTimeoutTest
+    # Internal delivery tooling is intentionally absent from public packages.
+    # Include those cases only when the operator source tree provides them.
     from test_compatibility_qa import CleanupTest
-    for case in (SourceReceiptTest, LocalTimeoutTest, CleanupTest):
+    cases = [CleanupTest]
+    try:
+        from test_local_delivery import SourceReceiptTest, LocalTimeoutTest
+        cases.extend([SourceReceiptTest, LocalTimeoutTest])
+    except ModuleNotFoundError as error:
+        if error.name != 'test_local_delivery':
+            raise
+    for case in cases:
         tests.addTests(loader.loadTestsFromTestCase(case))
     return tests
 

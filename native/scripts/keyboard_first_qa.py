@@ -520,8 +520,16 @@ def setup_login(qa, fixture):
     # Only setup activation uses the existing synthetic ACTION_SET_TEXT helper.
     # No keyboard-internal field or product button is filled/clicked this way.
     encoded = base64.b64encode(fixture['invite'].encode()).decode()
-    result = q.adb('shell', 'am', 'instrument', '-w', '-e', 'hint', "'一次性邀请码'", '-e', 'value', encoded, 'com.conversationlens.ime.qa/.DumpRunner')
-    if 'INSTRUMENTATION_RESULT: error=' in result:
+    max_attempts = 5 if qa.report.get('api') == '26' else 1
+    result = ''
+    for attempt in range(1, max_attempts+1):
+        result = q.adb('shell', 'am', 'instrument', '-w', '-e', 'hint', "'一次性邀请码'", '-e', 'value', encoded, 'com.conversationlens.ime.qa/.DumpRunner')
+        if 'INSTRUMENTATION_RESULT: error=' not in result:
+            qa.report['syntheticActivationSetAttempts'] = attempt
+            break
+        if attempt < max_attempts:
+            time.sleep(1)
+    else:
         raise AssertionError('Synthetic activation setup field was not available')
     qa.record('synthetic_setup_set_text', '一次性邀请码')
     qa.tap('我已了解并同意上述数据处理方式', scope='activity')

@@ -1,10 +1,18 @@
-// Personal-computer pilot. Expose only this loopback API via the MADR-041 HTTPS gateway.
+// Personal-computer pilot. Expose only this loopback API through a reviewed HTTPS gateway.
 import {readFileSync,writeFileSync,existsSync,mkdirSync,unlinkSync} from 'node:fs';
 import {resolve,join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {randomUUID} from 'node:crypto';
 import {createCloud} from './cloud.mjs';
 import {diagnose,requestId} from './diagnostics.mjs';
+
+export function loadModelKey(env=process.env,reader=readFileSync) {
+  const direct=typeof env.DASHSCOPE_API_KEY==='string'?env.DASHSCOPE_API_KEY.trim():'';
+  const keyPath=typeof env.LENS_MODEL_KEY_FILE==='string'?env.LENS_MODEL_KEY_FILE.trim():'';
+  const value=direct||(keyPath?reader(resolve(keyPath),'utf8').trim():'');
+  if(value&&!/^sk-[A-Za-z0-9_-]+$/.test(value))throw new Error('Invalid model provider key');
+  return value;
+}
 
 export async function startPc({directory,apiKey='',model='qwen-plus',baseUrl,budget={},port=4318}={}) {
   const root=resolve(directory),app=createCloud({directory:join(root,'data'),backupDirectory:join(root,'..','pc-backups'),apiKey,model,baseUrl,budget,provider:'bailian'});
@@ -35,11 +43,7 @@ if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
     mkdirSync(directory,{recursive:true,mode:0o700});
     const configFile=join(directory,'cloud-config.json');
     const config=JSON.parse(readFileSync(existsSync(configFile)?configFile:join(workspace,'native','deploy','cloud-config.example.json'),'utf8'));
-    const keyFile=join(workspace,'百炼.txt');let apiKey='';
-    if(existsSync(keyFile)){
-      const keys=readFileSync(keyFile,'utf8').match(/sk-[A-Za-z0-9_-]+/g);
-      if(keys?.length!==1)throw new Error('Invalid key file');apiKey=keys[0];
-    }
+    const apiKey=loadModelKey();
     const service=await startPc({directory,apiKey,model:config.model,baseUrl:config.baseUrl,budget:config.budget});
     console.log('PC native API ready on loopback:4318; public HTTPS gateway acceptance is required for phone access');
     const stop=()=>service.close().catch(e=>{diagnose('service_failed',requestId(),'shutdown',e);process.exitCode=1;});

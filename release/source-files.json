@@ -6,8 +6,12 @@
       "path": ".github/workflows/source-ci.yml"
     },
     {
-      "source": ".gitignore",
+      "source": "release/gitignore.public",
       "path": ".gitignore"
+    },
+    {
+      "source": "release/gitignore.public",
+      "path": "release/gitignore.public"
     },
     {
       "source": "CONTRIBUTING.md",
@@ -116,10 +120,6 @@
     {
       "source": "app/evals/pc-live-smoke.mjs",
       "path": "app/evals/pc-live-smoke.mjs"
-    },
-    {
-      "source": "app/evals/prepare-pilot-invite.mjs",
-      "path": "app/evals/prepare-pilot-invite.mjs"
     },
     {
       "source": "app/evals/run.mjs",
@@ -614,10 +614,6 @@
       "path": "native/scripts/build_qa.py"
     },
     {
-      "source": "native/scripts/build_release.py",
-      "path": "native/scripts/build_release.py"
-    },
-    {
       "source": "native/scripts/ci_android.py",
       "path": "native/scripts/ci_android.py"
     },
@@ -628,10 +624,6 @@
     {
       "source": "native/scripts/ci_ios.py",
       "path": "native/scripts/ci_ios.py"
-    },
-    {
-      "source": "native/scripts/ci_manifest.py",
-      "path": "native/scripts/ci_manifest.py"
     },
     {
       "source": "native/scripts/cloud_fixture.mjs",
@@ -770,10 +762,6 @@
       "path": "native/scripts/keyboard_ui_qa.py"
     },
     {
-      "source": "native/scripts/local_delivery.py",
-      "path": "native/scripts/local_delivery.py"
-    },
-    {
       "source": "native/scripts/make_ocr_samples.py",
       "path": "native/scripts/make_ocr_samples.py"
     },
@@ -788,10 +776,6 @@
     {
       "source": "native/scripts/offline_ocr_qa.py",
       "path": "native/scripts/offline_ocr_qa.py"
-    },
-    {
-      "source": "native/scripts/package_cloud.py",
-      "path": "native/scripts/package_cloud.py"
     },
     {
       "source": "native/scripts/package_source.py",
@@ -892,10 +876,6 @@
     {
       "source": "native/scripts/test_keyboard_details_fixture.py",
       "path": "native/scripts/test_keyboard_details_fixture.py"
-    },
-    {
-      "source": "native/scripts/test_local_delivery.py",
-      "path": "native/scripts/test_local_delivery.py"
     },
     {
       "source": "native/scripts/test_pc_server_controller.py",
